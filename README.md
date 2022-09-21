@@ -1,9 +1,5 @@
 # api-service-template
 
-# API SERVICE TEMPLATE
-
-
-
 ## BUILD 
 
 npm run dev:build
