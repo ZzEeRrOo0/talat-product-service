@@ -1,11 +1,14 @@
 # api-service-template
 
+## PRODUCTION
+npm run start:prod
+
 ## BUILD 
 
-npm run dev:build
+npm run build
 
 ## RUN
-npm run dev:serve
+npm run dev
 
 ## TEST
 npm run test
