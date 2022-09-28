@@ -1,5 +1,5 @@
 import { MongoDBContactDataSource } from "../../../../src/data/data-sources/mongodb/mongodb-contact-data-source";
-import { DatabaseWrapper } from "../../../../src/data/interfaces/data-sources/database-wrapper";
+import { DatabaseWrapper } from "../../../../src/data/interfaces/data-sources/mongodb/database-wrapper";
 
 describe("MongoDB DataSource", () => {
 	let mockDatabase: DatabaseWrapper;

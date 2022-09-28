@@ -1,4 +1,4 @@
-import { ContactDataSource } from "../../../src/data/interfaces/data-sources/contact-data-source";
+import { ContactDataSource } from "../../../src/data/interfaces/data-sources/mongodb/contact-data-source";
 import { Contact } from "../../../src/domain/entities/contact";
 import { ContactRepository } from "../../../src/domain/interfaces/repositories/contact-repository";
 import { ContactRepositoryImpl } from "../../../src/domain/repositories/contact-repository";
