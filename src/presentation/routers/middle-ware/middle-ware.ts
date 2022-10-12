@@ -9,6 +9,10 @@ import { GetAllContacts } from "../../../domain/use-cases/contact/get-all-contac
 import { GetAllProduct } from "../../../domain/use-cases/product/get-all-product";
 import ProductRouter from "../product-router";
 import ContactsRouter from "../contact-router";
+import CategoriesRouter from "../categories-router";
+import { GetAllCategories } from "../../../domain/use-cases/categories/get-all-categories";
+import { CategoriesRepositoryImpl } from "../../../domain/repositories/categories-repository";
+import { CategoriesDataSourceImpl } from "../../../data/data-sources/mysql/categories-data-source";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -38,4 +42,8 @@ export const contactMiddleWare = async () => {
 
 export const ProductMiddleWare = ProductRouter(
 	new GetAllProduct(new ProductRepositoryImpl(new ProductDataSourceImpl()))
+);
+
+export const CategoriesMiddleWare = CategoriesRouter(
+	new GetAllCategories(new CategoriesRepositoryImpl(new CategoriesDataSourceImpl()))
 );

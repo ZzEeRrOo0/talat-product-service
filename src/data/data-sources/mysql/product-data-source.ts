@@ -34,7 +34,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 	getAll(): Promise<ProductModel[]> {
 		const sql = "SELECT * FROM products WHERE deleted_at IS NULL";
 
-		return new Promise((reslove, reject) => {
+		return new Promise((resolve, reject) => {
 			db.query(sql, [], (error, result) => {
 				if (error) {
 					throw new Error("Internal server error.");
@@ -61,7 +61,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						)
 				);
 
-				reslove(products);
+				resolve(products);
 			});
 		});
 	}
