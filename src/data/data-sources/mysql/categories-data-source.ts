@@ -1,7 +1,6 @@
 
 import { db } from "../../../../config/database";
 import { CategoriesModel } from "./models/categories";
-import { OkPacket } from "mysql2";
 import { CategoriesDataSource } from "../../interfaces/data-sources/mysql/categories-data-source";
 
 export class CategoriesDataSourceImpl implements CategoriesDataSource {

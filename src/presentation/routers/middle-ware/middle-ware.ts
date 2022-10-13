@@ -13,6 +13,10 @@ import CategoriesRouter from "../categories-router";
 import { GetAllCategories } from "../../../domain/use-cases/categories/get-all-categories";
 import { CategoriesRepositoryImpl } from "../../../domain/repositories/categories-repository";
 import { CategoriesDataSourceImpl } from "../../../data/data-sources/mysql/categories-data-source";
+import { GetAllByCategoryId } from "../../../domain/use-cases/sub-category/get-all-by-category-id";
+import SubCategoryRouter from "../sub-category-router";
+import { SubCategoryRepositoryImpl } from "../../../domain/repositories/sub-category-repository";
+import { SubCategoryDataSourceImpl } from "../../../data/data-sources/mysql/sub-category-data-source";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -46,4 +50,8 @@ export const ProductMiddleWare = ProductRouter(
 
 export const CategoriesMiddleWare = CategoriesRouter(
 	new GetAllCategories(new CategoriesRepositoryImpl(new CategoriesDataSourceImpl()))
+);
+
+export const SubCategoryMiddleWare = SubCategoryRouter(
+	new GetAllByCategoryId(new SubCategoryRepositoryImpl(new SubCategoryDataSourceImpl()))
 );
