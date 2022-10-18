@@ -8,6 +8,10 @@ export class ProductRepositoryImpl implements ProductRepository {
     constructor(productDataSource: ProductDataSource) {
         this.productDataSource = productDataSource
     }
+    async getProductsBySubCategoryId(subCategoryId: string): Promise<ProductDetail[]> {
+        const result = await this.productDataSource.getAllBySubCategoryId(subCategoryId)
+        return result;
+    }
 
     async createProduct(product: Product): Promise<number> {
         const result = await this.productDataSource.create(product)

@@ -5,4 +5,5 @@ export interface ProductDataSource {
     create(product: Product): Promise<number>;
     getAll(): Promise<Product[]>;
     getAllByCategoryId(categoryId: string): Promise<ProductDetail[]>;
+    getAllBySubCategoryId(subCategoryId: string): Promise<ProductDetail[]>;
 }
