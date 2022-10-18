@@ -68,10 +68,10 @@ export class ProductDataSourceImpl implements ProductDataSource {
 	}
 
 	getAllByCategoryId(categoryId: string): Promise<ProductDetailModel[]> {
-		const sql = `SELECT id,name,code,product_type_id,category_id,sub_category_id,(SELECT image_name FROM product_images WHERE product_id = id AND deleted_at IS NULL) AS image FROM products WHERE category_id = ${categoryId} AND deleted_at IS NULL`;
+		const sql = "SELECT id,name,code,product_type_id,category_id,sub_category_id,(SELECT image_name FROM product_images WHERE product_id = id AND deleted_at IS NULL) AS image FROM products WHERE category_id = ? AND deleted_at IS NULL";
 
 		return new Promise((resolve, reject) => {
-			db.query(sql, [], (error, result) => {
+			db.query(sql, [categoryId], (error, result) => {
 				if (error) {
 					throw new Error("Internal server error.");
 				}
@@ -105,10 +105,10 @@ export class ProductDataSourceImpl implements ProductDataSource {
 	}
 
 	getAllBySubCategoryId(subCategoryId: string): Promise<ProductDetailModel[]> {
-		const sql = `SELECT id,name,code,product_type_id,category_id,sub_category_id,(SELECT image_name FROM product_images WHERE product_id = id AND deleted_at IS NULL) AS image FROM products WHERE sub_category_id = ${subCategoryId} AND deleted_at IS NULL`;
+		const sql = "SELECT id,name,code,product_type_id,category_id,sub_category_id,(SELECT image_name FROM product_images WHERE product_id = id AND deleted_at IS NULL) AS image FROM products WHERE sub_category_id = ? AND deleted_at IS NULL";
 
 		return new Promise((resolve, reject) => {
-			db.query(sql, [], (error, result) => {
+			db.query(sql, [subCategoryId], (error, result) => {
 				if (error) {
 					throw new Error("Internal server error.");
 				}
