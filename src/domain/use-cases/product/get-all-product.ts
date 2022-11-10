@@ -1,6 +1,6 @@
-import { Product } from "../../entities/product";
 import { ProductRepository } from "../../interfaces/repositories/product-repository";
 import { GetAllProductUseCase } from "../../interfaces/use-cases/product/get-all-product";
+import { AllProduct } from '../../entities/all-product';
 
 export class GetAllProduct implements GetAllProductUseCase {
     productRepository: ProductRepository
@@ -8,8 +8,8 @@ export class GetAllProduct implements GetAllProductUseCase {
         this.productRepository = productRepository
     }
 
-    async execute(): Promise<Product[]> {
-        const result = await this.productRepository.getProducts()
+    async execute(currentPage: number, pageSize: number): Promise<AllProduct> {
+        const result = await this.productRepository.getProducts(currentPage, pageSize)
         return result
     }
 }

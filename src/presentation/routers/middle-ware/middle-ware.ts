@@ -19,6 +19,7 @@ import { SubCategoryRepositoryImpl } from "../../../domain/repositories/sub-cate
 import { SubCategoryDataSourceImpl } from "../../../data/data-sources/mysql/sub-category-data-source";
 import { GetAllProductsByCategoryId } from "../../../domain/use-cases/product/get-all-by-category-id";
 import { GetAllProductsBySubCategoryId } from "../../../domain/use-cases/product/get-all-by-sub-category-id";
+import { Pagination } from "../../../core/pagination";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -47,9 +48,9 @@ export const contactMiddleWare = async () => {
 };
 
 export const ProductMiddleWare = ProductRouter(
-	new GetAllProduct(new ProductRepositoryImpl(new ProductDataSourceImpl())),
-	new GetAllProductsByCategoryId(new ProductRepositoryImpl(new ProductDataSourceImpl())),
-	new GetAllProductsBySubCategoryId(new ProductRepositoryImpl(new ProductDataSourceImpl()))
+	new GetAllProduct(new ProductRepositoryImpl(new ProductDataSourceImpl(new Pagination()))),
+	new GetAllProductsByCategoryId(new ProductRepositoryImpl(new ProductDataSourceImpl(new Pagination()))),
+	new GetAllProductsBySubCategoryId(new ProductRepositoryImpl(new ProductDataSourceImpl(new Pagination())))
 );
 
 export const CategoriesMiddleWare = CategoriesRouter(
