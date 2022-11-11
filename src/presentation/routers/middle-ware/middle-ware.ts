@@ -21,6 +21,10 @@ import { GetAllProductsByCategoryId } from "../../../domain/use-cases/product/ge
 import { GetAllProductsBySubCategoryId } from "../../../domain/use-cases/product/get-all-by-sub-category-id";
 import { Pagination } from "../../../core/pagination";
 import { AddProduct } from "../../../domain/use-cases/product/add-product-usecase";
+import ProductSizeTypeRouter from "../product-size-type-router";
+import { GetAllProductSizeType } from "../../../domain/use-cases/product-size-type/get-all-product-size-type";
+import { ProductTypeSizeRepositoryImpl } from "../../../domain/repositories/product-size-type-reposity";
+import { ProductSizeTypeDataSourceImpl } from "../../../data/data-sources/mysql/product-size-type-data-source";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -61,4 +65,8 @@ export const CategoriesMiddleWare = CategoriesRouter(
 
 export const SubCategoryMiddleWare = SubCategoryRouter(
 	new GetAllByCategoryId(new SubCategoryRepositoryImpl(new SubCategoryDataSourceImpl()))
+);
+
+export const ProductSizeTypeMiddleWare = ProductSizeTypeRouter(
+	new GetAllProductSizeType(new ProductTypeSizeRepositoryImpl(new ProductSizeTypeDataSourceImpl()))
 );
