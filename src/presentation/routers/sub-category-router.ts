@@ -10,7 +10,10 @@ export default function SubCategoryRouter(
     router.get("/:categoryId", async (req: Request, res: Response) => {
         try {
             const subCategory = await getAllByCategoryIdUseCase.execute(req.params.categoryId);
-            res.send(subCategory);
+            res.json({
+                status: 200,
+                data: subCategory
+            });
         } catch (err) {
             res.status(500).send({ message: "Error fetching data" });
         }

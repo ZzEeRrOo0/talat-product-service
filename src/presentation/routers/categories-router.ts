@@ -10,7 +10,10 @@ export default function CategoriesRouter(
     router.get("/", async (req: Request, res: Response) => {
         try {
             const categories = await getAllCategoriesUseCase.execute();
-            res.send(categories);
+            res.json({
+                status: 200,
+                data: categories
+            });
         } catch (err) {
             res.status(500).send({ message: "Error fetching data" });
         }

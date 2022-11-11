@@ -13,7 +13,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		this.paginationService = $paginationService;
 	}
 
-	create(product: ProductModel): Promise<number> {
+	addProduct(product: ProductModel): Promise<boolean> {
 		const sql =
 			"INSERT INTO products (name, code, product_type_id, category_id, sub_category_id) VALUES(?, ?, ?, ?, ?)";
 
@@ -33,8 +33,12 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					}
 
 					const insertId = (<OkPacket>result).insertId;
+					if (insertId) {
+						resolve(true);
+					} else {
+						resolve(false);
+					}
 
-					resolve(insertId);
 				}
 			);
 		});
