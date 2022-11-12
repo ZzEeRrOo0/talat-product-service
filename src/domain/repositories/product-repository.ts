@@ -15,17 +15,16 @@ export class ProductRepositoryImpl implements ProductRepository {
 		this.productDataSource = productDataSource;
 		this.firebaseStorageDataSource = firebaseStorageDataSource;
 	}
+	async addProduct(product: Product): Promise<number> {
+		const result = await this.productDataSource.addProduct(product);
+		return result;
+	}
 	async getProductsBySubCategoryId(
 		subCategoryId: string
 	): Promise<ProductDetail[]> {
 		const result = await this.productDataSource.getAllBySubCategoryId(
 			subCategoryId
 		);
-		return result;
-	}
-
-	async addProduct(product: Product): Promise<boolean> {
-		const result = await this.productDataSource.addProduct(product);
 		return result;
 	}
 	async getProducts(

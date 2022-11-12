@@ -1,8 +1,8 @@
 export interface ProductDetail {
     id: number;
-    name: String;
-    code: String;
-    image?: String;
+    name: string;
+    code: string;
+    image?: string;
     productTypeId: number;
     categoryId: number;
     subCategoryId?: number;

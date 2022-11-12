@@ -32,6 +32,9 @@ import { ProductTypeDataSourceImpl } from "../../../data/data-sources/mysql/prod
 import { FirebaseStorageDataSourceImpl } from "../../../data/data-sources/firebase/firebase-storage-data-sorce";
 import { GoogleStorage } from "../../../core/upload/google-storage";
 import { UploadProductImage } from "../../../domain/use-cases/product/upload-product-image";
+import { AddProductSize } from "../../../domain/use-cases/product-size/add-product-size-usecase";
+import { ProductSizeRepositoryImpl } from "../../../domain/repositories/product-size-repository";
+import { ProductSizeDataSourceImpl } from "../../../data/data-sources/mysql/product-size-data-source";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -82,6 +85,11 @@ export const ProductMiddleWare = ProductRouter(
 		new ProductRepositoryImpl(
 			new ProductDataSourceImpl(new Pagination()),
 			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+		)
+	),
+	new AddProductSize(
+		new ProductSizeRepositoryImpl(
+			new ProductSizeDataSourceImpl(new Pagination())
 		)
 	),
 	new UploadProductImage(

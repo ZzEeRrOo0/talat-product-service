@@ -1,5 +1,6 @@
 import express from "express";
 import { Request, Response } from "express";
+import { AddProductSizeUseCase } from "../../domain/interfaces/use-cases/product-size/add-product-size";
 import { AddProductUseCase } from "../../domain/interfaces/use-cases/product/add-product";
 import { GetAllProductUseCase } from "../../domain/interfaces/use-cases/product/get-all-product";
 import { GetAllProductsByCategoryIdUseCase } from "../../domain/interfaces/use-cases/product/get-all-products-by-category-id";
@@ -13,7 +14,8 @@ export default function ProductRouter(
 	getAllProductsByCategoryIdUseCase: GetAllProductsByCategoryIdUseCase,
 	getAllProductsBySubCategoryIdUseCase: GetAllProductsBySubCategoryIdUseCase,
 	addProductUseCase: AddProductUseCase,
-	uploadProductImageUseCase: UploadProductImageUseCase
+	addProductSizeUseCase: AddProductSizeUseCase,
+	uploadProductImageUseCase: UploadProductImageUseCase,
 ) {
 	const router = express.Router();
 	const upload = multer();
@@ -34,8 +36,17 @@ export default function ProductRouter(
 	router.post("/", async (req: Request, res: Response) => {
 		try {
 			//TODO check body and haldle bad request
-			await addProductUseCase.execute(req.body);
-			res.send(new APIResponse(200, { message: "Created Successfully" }));
+			const productID = await addProductUseCase.execute(req.body);
+			await addProductSizeUseCase.execute({
+				productId: productID,
+				...req.body,
+			});
+			res.send(
+				new APIResponse(200, {
+					product_id: productID,
+					message: "Created Successfully",
+				})
+			);
 		} catch (err) {
 			res.send(new APIResponse(500, { message: "Error saving data" }));
 		}

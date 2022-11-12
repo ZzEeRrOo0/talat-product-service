@@ -19,7 +19,7 @@ export class SubCategoryDataSourceImpl implements SubCategoryDataSource {
                 const subCategory: SubCategoryModel[] = data.map(
                     (e: {
                         id: number;
-                        name: String;
+                        name: string;
                         category_id: number;
                     }) =>
                         new SubCategoryModel(

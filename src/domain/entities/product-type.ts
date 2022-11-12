@@ -1,5 +1,5 @@
 export interface ProductType {
     id: number;
-    name: String;
+    name: string;
     sub_category_id: number;
 }

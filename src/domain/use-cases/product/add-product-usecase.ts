@@ -9,7 +9,7 @@ export class AddProduct implements AddProductUseCase {
         this.productRepository = productRepository
     }
 
-    async execute(product: Product): Promise<boolean> {
+    async execute(product: Product): Promise<number> {
         const result = await this.productRepository.addProduct(product)
         return result
     }

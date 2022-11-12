@@ -2,12 +2,12 @@ import { SubCategory } from "../../../../domain/entities/sub-category";
 
 export class SubCategoryModel implements SubCategory {
     id: number;
-    name!: String;
+    name!: string;
     category_id: number;
 
     constructor(
         id: number,
-        name: String,
+        name: string,
         category_id: number
     ) {
         (this.id = id),
