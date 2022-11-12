@@ -4,7 +4,7 @@ import { AllProduct } from '../../../../domain/entities/all-product';
 
 export interface ProductDataSource {
     // create(product: Product): Promise<number>;
-    addProduct(product: Product): Promise<boolean>;
+    addProduct(product: Product): Promise<number>;
     getAll(currentPage: number, pageSize: number): Promise<AllProduct>;
     getAllByCategoryId(categoryId: string): Promise<ProductDetail[]>;
     getAllBySubCategoryId(subCategoryId: string): Promise<ProductDetail[]>;

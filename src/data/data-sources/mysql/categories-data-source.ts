@@ -18,7 +18,7 @@ export class CategoriesDataSourceImpl implements CategoriesDataSource {
                 const products: CategoriesModel[] = data.map(
                     (e: {
                         id: number;
-                        name: String;
+                        name: string;
                     }) =>
                         new CategoriesModel(
                             e.id,

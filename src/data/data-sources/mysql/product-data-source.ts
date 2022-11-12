@@ -13,7 +13,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		this.paginationService = $paginationService;
 	}
 
-	addProduct(product: ProductModel): Promise<boolean> {
+	addProduct(product: ProductModel): Promise<number> {
 		const sql =
 			"INSERT INTO products (name, code, product_type_id, category_id, sub_category_id) VALUES(?, ?, ?, ?, ?)";
 
@@ -31,14 +31,8 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					if (error) {
 						throw new Error("Internal server error.");
 					}
-
 					const insertId = (<OkPacket>result).insertId;
-					if (insertId) {
-						resolve(true);
-					} else {
-						resolve(false);
-					}
-
+					resolve(insertId);
 				}
 			);
 		});
@@ -78,8 +72,8 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						const products: ProductModel[] = data.map(
 							(e: {
 								id: number;
-								name: String;
-								code: String;
+								name: string;
+								code: string;
 								product_type_id: number;
 								category_id: number;
 								sub_category_id: number | undefined;
@@ -121,9 +115,9 @@ export class ProductDataSourceImpl implements ProductDataSource {
 				const products: ProductDetailModel[] = data.map(
 					(e: {
 						id: number;
-						name: String;
-						code: String;
-						image: String | undefined;
+						name: string;
+						code: string;
+						image: string | undefined;
 						product_type_id: number;
 						category_id: number;
 						sub_category_id: number | undefined;
@@ -161,9 +155,9 @@ export class ProductDataSourceImpl implements ProductDataSource {
 				const products: ProductDetailModel[] = data.map(
 					(e: {
 						id: number;
-						name: String;
-						code: String;
-						image: String | undefined;
+						name: string;
+						code: string;
+						image: string | undefined;
 						product_type_id: number;
 						category_id: number;
 						sub_category_id: number | undefined;

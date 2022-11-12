@@ -18,7 +18,7 @@ export class ProductSizeTypeDataSourceImpl implements ProductSizeTypeDataSource 
                 const productSizeType: ProductSizeTypeModel[] = data.map(
                     (e: {
                         id: number;
-                        name: String;
+                        name: string;
                     }) =>
                         new ProductSizeTypeModel(
                             e.id,

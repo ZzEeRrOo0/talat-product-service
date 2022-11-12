@@ -14,7 +14,7 @@ export class ProductRepositoryImpl implements ProductRepository {
         return result;
     }
 
-    async addProduct(product: Product): Promise<boolean> {
+    async addProduct(product: Product): Promise<number> {
         const result = await this.productDataSource.addProduct(product)
         return result;
     }

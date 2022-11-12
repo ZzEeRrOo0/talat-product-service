@@ -1,5 +1,6 @@
 import express from "express";
 import { Request, Response } from "express";
+import { AddProductSizeUseCase } from "../../domain/interfaces/use-cases/product-size/add-product-size";
 import { AddProductUseCase } from "../../domain/interfaces/use-cases/product/add-product";
 import { GetAllProductUseCase } from "../../domain/interfaces/use-cases/product/get-all-product";
 import { GetAllProductsByCategoryIdUseCase } from "../../domain/interfaces/use-cases/product/get-all-products-by-category-id";
@@ -10,6 +11,7 @@ export default function ProductRouter(
 	getAllProductsByCategoryIdUseCase: GetAllProductsByCategoryIdUseCase,
 	getAllProductsBySubCategoryIdUseCase: GetAllProductsBySubCategoryIdUseCase,
 	addProductUseCase: AddProductUseCase,
+	addProductSizeUseCase: AddProductSizeUseCase
 ) {
 	const router = express.Router();
 
@@ -31,9 +33,15 @@ export default function ProductRouter(
 	});
 	router.post('/', async (req: Request, res: Response) => {
 		try {
-			await addProductUseCase.execute(req.body)
-			res.statusCode = 200
-			res.json({ status: 200, message: "Created" })
+			const productID = await addProductUseCase.execute(req.body)
+			await addProductSizeUseCase.execute({ productId: productID, ...req.body })
+			res.json({
+				status: 200,
+				data: {
+					product_id: productID
+				},
+				message: "Created"
+			})
 		} catch (err) {
 			res.status(500).send({ message: "Error saving data" })
 		}

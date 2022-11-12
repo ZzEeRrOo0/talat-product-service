@@ -2,18 +2,18 @@ import { ProductDetail } from './../../../../domain/entities/product-detail';
 
 export class ProductDetailModel implements ProductDetail {
     id: number;
-    name: String;
-    code: String;
-    image: String | undefined;
+    name: string;
+    code: string;
+    image: string | undefined;
     productTypeId: number;
     categoryId: number;
     subCategoryId?: number | undefined;
 
     constructor(
         id: number,
-        name: String,
-        code: String,
-        image: String | undefined,
+        name: string,
+        code: string,
+        image: string | undefined,
         productTypeId: number,
         categoryId: number,
         subCategoryId: number | undefined

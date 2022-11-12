@@ -18,7 +18,7 @@ export class ProductTypeDataSourceImpl implements ProductTypeDataSource {
                 const productType: ProductTypeModel[] = data.map(
                     (e: {
                         id: number;
-                        name: String;
+                        name: string;
                         category_id: number;
                     }) =>
                         new ProductTypeModel(

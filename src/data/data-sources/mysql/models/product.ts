@@ -2,16 +2,16 @@ import { Product } from "../../../../domain/entities/product";
 
 export class ProductModel implements Product {
 	id?: number | undefined;
-	name!: String;
-	code!: String;
+	name!: string;
+	code!: string;
 	productTypeId!: number;
 	categoryId!: number;
 	subCategoryId?: number | undefined;
 
 	constructor(
 		id: number | undefined,
-		name: String,
-		code: String,
+		name: string,
+		code: string,
 		productTypeId: number,
 		categoryId: number,
 		subCategoryId: number | undefined

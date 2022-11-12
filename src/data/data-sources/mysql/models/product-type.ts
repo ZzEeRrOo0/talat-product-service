@@ -3,12 +3,12 @@ import { ProductType } from "../../../../domain/entities/product-type";
 
 export class ProductTypeModel implements ProductType {
     id: number;
-    name: String;
+    name: string;
     sub_category_id: number;
 
     constructor(
         id: number,
-        name: String,
+        name: string,
         sub_category_id: number
     ) {
         (this.id = id),
