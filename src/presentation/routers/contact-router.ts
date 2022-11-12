@@ -2,6 +2,7 @@ import express from 'express'
 import { Request, Response } from 'express'
 import { CreateContactUseCase } from '../../domain/interfaces/use-cases/contact/create-contact'
 import { GetAllContactsUseCase } from '../../domain/interfaces/use-cases/contact/get-all-contact'
+import { APIResponse } from '../../core/response/api-response';
 
 
 export default function ContactsRouter(
@@ -12,20 +13,19 @@ export default function ContactsRouter(
 
     router.get('/', async (req: Request, res: Response) => {
         try {
-            const contacts = await getAllContactsUseCase.execute()
-            res.send(contacts)
+            const contacts = await getAllContactsUseCase.execute() 
+            res.send(new APIResponse(200, contacts))
         } catch (err) {
-            res.status(500).send({ message: "Error fetching data" })
+            res.send(new APIResponse(200, { message: "Error fetching data" }))
         }
     })
 
     router.post('/', async (req: Request, res: Response) => {
         try {
             await createContactUseCase.execute(req.body)
-            res.statusCode = 201
-            res.json({ message: "Created" })
+			res.send(new APIResponse(201, { message: "Created" }))
         } catch (err) {
-            res.status(500).send({ message: "Error saving data" })
+            res.send(new APIResponse(200, { message: "Error saving data" }))
         }
     })
 

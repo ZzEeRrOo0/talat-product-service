@@ -1,6 +1,7 @@
 import express from "express";
 import { Request, Response } from "express";
 import { GetAllProductSizeTypeUseCase } from "../../domain/interfaces/use-cases/product-size-type/get-by-sub-category-usecase";
+import { APIResponse } from '../../core/response/api-response';
 
 export default function ProductSizeTypeRouter(
     getAllProductSizeTypeUseCase: GetAllProductSizeTypeUseCase
@@ -10,12 +11,9 @@ export default function ProductSizeTypeRouter(
     router.get("/", async (req: Request, res: Response) => {
         try {
             const productSizeType = await getAllProductSizeTypeUseCase.execute();
-            res.json({
-                status: 200,
-                data: productSizeType
-            });
+            res.send(new APIResponse(200, productSizeType))
         } catch (err) {
-            res.status(500).send({ message: "Error fetching data" });
+            res.send(new APIResponse(500, { message: "Error fetching data" }))
         }
     });
 

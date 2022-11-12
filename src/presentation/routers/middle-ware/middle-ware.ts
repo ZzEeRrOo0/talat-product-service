@@ -29,6 +29,9 @@ import ProductTypeRouter from "../product-type-routers";
 import { GetAllBySubCategoryId } from "../../../domain/use-cases/product-type/get-all-by-sub-category-id";
 import { ProductTypeRepositoryImpl } from "../../../domain/repositories/product-type-repository";
 import { ProductTypeDataSourceImpl } from "../../../data/data-sources/mysql/product-type-data-source";
+import { FirebaseStorageDataSourceImpl } from "../../../data/data-sources/firebase/firebase-storage-data-sorce";
+import { GoogleStorage } from "../../../core/upload/google-storage";
+import { UploadProductImage } from "../../../domain/use-cases/product/upload-product-image";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -57,24 +60,58 @@ export const contactMiddleWare = async () => {
 };
 
 export const ProductMiddleWare = ProductRouter(
-	new GetAllProduct(new ProductRepositoryImpl(new ProductDataSourceImpl(new Pagination()))),
-	new GetAllProductsByCategoryId(new ProductRepositoryImpl(new ProductDataSourceImpl(new Pagination()))),
-	new GetAllProductsBySubCategoryId(new ProductRepositoryImpl(new ProductDataSourceImpl(new Pagination()))),
-	new AddProduct(new ProductRepositoryImpl(new ProductDataSourceImpl(new Pagination()))),
+	new GetAllProduct(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(new Pagination()),
+			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+		)
+	),
+	new GetAllProductsByCategoryId(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(new Pagination()),
+			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+		)
+	),
+	new GetAllProductsBySubCategoryId(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(new Pagination()),
+			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+		)
+	),
+	new AddProduct(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(new Pagination()),
+			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+		)
+	),
+	new UploadProductImage(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(new Pagination()),
+			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+		)
+	)
 );
 
 export const CategoriesMiddleWare = CategoriesRouter(
-	new GetAllCategories(new CategoriesRepositoryImpl(new CategoriesDataSourceImpl()))
+	new GetAllCategories(
+		new CategoriesRepositoryImpl(new CategoriesDataSourceImpl())
+	)
 );
 
 export const SubCategoryMiddleWare = SubCategoryRouter(
-	new GetAllByCategoryId(new SubCategoryRepositoryImpl(new SubCategoryDataSourceImpl()))
+	new GetAllByCategoryId(
+		new SubCategoryRepositoryImpl(new SubCategoryDataSourceImpl())
+	)
 );
 
 export const ProductSizeTypeMiddleWare = ProductSizeTypeRouter(
-	new GetAllProductSizeType(new ProductTypeSizeRepositoryImpl(new ProductSizeTypeDataSourceImpl()))
+	new GetAllProductSizeType(
+		new ProductTypeSizeRepositoryImpl(new ProductSizeTypeDataSourceImpl())
+	)
 );
 
 export const ProductTypeMiddleWare = ProductTypeRouter(
-	new GetAllBySubCategoryId(new ProductTypeRepositoryImpl(new ProductTypeDataSourceImpl()))
+	new GetAllBySubCategoryId(
+		new ProductTypeRepositoryImpl(new ProductTypeDataSourceImpl())
+	)
 );
