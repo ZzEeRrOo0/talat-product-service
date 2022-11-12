@@ -43,7 +43,7 @@ export class Pagination {
 		let totalPages = Math.ceil(totalItems / pageSize);
 
 		// ensure current page isn't out of range
-		if (currentPage < 1) {
+		if (currentPage < 1 || totalPages == 0) {
 			currentPage = 1;
 		} else if (currentPage > totalPages) {
 			currentPage = totalPages;
@@ -76,6 +76,8 @@ export class Pagination {
 		// calculate start and end item indexes
 		let startIndex = (currentPage - 1) * pageSize;
 		let endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
+
+		totalItems == 0 ? (endIndex = 0) : endIndex;
 
 		// create an array of pages to ng-repeat in the pager control
 		let pages = Array.from(Array(endPage + 1 - startPage).keys()).map(
