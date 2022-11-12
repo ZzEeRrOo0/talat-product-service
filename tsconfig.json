@@ -101,6 +101,9 @@
 		"skipLibCheck": true /* Skip type checking all .d.ts files. */,
 		"outDir": "./build",
 		"rootDir": ".",
-		"declaration": true
+		"declaration": true,
+		"types": [
+			"node"
+		]
 	}
 }
