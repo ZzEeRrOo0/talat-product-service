@@ -1,5 +1,6 @@
 import express from "express";
 import { Request, Response } from "express";
+import { AddProductUseCase } from "../../domain/interfaces/use-cases/product/add-product";
 import { GetAllProductUseCase } from "../../domain/interfaces/use-cases/product/get-all-product";
 import { GetAllProductsByCategoryIdUseCase } from "../../domain/interfaces/use-cases/product/get-all-products-by-category-id";
 import { GetAllProductsBySubCategoryIdUseCase } from "../../domain/interfaces/use-cases/product/get-all-products-by-sub-category-id";
@@ -7,7 +8,8 @@ import { GetAllProductsBySubCategoryIdUseCase } from "../../domain/interfaces/us
 export default function ProductRouter(
 	getAllProductUseCase: GetAllProductUseCase,
 	getAllProductsByCategoryIdUseCase: GetAllProductsByCategoryIdUseCase,
-	getAllProductsBySubCategoryIdUseCase: GetAllProductsBySubCategoryIdUseCase
+	getAllProductsBySubCategoryIdUseCase: GetAllProductsBySubCategoryIdUseCase,
+	addProductUseCase: AddProductUseCase,
 ) {
 	const router = express.Router();
 
@@ -19,11 +21,23 @@ export default function ProductRouter(
 				Number.parseInt(currentPage),
 				Number.parseInt(pageSize)
 			);
-			res.send(products);
+			res.json({
+				status: 200,
+				data: products
+			});
 		} catch (err) {
 			res.status(500).send({ message: "Error fetching data" });
 		}
 	});
+	router.post('/', async (req: Request, res: Response) => {
+		try {
+			await addProductUseCase.execute(req.body)
+			res.statusCode = 200
+			res.json({ status: 200, message: "Created" })
+		} catch (err) {
+			res.status(500).send({ message: "Error saving data" })
+		}
+	})
 
 	router.get("/category/:id", async (req: Request, res: Response) => {
 		try {
