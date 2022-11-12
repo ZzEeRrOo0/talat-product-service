@@ -1,9 +1,6 @@
 import express from "express";
 import cors from "cors";
 
-//get router
-var router = express.Router();
-
 //options for cors midddleware
 const options: cors.CorsOptions = {
 	allowedHeaders: [
@@ -21,6 +18,6 @@ const options: cors.CorsOptions = {
 
 const server = express();
 server.use(express.json());
-router.use(cors(options));
-router.options("*", cors(options));
+server.use(cors(options));
+server.options("*", cors(options));
 export default server;
