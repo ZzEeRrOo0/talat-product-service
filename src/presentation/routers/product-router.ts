@@ -23,7 +23,7 @@ export default function ProductRouter(
 	router.get("/", async (req: Request, res: Response) => {
 		try {
 			const currentPage = req.query["currentPage"]?.toString() ?? "1";
-			const pageSize = req.query["pageSize"]?.toString() ?? "10";
+			const pageSize = req.query["pageSize"]?.toString() ?? "5";
 			const products = await getAllProductUseCase.execute(
 				Number.parseInt(currentPage),
 				Number.parseInt(pageSize)

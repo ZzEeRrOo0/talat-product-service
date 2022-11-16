@@ -42,7 +42,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		const getTotalItemSql =
 			"SELECT COUNT(*) AS total FROM products WHERE deleted_at IS NULL";
 		const getProductsSql =
-			"SELECT * FROM products WHERE deleted_at IS NULL LIMIT ? OFFSET ?";
+			"SELECT p.id,p.name,p.code,p.status,(SELECT price from product_size WHERE product_id = p.id AND deleted_at IS NULL LIMIT 1) AS price FROM products AS p WHERE deleted_at IS NULL LIMIT ? OFFSET ?";
 
 		return new Promise((resolve, reject) => {
 			db.query(getTotalItemSql, [], (error, result) => {
@@ -77,6 +77,8 @@ export class ProductDataSourceImpl implements ProductDataSource {
 								product_type_id: number;
 								category_id: number;
 								sub_category_id: number | undefined;
+								status: boolean
+								price: number
 							}) =>
 								new ProductModel(
 									e.id,
@@ -84,7 +86,9 @@ export class ProductDataSourceImpl implements ProductDataSource {
 									e.code,
 									e.product_type_id,
 									e.category_id,
-									e.sub_category_id
+									e.sub_category_id,
+									e.status,
+									e.price
 								)
 						);
 

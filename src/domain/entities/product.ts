@@ -5,4 +5,6 @@ export interface Product {
 	productTypeId: number;
 	categoryId: number;
 	subCategoryId?: number;
+	status: boolean;
+	price: number;
 }

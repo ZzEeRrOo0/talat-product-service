@@ -7,6 +7,8 @@ export class ProductModel implements Product {
 	productTypeId!: number;
 	categoryId!: number;
 	subCategoryId?: number | undefined;
+	status!: boolean
+	price!: number
 
 	constructor(
 		id: number | undefined,
@@ -14,7 +16,9 @@ export class ProductModel implements Product {
 		code: string,
 		productTypeId: number,
 		categoryId: number,
-		subCategoryId: number | undefined
+		subCategoryId: number | undefined,
+		status: boolean,
+		price: number
 	) {
 		(this.id = id),
 			(this.name = name),
@@ -22,5 +26,7 @@ export class ProductModel implements Product {
 			(this.productTypeId = productTypeId),
 			(this.categoryId = categoryId),
 			(this.subCategoryId = subCategoryId);
+		(this.status = status);
+		(this.price = price);
 	}
 }

@@ -8,17 +8,17 @@ export class GoogleStorage {
 
 		return new Promise((resolve, reject) => {
 			const randomChar = Math.random().toString(36).substring(7)
-            const time = new Date().getTime()
+			const time = new Date().getTime()
 			const oldName = file.originalname
-            const fileType = path.extname(oldName).toLowerCase()
-            const fileName = `${randomChar}-${time}` + `${fileType}`
-			const fileToUplaod = `${folderName}/${fileName}`
+			const fileType = path.extname(oldName).toLowerCase()
+			const fileName = `${randomChar}-${time}` + `${fileType}`
+			const fileToUpload = `${folderName}/${fileName}`
 
-			const bucketFile = storage.file(fileToUplaod)
+			const bucketFile = storage.file(fileToUpload)
 
-			const stream  = bucketFile.createWriteStream({
+			const stream = bucketFile.createWriteStream({
 				metadata: {
-					ccontentType: file.mimetype
+					contentType: file.mimetype
 				},
 				resumable: false
 			})
