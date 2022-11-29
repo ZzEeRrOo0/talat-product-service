@@ -4,7 +4,7 @@ import path from 'path';
 const storage = admin.storage().bucket()
 
 export class GoogleStorage {
-	upload(file: any, folderName: String): Promise<String> {
+	upload(file: any, folderName: string): Promise<string> {
 
 		return new Promise((resolve, reject) => {
 			const randomChar = Math.random().toString(36).substring(7)

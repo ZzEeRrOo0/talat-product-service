@@ -8,6 +8,8 @@ import { GetAllProductsBySubCategoryIdUseCase } from "../../domain/interfaces/us
 import { APIResponse } from "../../core/response/api-response";
 import multer from "multer";
 import { UploadProductImageUseCase } from "../../domain/interfaces/use-cases/product/upload-product-image";
+import { AddProductImageUseCase } from "../../domain/interfaces/use-cases/product/add-product-image";
+import { ProductImage } from "../../domain/entities/product-image";
 
 export default function ProductRouter(
 	getAllProductUseCase: GetAllProductUseCase,
@@ -16,6 +18,7 @@ export default function ProductRouter(
 	addProductUseCase: AddProductUseCase,
 	addProductSizeUseCase: AddProductSizeUseCase,
 	uploadProductImageUseCase: UploadProductImageUseCase,
+	addProductImageUseCase: AddProductImageUseCase,
 ) {
 	const router = express.Router();
 	const upload = multer();
@@ -75,7 +78,7 @@ export default function ProductRouter(
 	});
 
 	router.post(
-		"/upload-image",
+		"/upload-image/:id",
 		upload.single("product_image"),
 		async (req: Request, res: Response) => {
 			try {
@@ -84,8 +87,8 @@ export default function ProductRouter(
 						req.file,
 						"product"
 					);
-					console.log(image);
-					//TODO insert image name to product image table
+					const productImageId = await addProductImageUseCase.execute(new ProductImage(req.params.id, image))
+					res.send(new APIResponse(200, { message: "Image upload successful" }));
 				} else {
 					res.send(new APIResponse(400, { message: "Bad request" }));
 				}

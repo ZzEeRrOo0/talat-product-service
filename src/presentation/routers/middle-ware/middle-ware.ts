@@ -35,6 +35,8 @@ import { UploadProductImage } from "../../../domain/use-cases/product/upload-pro
 import { AddProductSize } from "../../../domain/use-cases/product-size/add-product-size-usecase";
 import { ProductSizeRepositoryImpl } from "../../../domain/repositories/product-size-repository";
 import { ProductSizeDataSourceImpl } from "../../../data/data-sources/mysql/product-size-data-source";
+import { AddProductImage } from "../../../domain/use-cases/product/add-product-image";
+
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -93,6 +95,12 @@ export const ProductMiddleWare = ProductRouter(
 		)
 	),
 	new UploadProductImage(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(new Pagination()),
+			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+		)
+	),
+	new AddProductImage(
 		new ProductRepositoryImpl(
 			new ProductDataSourceImpl(new Pagination()),
 			new FirebaseStorageDataSourceImpl(new GoogleStorage())

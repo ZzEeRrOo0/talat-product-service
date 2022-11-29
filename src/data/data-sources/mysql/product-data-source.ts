@@ -5,12 +5,35 @@ import { OkPacket } from "mysql2";
 import { ProductDetailModel } from "./models/product-detail";
 import { Pagination } from "../../../core/pagination/index";
 import { AllProductModel } from "./models/all-product";
+import { ProductImage } from "../../../domain/entities/product-image";
 
 export class ProductDataSourceImpl implements ProductDataSource {
 	paginationService: Pagination;
 
 	constructor($paginationService: Pagination) {
 		this.paginationService = $paginationService;
+	}
+
+	addProductImage(productImage: ProductImage): Promise<string> {
+		const sql =
+			"INSERT INTO product_images (product_id, image_name) VALUES(?, ?)";
+
+		return new Promise((resolve, reject) => {
+			db.query(
+				sql,
+				[
+					productImage.productID,
+					productImage.imagePath,
+				],
+				(error, result) => {
+					if (error) {
+						throw new Error("Internal server error.");
+					}
+					const insertId = (<OkPacket>result).insertId;
+					resolve(insertId.toString());
+				}
+			);
+		});
 	}
 
 	addProduct(product: ProductModel): Promise<number> {

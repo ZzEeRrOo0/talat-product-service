@@ -4,6 +4,7 @@ import { Product } from "../entities/product";
 import { ProductRepository } from "../interfaces/repositories/product-repository";
 import { AllProduct } from "../entities/all-product";
 import { FirebaseStorageDataSource } from "../../data/interfaces/data-sources/firebase/firebase-storage-data-source";
+import { ProductImage } from "../entities/product-image";
 
 export class ProductRepositoryImpl implements ProductRepository {
 	productDataSource: ProductDataSource;
@@ -14,6 +15,10 @@ export class ProductRepositoryImpl implements ProductRepository {
 	) {
 		this.productDataSource = productDataSource;
 		this.firebaseStorageDataSource = firebaseStorageDataSource;
+	}
+	async addProductImage(imageParams: ProductImage): Promise<string> {
+		const result = await this.productDataSource.addProductImage(imageParams);
+		return result;
 	}
 	async addProduct(product: Product): Promise<number> {
 		const result = await this.productDataSource.addProduct(product);
@@ -45,7 +50,7 @@ export class ProductRepositoryImpl implements ProductRepository {
 		);
 		return result;
 	}
-	async uploadProductImage(file: any, folderName: String): Promise<String> {
+	async uploadProductImage(file: any, folderName: string): Promise<string> {
 		const result = await this.firebaseStorageDataSource.uploadProductImage(
 			file,
 			folderName

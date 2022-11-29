@@ -1,3 +1,3 @@
 export interface FirebaseStorageDataSource {
-	uploadProductImage(file: any, folderName: String): Promise<String>;
+	uploadProductImage(file: any, folderName: string): Promise<string>;
 }
