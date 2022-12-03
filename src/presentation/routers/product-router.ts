@@ -18,7 +18,7 @@ export default function ProductRouter(
 	addProductUseCase: AddProductUseCase,
 	addProductSizeUseCase: AddProductSizeUseCase,
 	uploadProductImageUseCase: UploadProductImageUseCase,
-	addProductImageUseCase: AddProductImageUseCase,
+	addProductImageUseCase: AddProductImageUseCase
 ) {
 	const router = express.Router();
 	const upload = multer();
@@ -29,7 +29,8 @@ export default function ProductRouter(
 			const pageSize = req.query["pageSize"]?.toString() ?? "5";
 			const products = await getAllProductUseCase.execute(
 				Number.parseInt(currentPage),
-				Number.parseInt(pageSize)
+				Number.parseInt(pageSize),
+				req
 			);
 			res.send(new APIResponse(200, products));
 		} catch (err) {
@@ -87,8 +88,14 @@ export default function ProductRouter(
 						req.file,
 						"product"
 					);
-					const productImageId = await addProductImageUseCase.execute(new ProductImage(req.params.id, image))
-					res.send(new APIResponse(200, { message: "Image upload successful" }));
+					const productImageId = await addProductImageUseCase.execute(
+						new ProductImage(req.params.id, image)
+					);
+					res.send(
+						new APIResponse(200, {
+							message: "Image upload successful",
+						})
+					);
 				} else {
 					res.send(new APIResponse(400, { message: "Bad request" }));
 				}

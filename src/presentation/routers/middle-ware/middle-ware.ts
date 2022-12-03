@@ -36,7 +36,7 @@ import { AddProductSize } from "../../../domain/use-cases/product-size/add-produ
 import { ProductSizeRepositoryImpl } from "../../../domain/repositories/product-size-repository";
 import { ProductSizeDataSourceImpl } from "../../../data/data-sources/mysql/product-size-data-source";
 import { AddProductImage } from "../../../domain/use-cases/product/add-product-image";
-
+import { FindProductByQueryImpl } from "../../../core/util/mysql/find-product-by-query";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -67,25 +67,37 @@ export const contactMiddleWare = async () => {
 export const ProductMiddleWare = ProductRouter(
 	new GetAllProduct(
 		new ProductRepositoryImpl(
-			new ProductDataSourceImpl(new Pagination()),
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
 			new FirebaseStorageDataSourceImpl(new GoogleStorage())
 		)
 	),
 	new GetAllProductsByCategoryId(
 		new ProductRepositoryImpl(
-			new ProductDataSourceImpl(new Pagination()),
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
 			new FirebaseStorageDataSourceImpl(new GoogleStorage())
 		)
 	),
 	new GetAllProductsBySubCategoryId(
 		new ProductRepositoryImpl(
-			new ProductDataSourceImpl(new Pagination()),
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
 			new FirebaseStorageDataSourceImpl(new GoogleStorage())
 		)
 	),
 	new AddProduct(
 		new ProductRepositoryImpl(
-			new ProductDataSourceImpl(new Pagination()),
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
 			new FirebaseStorageDataSourceImpl(new GoogleStorage())
 		)
 	),
@@ -96,13 +108,19 @@ export const ProductMiddleWare = ProductRouter(
 	),
 	new UploadProductImage(
 		new ProductRepositoryImpl(
-			new ProductDataSourceImpl(new Pagination()),
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
 			new FirebaseStorageDataSourceImpl(new GoogleStorage())
 		)
 	),
 	new AddProductImage(
 		new ProductRepositoryImpl(
-			new ProductDataSourceImpl(new Pagination()),
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
 			new FirebaseStorageDataSourceImpl(new GoogleStorage())
 		)
 	)

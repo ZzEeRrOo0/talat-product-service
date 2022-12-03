@@ -6,12 +6,19 @@ import { ProductDetailModel } from "./models/product-detail";
 import { Pagination } from "../../../core/pagination/index";
 import { AllProductModel } from "./models/all-product";
 import { ProductImage } from "../../../domain/entities/product-image";
+import { FindProductByQuery } from "../../../core/util/mysql/find-product-by-query";
+import { Request } from "express";
 
 export class ProductDataSourceImpl implements ProductDataSource {
 	paginationService: Pagination;
+	findProductByQuery: FindProductByQuery;
 
-	constructor($paginationService: Pagination) {
+	constructor(
+		$paginationService: Pagination,
+		$findProductByQuery: FindProductByQuery
+	) {
 		this.paginationService = $paginationService;
+		this.findProductByQuery = $findProductByQuery;
 	}
 
 	addProductImage(productImage: ProductImage): Promise<string> {
@@ -21,10 +28,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		return new Promise((resolve, reject) => {
 			db.query(
 				sql,
-				[
-					productImage.productID,
-					productImage.imagePath,
-				],
+				[productImage.productID, productImage.imagePath],
 				(error, result) => {
 					if (error) {
 						throw new Error("Internal server error.");
@@ -61,11 +65,16 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		});
 	}
 
-	getAll(currentPage: number, pageSize: number): Promise<AllProductModel> {
+	getAll(
+		currentPage: number,
+		pageSize: number,
+		req: Request
+	): Promise<AllProductModel> {
 		const getTotalItemSql =
 			"SELECT COUNT(*) AS total FROM products WHERE deleted_at IS NULL";
-		const getProductsSql =
-			"SELECT p.id,p.name,p.code,p.status,(SELECT price from product_size WHERE product_id = p.id AND deleted_at IS NULL LIMIT 1) AS price FROM products AS p WHERE deleted_at IS NULL LIMIT ? OFFSET ?";
+		const getProductsSql = `SELECT p.id,p.name,p.code,p.status,(SELECT price from product_size WHERE product_id = p.id AND deleted_at IS NULL LIMIT 1) AS price FROM products AS p WHERE ${this.findProductByQuery.whereSql(
+			req
+		)} LIMIT ? OFFSET ?`;
 
 		return new Promise((resolve, reject) => {
 			db.query(getTotalItemSql, [], (error, result) => {
@@ -100,8 +109,8 @@ export class ProductDataSourceImpl implements ProductDataSource {
 								product_type_id: number;
 								category_id: number;
 								sub_category_id: number | undefined;
-								status: boolean
-								price: number
+								status: boolean;
+								price: number;
 							}) =>
 								new ProductModel(
 									e.id,
