@@ -8,6 +8,14 @@ export class ProductSizeRepositoryImpl implements ProductSizeRepository {
         this.productSizeDataSource = productSizeDataSource
     }
 
+    async updateProductPrice(productId: string, productPrice: string): Promise<string> {
+        const result = await this.productSizeDataSource.updateProductPrice(
+            productId,
+            productPrice,
+        );
+        return result;
+    }
+
     async addProductSize(productSize: ProductSize): Promise<number> {
         const result = await this.productSizeDataSource.addProductSize(productSize)
         return result;
