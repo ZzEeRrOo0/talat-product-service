@@ -17,6 +17,12 @@ export class ProductRepositoryImpl implements ProductRepository {
 		this.productDataSource = productDataSource;
 		this.firebaseStorageDataSource = firebaseStorageDataSource;
 	}
+	async updateProductStatus(productId: string, productStatus: number): Promise<string> {
+		const result = await this.productDataSource.updateProductStatus(
+			productId, productStatus
+		);
+		return result;
+	}
 	async addProductImage(imageParams: ProductImage): Promise<string> {
 		const result = await this.productDataSource.addProductImage(
 			imageParams

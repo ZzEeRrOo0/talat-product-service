@@ -38,6 +38,7 @@ import { ProductSizeDataSourceImpl } from "../../../data/data-sources/mysql/prod
 import { AddProductImage } from "../../../domain/use-cases/product/add-product-image";
 import { FindProductByQueryImpl } from "../../../core/util/mysql/find-product-by-query";
 import { UpdateProductPrice } from "../../../domain/use-cases/product-size/update-product-price";
+import { UpdateProductStatus } from "../../../domain/use-cases/product/update-product-status-usecase";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -130,6 +131,15 @@ export const ProductMiddleWare = ProductRouter(
 			new ProductSizeDataSourceImpl(
 				new Pagination(),
 			),
+		)
+	),
+	new UpdateProductStatus(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
+			new FirebaseStorageDataSourceImpl(new GoogleStorage())
 		)
 	)
 );
