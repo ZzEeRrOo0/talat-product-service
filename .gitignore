@@ -147,3 +147,4 @@ dist
 *.js
 *.d.ts
 talat-admin-cert.json
+cloudinary-secret-key.json

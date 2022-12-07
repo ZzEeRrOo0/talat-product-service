@@ -29,7 +29,7 @@ import ProductTypeRouter from "../product-type-routers";
 import { GetAllBySubCategoryId } from "../../../domain/use-cases/product-type/get-all-by-sub-category-id";
 import { ProductTypeRepositoryImpl } from "../../../domain/repositories/product-type-repository";
 import { ProductTypeDataSourceImpl } from "../../../data/data-sources/mysql/product-type-data-source";
-import { FirebaseStorageDataSourceImpl } from "../../../data/data-sources/firebase/firebase-storage-data-sorce";
+import { FirebaseStorageDataSourceImpl } from "../../../data/data-sources/firebase/firebase-storage-data-source";
 import { GoogleStorage } from "../../../core/upload/google-storage";
 import { UploadProductImage } from "../../../domain/use-cases/product/upload-product-image";
 import { AddProductSize } from "../../../domain/use-cases/product-size/add-product-size-usecase";
@@ -37,6 +37,9 @@ import { ProductSizeRepositoryImpl } from "../../../domain/repositories/product-
 import { ProductSizeDataSourceImpl } from "../../../data/data-sources/mysql/product-size-data-source";
 import { AddProductImage } from "../../../domain/use-cases/product/add-product-image";
 import { FindProductByQueryImpl } from "../../../core/util/mysql/find-product-by-query";
+import { CloudinaryDataSourceImpl } from "../../../data/data-sources/cloudinary/cloudinary-data-source";
+import { Cloudinary } from "../../../core/upload/cloudinary";
+import { UploadCategoryImage } from "../../../domain/use-cases/categories/upload-category-image";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -128,7 +131,16 @@ export const ProductMiddleWare = ProductRouter(
 
 export const CategoriesMiddleWare = CategoriesRouter(
 	new GetAllCategories(
-		new CategoriesRepositoryImpl(new CategoriesDataSourceImpl())
+		new CategoriesRepositoryImpl(
+			new CategoriesDataSourceImpl(),
+			new CloudinaryDataSourceImpl(new Cloudinary())
+		)
+	),
+	new UploadCategoryImage(
+		new CategoriesRepositoryImpl(
+			new CategoriesDataSourceImpl(),
+			new CloudinaryDataSourceImpl(new Cloudinary())
+		)
 	)
 );
 
