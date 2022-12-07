@@ -40,6 +40,8 @@ import { FindProductByQueryImpl } from "../../../core/util/mysql/find-product-by
 import { CloudinaryDataSourceImpl } from "../../../data/data-sources/cloudinary/cloudinary-data-source";
 import { Cloudinary } from "../../../core/upload/cloudinary";
 import { UploadCategoryImage } from "../../../domain/use-cases/categories/upload-category-image";
+import { UpdateProductPrice } from "../../../domain/use-cases/product-size/update-product-price";
+import { UpdateProductStatus } from "../../../domain/use-cases/product/update-product-status-usecase";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -119,6 +121,22 @@ export const ProductMiddleWare = ProductRouter(
 		)
 	),
 	new AddProductImage(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
+			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+		)
+	),
+	new UpdateProductPrice(
+		new ProductSizeRepositoryImpl(
+			new ProductSizeDataSourceImpl(
+				new Pagination(),
+			),
+		)
+	),
+	new UpdateProductStatus(
 		new ProductRepositoryImpl(
 			new ProductDataSourceImpl(
 				new Pagination(),

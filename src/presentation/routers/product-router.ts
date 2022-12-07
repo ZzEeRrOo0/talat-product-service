@@ -10,6 +10,8 @@ import multer from "multer";
 import { UploadProductImageUseCase } from "../../domain/interfaces/use-cases/product/upload-product-image";
 import { AddProductImageUseCase } from "../../domain/interfaces/use-cases/product/add-product-image";
 import { ProductImage } from "../../domain/entities/product-image";
+import { UpdateProductPriceUseCase } from "../../domain/interfaces/use-cases/product-size/update-product-price";
+import { UpdateProductStatusUseCase } from "../../domain/interfaces/use-cases/product/update-product-statatus-usecase";
 
 export default function ProductRouter(
 	getAllProductUseCase: GetAllProductUseCase,
@@ -18,7 +20,9 @@ export default function ProductRouter(
 	addProductUseCase: AddProductUseCase,
 	addProductSizeUseCase: AddProductSizeUseCase,
 	uploadProductImageUseCase: UploadProductImageUseCase,
-	addProductImageUseCase: AddProductImageUseCase
+	addProductImageUseCase: AddProductImageUseCase,
+	updateProductPriceUseCase: UpdateProductPriceUseCase,
+	updateProductStatusUseCase: UpdateProductStatusUseCase,
 ) {
 	const router = express.Router();
 	const upload = multer();
@@ -73,6 +77,43 @@ export default function ProductRouter(
 				req.params.id
 			);
 			res.send(new APIResponse(200, products));
+		} catch (err) {
+			res.send(new APIResponse(500, { message: "Error fetching data" }));
+		}
+	});
+
+	router.put("/update-price/:id", async (req: Request, res: Response) => {
+		try {
+			let price = req.body.price ?? '0';
+			if (price !== '0') {
+				await updateProductPriceUseCase.execute(
+					req.params.id,
+					price as string,
+				);
+				res.send(new APIResponse(200, { message: "update Product price successful" }));
+			} else {
+				res.send(new APIResponse(400, { message: "Error wrong data" }));
+			}
+
+		} catch (err) {
+			res.send(new APIResponse(500, { message: "Error fetching data" }));
+		}
+	});
+
+
+	router.put("/update-status/:id", async (req: Request, res: Response) => {
+		try {
+			let status = req.body.status ?? 0;
+			if (status !== 0) {
+				await updateProductStatusUseCase.execute(
+					req.params.id,
+					status as number,
+				);
+				res.send(new APIResponse(200, { message: "update Product status successful" }));
+			} else {
+				res.send(new APIResponse(400, { message: "Error wrong data" }));
+			}
+
 		} catch (err) {
 			res.send(new APIResponse(500, { message: "Error fetching data" }));
 		}

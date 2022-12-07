@@ -20,6 +20,27 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		this.paginationService = $paginationService;
 		this.findProductByQuery = $findProductByQuery;
 	}
+	updateProductStatus(productId: string, productStatus: number): Promise<string> {
+		const sql =
+			"UPDATE products SET status = ? WHERE id = ? AND deleted_at IS NULL";
+
+		return new Promise((resolve, reject) => {
+			db.query(
+				sql,
+				[
+					productStatus,
+					productId,
+				],
+				(error, result) => {
+					if (error) {
+						throw new Error("Internal server error.");
+					}
+					const insertId = (<OkPacket>result).insertId;
+					resolve(insertId.toString());
+				}
+			);
+		});
+	}
 
 	addProductImage(productImage: ProductImage): Promise<string> {
 		const sql =
