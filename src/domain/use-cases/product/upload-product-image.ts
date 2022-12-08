@@ -6,7 +6,7 @@ export class UploadProductImage implements UploadProductImageUseCase {
 	constructor(productRepository: ProductRepository) {
 		this.productRepository = productRepository;
 	}
-	async execute(file: any, folderName: string): Promise<string> {
+	async execute(file: string, folderName: string): Promise<string> {
 		const result = await this.productRepository.uploadProductImage(
 			file,
 			folderName

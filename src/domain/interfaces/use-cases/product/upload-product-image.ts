@@ -1,3 +1,3 @@
 export interface UploadProductImageUseCase {
-	execute(file: any, folderName: string): Promise<string>;
+	execute(file: string, folderName: string): Promise<string>;
 }

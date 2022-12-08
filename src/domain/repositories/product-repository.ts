@@ -3,23 +3,28 @@ import { ProductDataSource } from "../../data/interfaces/data-sources/mysql/prod
 import { Product } from "../entities/product";
 import { ProductRepository } from "../interfaces/repositories/product-repository";
 import { AllProduct } from "../entities/all-product";
-import { FirebaseStorageDataSource } from "../../data/interfaces/data-sources/firebase/firebase-storage-data-source";
 import { ProductImage } from "../entities/product-image";
 import { Request } from "express";
+import { CloudinaryDataSource } from "../../data/interfaces/data-sources/cloudinary/cloudinary-data-source";
 
 export class ProductRepositoryImpl implements ProductRepository {
 	productDataSource: ProductDataSource;
-	firebaseStorageDataSource: FirebaseStorageDataSource;
+	cloudinaryDataSource: CloudinaryDataSource;
 	constructor(
-		productDataSource: ProductDataSource,
-		firebaseStorageDataSource: FirebaseStorageDataSource
+		$productDataSource: ProductDataSource,
+		$cloudinaryDataSource: CloudinaryDataSource,
+
 	) {
-		this.productDataSource = productDataSource;
-		this.firebaseStorageDataSource = firebaseStorageDataSource;
+		this.productDataSource = $productDataSource;
+		this.cloudinaryDataSource = $cloudinaryDataSource;
 	}
-	async updateProductStatus(productId: string, productStatus: number): Promise<string> {
+	async updateProductStatus(
+		productId: string,
+		productStatus: number
+	): Promise<string> {
 		const result = await this.productDataSource.updateProductStatus(
-			productId, productStatus
+			productId,
+			productStatus
 		);
 		return result;
 	}
@@ -61,8 +66,11 @@ export class ProductRepositoryImpl implements ProductRepository {
 		);
 		return result;
 	}
-	async uploadProductImage(file: any, folderName: string): Promise<string> {
-		const result = await this.firebaseStorageDataSource.uploadProductImage(
+	async uploadProductImage(
+		file: string,
+		folderName: string
+	): Promise<string> {
+		const result = await this.cloudinaryDataSource.uploadImage(
 			file,
 			folderName
 		);

@@ -20,7 +20,7 @@ import { SubCategoryDataSourceImpl } from "../../../data/data-sources/mysql/sub-
 import { GetAllProductsByCategoryId } from "../../../domain/use-cases/product/get-all-by-category-id";
 import { GetAllProductsBySubCategoryId } from "../../../domain/use-cases/product/get-all-by-sub-category-id";
 import { Pagination } from "../../../core/pagination";
-import { AddProduct } from "../../../domain/use-cases/product/add-product-usecase";
+import { AddProduct } from "../../../domain/use-cases/product/add-product";
 import ProductSizeTypeRouter from "../product-size-type-router";
 import { GetAllProductSizeType } from "../../../domain/use-cases/product-size-type/get-all-product-size-type";
 import { ProductTypeSizeRepositoryImpl } from "../../../domain/repositories/product-size-type-reposity";
@@ -41,7 +41,7 @@ import { CloudinaryDataSourceImpl } from "../../../data/data-sources/cloudinary/
 import { Cloudinary } from "../../../core/upload/cloudinary";
 import { UploadCategoryImage } from "../../../domain/use-cases/categories/upload-category-image";
 import { UpdateProductPrice } from "../../../domain/use-cases/product-size/update-product-price";
-import { UpdateProductStatus } from "../../../domain/use-cases/product/update-product-status-usecase";
+import { UpdateProductStatus } from "../../../domain/use-cases/product/update-product-status";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -76,7 +76,7 @@ export const ProductMiddleWare = ProductRouter(
 				new Pagination(),
 				new FindProductByQueryImpl()
 			),
-			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
 	),
 	new GetAllProductsByCategoryId(
@@ -85,7 +85,7 @@ export const ProductMiddleWare = ProductRouter(
 				new Pagination(),
 				new FindProductByQueryImpl()
 			),
-			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
 	),
 	new GetAllProductsBySubCategoryId(
@@ -94,7 +94,7 @@ export const ProductMiddleWare = ProductRouter(
 				new Pagination(),
 				new FindProductByQueryImpl()
 			),
-			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
 	),
 	new AddProduct(
@@ -103,7 +103,7 @@ export const ProductMiddleWare = ProductRouter(
 				new Pagination(),
 				new FindProductByQueryImpl()
 			),
-			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
 	),
 	new AddProductSize(
@@ -117,7 +117,7 @@ export const ProductMiddleWare = ProductRouter(
 				new Pagination(),
 				new FindProductByQueryImpl()
 			),
-			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
 	),
 	new AddProductImage(
@@ -126,14 +126,12 @@ export const ProductMiddleWare = ProductRouter(
 				new Pagination(),
 				new FindProductByQueryImpl()
 			),
-			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
 	),
 	new UpdateProductPrice(
 		new ProductSizeRepositoryImpl(
-			new ProductSizeDataSourceImpl(
-				new Pagination(),
-			),
+			new ProductSizeDataSourceImpl(new Pagination())
 		)
 	),
 	new UpdateProductStatus(
@@ -142,7 +140,7 @@ export const ProductMiddleWare = ProductRouter(
 				new Pagination(),
 				new FindProductByQueryImpl()
 			),
-			new FirebaseStorageDataSourceImpl(new GoogleStorage())
+			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
 	)
 );

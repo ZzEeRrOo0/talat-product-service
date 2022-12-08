@@ -14,7 +14,7 @@ export class CategoriesRepositoryImpl implements CategoriesRepository {
 		this.cloudinaryDataSource = $cloudinaryDataSource;
 	}
 	async uploadCategoryImage(file: string, folderName: string): Promise<string> {
-		const result = await this.cloudinaryDataSource.uploadCategoryImage(
+		const result = await this.cloudinaryDataSource.uploadImage(
 			file,
 			folderName
 		);

@@ -14,7 +14,7 @@ export interface ProductRepository {
 	): Promise<AllProduct>;
 	getProductsByCategoryId(categoryId: string): Promise<ProductDetail[]>;
 	getProductsBySubCategoryId(subCategoryId: string): Promise<ProductDetail[]>;
-	uploadProductImage(file: any, folderName: string): Promise<string>;
+	uploadProductImage(file: string, folderName: string): Promise<string>;
 	addProductImage(imageParams: ProductImage): Promise<string>;
 	updateProductStatus(productId: string, productStatus: number): Promise<string>;
 }

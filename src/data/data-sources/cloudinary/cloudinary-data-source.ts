@@ -7,7 +7,7 @@ export class CloudinaryDataSourceImpl implements CloudinaryDataSource {
 		this.cloudinary = $cloudinary;
 	}
 
-	uploadCategoryImage(file: string, folderName: string): Promise<string> {
+	uploadImage(file: string, folderName: string): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const upload = this.cloudinary.upload(file, folderName);
 

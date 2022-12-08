@@ -22,10 +22,13 @@ export default function ProductRouter(
 	uploadProductImageUseCase: UploadProductImageUseCase,
 	addProductImageUseCase: AddProductImageUseCase,
 	updateProductPriceUseCase: UpdateProductPriceUseCase,
-	updateProductStatusUseCase: UpdateProductStatusUseCase,
+	updateProductStatusUseCase: UpdateProductStatusUseCase
 ) {
 	const router = express.Router();
-	const upload = multer();
+	const upload = multer({
+		storage: multer.diskStorage({}),
+		limits: { fieldSize: 100000 },
+	});
 
 	router.get("/", async (req: Request, res: Response) => {
 		try {
@@ -84,22 +87,24 @@ export default function ProductRouter(
 
 	router.put("/update-price/:id", async (req: Request, res: Response) => {
 		try {
-			let price = req.body.price ?? '0';
-			if (price !== '0') {
+			let price = req.body.price ?? "0";
+			if (price !== "0") {
 				await updateProductPriceUseCase.execute(
 					req.params.id,
-					price as string,
+					price as string
 				);
-				res.send(new APIResponse(200, { message: "update Product price successful" }));
+				res.send(
+					new APIResponse(200, {
+						message: "update Product price successful",
+					})
+				);
 			} else {
 				res.send(new APIResponse(400, { message: "Error wrong data" }));
 			}
-
 		} catch (err) {
 			res.send(new APIResponse(500, { message: "Error fetching data" }));
 		}
 	});
-
 
 	router.put("/update-status/:id", async (req: Request, res: Response) => {
 		try {
@@ -107,13 +112,16 @@ export default function ProductRouter(
 			if (status !== 0) {
 				await updateProductStatusUseCase.execute(
 					req.params.id,
-					status as number,
+					status as number
 				);
-				res.send(new APIResponse(200, { message: "update Product status successful" }));
+				res.send(
+					new APIResponse(200, {
+						message: "update Product status successful",
+					})
+				);
 			} else {
 				res.send(new APIResponse(400, { message: "Error wrong data" }));
 			}
-
 		} catch (err) {
 			res.send(new APIResponse(500, { message: "Error fetching data" }));
 		}
@@ -126,8 +134,8 @@ export default function ProductRouter(
 			try {
 				if (req.file) {
 					const image = await uploadProductImageUseCase.execute(
-						req.file,
-						"product"
+						req.file.path,
+						"products/"
 					);
 					const productImageId = await addProductImageUseCase.execute(
 						new ProductImage(req.params.id, image)
