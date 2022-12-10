@@ -33,7 +33,6 @@ export class ProductDataSourceImpl implements ProductDataSource {
 
 		return new Promise((resolve, reject) => {
 			db.query(sql, [productId], (error, result) => {
-				console.log(error)
 				if (error) {
 					throw new Error("Internal server error.");
 				}
