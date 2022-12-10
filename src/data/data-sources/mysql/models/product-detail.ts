@@ -8,6 +8,13 @@ export class ProductDetailModel implements ProductDetail {
     productTypeId: number;
     categoryId: number;
     subCategoryId?: number | undefined;
+    status: boolean;
+    categoryName?: string | undefined;
+    subCategoryName?: string | undefined;
+    productTypeName?: string | undefined;
+    size?: number | undefined;
+    price?: number | undefined;
+    productSizeType?: string | undefined;
 
     constructor(
         id: number,
@@ -16,7 +23,16 @@ export class ProductDetailModel implements ProductDetail {
         image: string | undefined,
         productTypeId: number,
         categoryId: number,
-        subCategoryId: number | undefined
+        subCategoryId: number | undefined,
+        status: boolean,
+        categoryName: string | undefined,
+        subCategoryName: string | undefined,
+        productTypeName: string | undefined,
+        size: number | undefined,
+        price: number | undefined,
+        productSizeType: string | undefined,
+
+
     ) {
         (this.id = id),
             (this.name = name),
@@ -25,5 +41,12 @@ export class ProductDetailModel implements ProductDetail {
             (this.productTypeId = productTypeId),
             (this.categoryId = categoryId),
             (this.subCategoryId = subCategoryId);
+        (this.categoryName = categoryName);
+        (this.subCategoryName = subCategoryName);
+        (this.productTypeName = productTypeName);
+        (this.size = size);
+        (this.price = price);
+        (this.productSizeType = productSizeType);
+        (this.status = status);
     }
 }

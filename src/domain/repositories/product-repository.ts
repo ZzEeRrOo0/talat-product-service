@@ -18,6 +18,12 @@ export class ProductRepositoryImpl implements ProductRepository {
 		this.productDataSource = $productDataSource;
 		this.cloudinaryDataSource = $cloudinaryDataSource;
 	}
+	async getProductByProductId(productId: string): Promise<ProductDetail[]> {
+		const result = await this.productDataSource.getProductsByProductId(
+			productId
+		);
+		return result;
+	}
 	async updateProductStatus(
 		productId: string,
 		productStatus: number

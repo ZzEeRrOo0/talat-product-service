@@ -12,4 +12,5 @@ export interface ProductDataSource {
     getAllBySubCategoryId(subCategoryId: string): Promise<ProductDetail[]>;
     addProductImage(productImage: ProductImage): Promise<string>;
     updateProductStatus(productId: string, productStatus: number): Promise<string>;
+    getProductsByProductId(productId: string): Promise<ProductDetail[]>;
 }

@@ -8,6 +8,7 @@ import { AllProductModel } from "./models/all-product";
 import { ProductImage } from "../../../domain/entities/product-image";
 import { FindProductByQuery } from "../../../core/util/mysql/find-product-by-query";
 import { Request } from "express";
+import { ProductDetail } from "../../../domain/entities/product-detail";
 
 export class ProductDataSourceImpl implements ProductDataSource {
 	paginationService: Pagination;
@@ -19,6 +20,64 @@ export class ProductDataSourceImpl implements ProductDataSource {
 	) {
 		this.paginationService = $paginationService;
 		this.findProductByQuery = $findProductByQuery;
+	}
+	getProductsByProductId(productId: string): Promise<ProductDetail[]> {
+		const sql =
+			"SELECT p.id,p.name,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id,ps.size,ps.price," +
+			"(SELECT name FROM product_size_type WHERE id = ps.product_size_type_id AND deleted_at IS NULL) AS product_size_type, " +
+			"(SELECT name FROM categories WHERE id = p.category_id AND deleted_at IS NULL) AS category_name, " +
+			"(SELECT name FROM sub_category WHERE id = p.sub_category_id AND deleted_at IS NULL) AS sub_category_name, " +
+			"(SELECT name FROM product_type WHERE id = p.product_type_id AND deleted_at IS NULL) AS product_type_name, " +
+			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL) AS image " +
+			"FROM products AS p LEFT JOIN product_size AS ps ON p.id = ps.product_id WHERE p.id = ? AND p.deleted_at IS NULL";
+
+		return new Promise((resolve, reject) => {
+			db.query(sql, [productId], (error, result) => {
+				console.log(error)
+				if (error) {
+					throw new Error("Internal server error.");
+				}
+
+				const data = JSON.parse(JSON.stringify(result));
+
+				const products: ProductDetailModel[] = data.map(
+					(e: {
+						id: number;
+						name: string;
+						code: string;
+						image: string | undefined;
+						product_type_id: number;
+						category_id: number;
+						sub_category_id: number | undefined;
+						status: boolean;
+						category_name?: string | undefined;
+						sub_category_name?: string | undefined;
+						product_type_name?: string | undefined;
+						size: number | undefined,
+						price: number | undefined,
+						product_size_type: string | undefined,
+					}) =>
+						new ProductDetailModel(
+							e.id,
+							e.name,
+							e.code,
+							e.image,
+							e.product_type_id,
+							e.category_id,
+							e.sub_category_id,
+							e.status,
+							e.category_name,
+							e.sub_category_name,
+							e.product_type_name,
+							e.size,
+							e.price,
+							e.product_size_type,
+						)
+				);
+
+				resolve(products);
+			});
+		});
 	}
 	updateProductStatus(
 		productId: string,
@@ -155,7 +214,12 @@ export class ProductDataSourceImpl implements ProductDataSource {
 
 	getAllByCategoryId(categoryId: string): Promise<ProductDetailModel[]> {
 		const sql =
-			"SELECT id,name,code,product_type_id,category_id,sub_category_id,(SELECT image_name FROM product_images WHERE product_id = id AND deleted_at IS NULL) AS image FROM products WHERE category_id = ? AND deleted_at IS NULL";
+			"SELECT p.id,p.name,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id," +
+			"(SELECT name FROM categories WHERE id = p.category_id AND deleted_at IS NULL) AS category_name, " +
+			"(SELECT name FROM sub_category WHERE id = p.sub_category_id AND deleted_at IS NULL) AS sub_category_name, " +
+			"(SELECT name FROM product_type WHERE id = p.product_type_id AND deleted_at IS NULL) AS product_type_name, " +
+			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL) AS image " +
+			"FROM products AS p WHERE category_id = ? AND deleted_at IS NULL";
 
 		return new Promise((resolve, reject) => {
 			db.query(sql, [categoryId], (error, result) => {
@@ -174,6 +238,13 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						product_type_id: number;
 						category_id: number;
 						sub_category_id: number | undefined;
+						status: boolean;
+						category_name?: string | undefined;
+						sub_category_name?: string | undefined;
+						product_type_name?: string | undefined;
+						size: number | undefined,
+						price: number | undefined,
+						productSizeType: string | undefined,
 					}) =>
 						new ProductDetailModel(
 							e.id,
@@ -182,7 +253,14 @@ export class ProductDataSourceImpl implements ProductDataSource {
 							e.image,
 							e.product_type_id,
 							e.category_id,
-							e.sub_category_id
+							e.sub_category_id,
+							e.status,
+							e.category_name,
+							e.sub_category_name,
+							e.product_type_name,
+							e.size,
+							e.price,
+							e.productSizeType,
 						)
 				);
 
@@ -195,7 +273,12 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		subCategoryId: string
 	): Promise<ProductDetailModel[]> {
 		const sql =
-			"SELECT id,name,code,product_type_id,category_id,sub_category_id,(SELECT image_name FROM product_images WHERE product_id = id AND deleted_at IS NULL) AS image FROM products WHERE sub_category_id = ? AND deleted_at IS NULL";
+			"SELECT p.id,p.name,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id," +
+			"(SELECT name FROM categories WHERE id = p.category_id AND deleted_at IS NULL) AS category_name, " +
+			"(SELECT name FROM sub_category WHERE id = p.sub_category_id AND deleted_at IS NULL) AS sub_category_name, " +
+			"(SELECT name FROM product_type WHERE id = p.product_type_id AND deleted_at IS NULL) AS product_type_name, " +
+			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL) AS image " +
+			"FROM products AS p WHERE sub_category_id = ? AND deleted_at IS NULL";
 
 		return new Promise((resolve, reject) => {
 			db.query(sql, [subCategoryId], (error, result) => {
@@ -214,6 +297,13 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						product_type_id: number;
 						category_id: number;
 						sub_category_id: number | undefined;
+						status: boolean;
+						category_name?: string | undefined;
+						sub_category_name?: string | undefined;
+						product_type_name?: string | undefined;
+						size: number | undefined,
+						price: number | undefined,
+						productSizeType: string | undefined,
 					}) =>
 						new ProductDetailModel(
 							e.id,
@@ -222,7 +312,14 @@ export class ProductDataSourceImpl implements ProductDataSource {
 							e.image,
 							e.product_type_id,
 							e.category_id,
-							e.sub_category_id
+							e.sub_category_id,
+							e.status,
+							e.category_name,
+							e.sub_category_name,
+							e.product_type_name,
+							e.size,
+							e.price,
+							e.productSizeType,
 						)
 				);
 

@@ -12,6 +12,7 @@ import { AddProductImageUseCase } from "../../domain/interfaces/use-cases/produc
 import { ProductImage } from "../../domain/entities/product-image";
 import { UpdateProductPriceUseCase } from "../../domain/interfaces/use-cases/product-size/update-product-price";
 import { UpdateProductStatusUseCase } from "../../domain/interfaces/use-cases/product/update-product-statatus-usecase";
+import { GetProductByProductIdUseCase } from "../../domain/interfaces/use-cases/product/get-by-product-id";
 
 export default function ProductRouter(
 	getAllProductUseCase: GetAllProductUseCase,
@@ -22,7 +23,8 @@ export default function ProductRouter(
 	uploadProductImageUseCase: UploadProductImageUseCase,
 	addProductImageUseCase: AddProductImageUseCase,
 	updateProductPriceUseCase: UpdateProductPriceUseCase,
-	updateProductStatusUseCase: UpdateProductStatusUseCase
+	updateProductStatusUseCase: UpdateProductStatusUseCase,
+	getProductByProductIdUseCase: GetProductByProductIdUseCase,
 ) {
 	const router = express.Router();
 	const upload = multer({
@@ -44,6 +46,18 @@ export default function ProductRouter(
 			res.send(new APIResponse(500, { message: "Error fetching data" }));
 		}
 	});
+
+	router.get("/:id", async (req: Request, res: Response) => {
+		try {
+			const products = await getProductByProductIdUseCase.execute(
+				req.params.id
+			);
+			res.send(new APIResponse(200, products));
+		} catch (err) {
+			res.send(new APIResponse(500, { message: "Error fetching data" }));
+		}
+	});
+
 	router.post("/", async (req: Request, res: Response) => {
 		try {
 			//TODO check body and haldle bad request

@@ -40,6 +40,7 @@ import { Cloudinary } from "../../../core/upload/cloudinary";
 import { UploadCategoryImage } from "../../../domain/use-cases/categories/upload-category-image";
 import { UpdateProductPrice } from "../../../domain/use-cases/product-size/update-product-price";
 import { UpdateProductStatus } from "../../../domain/use-cases/product/update-product-status";
+import { GetProductByProductId } from "../../../domain/use-cases/product/get-by-product-id";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -140,7 +141,16 @@ export const ProductMiddleWare = ProductRouter(
 			),
 			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
-	)
+	),
+	new GetProductByProductId(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
+			new CloudinaryDataSourceImpl(new Cloudinary())
+		)
+	),
 );
 
 export const CategoriesMiddleWare = CategoriesRouter(
