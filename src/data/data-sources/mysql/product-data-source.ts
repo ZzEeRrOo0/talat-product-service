@@ -52,9 +52,9 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						category_name?: string | undefined;
 						sub_category_name?: string | undefined;
 						product_type_name?: string | undefined;
-						size: number | undefined,
-						price: number | undefined,
-						product_size_type: string | undefined,
+						size: number | undefined;
+						price: number | undefined;
+						product_size_type: string | undefined;
 					}) =>
 						new ProductDetailModel(
 							e.id,
@@ -70,7 +70,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 							e.product_type_name,
 							e.size,
 							e.price,
-							e.product_size_type,
+							e.product_size_type
 						)
 				);
 
@@ -125,9 +125,9 @@ export class ProductDataSourceImpl implements ProductDataSource {
 				[
 					product.name,
 					product.code,
-					product.productTypeId,
-					product.categoryId,
-					product.subCategoryId,
+					product.product_type_id,
+					product.category_id,
+					product.sub_category_id,
 				],
 				(error, result) => {
 					if (error) {
@@ -147,9 +147,12 @@ export class ProductDataSourceImpl implements ProductDataSource {
 	): Promise<AllProductModel> {
 		const getTotalItemSql =
 			"SELECT COUNT(*) AS total FROM products WHERE deleted_at IS NULL";
-		const getProductsSql = `SELECT p.id,p.name,p.code,p.status,(SELECT price from product_size WHERE product_id = p.id AND deleted_at IS NULL LIMIT 1) AS price FROM products AS p WHERE ${this.findProductByQuery.whereSql(
-			req
-		)} LIMIT ? OFFSET ?`;
+		const getProductsSql =
+			`SELECT p.id,p.name,p.code,p.status,(SELECT price from product_size WHERE product_id = p.id AND deleted_at IS NULL LIMIT 1) AS price,` +
+			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL) AS image_url " +
+			`FROM products AS p WHERE ${this.findProductByQuery.whereSql(
+				req
+			)} LIMIT ? OFFSET ?`;
 
 		return new Promise((resolve, reject) => {
 			db.query(getTotalItemSql, [], (error, result) => {
@@ -186,6 +189,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 								sub_category_id: number | undefined;
 								status: boolean;
 								price: number;
+								image_url: string;
 							}) =>
 								new ProductModel(
 									e.id,
@@ -195,7 +199,8 @@ export class ProductDataSourceImpl implements ProductDataSource {
 									e.category_id,
 									e.sub_category_id,
 									e.status,
-									e.price
+									e.price,
+									e.image_url
 								)
 						);
 
@@ -241,9 +246,9 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						category_name?: string | undefined;
 						sub_category_name?: string | undefined;
 						product_type_name?: string | undefined;
-						size: number | undefined,
-						price: number | undefined,
-						productSizeType: string | undefined,
+						size: number | undefined;
+						price: number | undefined;
+						productSizeType: string | undefined;
 					}) =>
 						new ProductDetailModel(
 							e.id,
@@ -259,7 +264,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 							e.product_type_name,
 							e.size,
 							e.price,
-							e.productSizeType,
+							e.productSizeType
 						)
 				);
 
@@ -300,9 +305,9 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						category_name?: string | undefined;
 						sub_category_name?: string | undefined;
 						product_type_name?: string | undefined;
-						size: number | undefined,
-						price: number | undefined,
-						productSizeType: string | undefined,
+						size: number | undefined;
+						price: number | undefined;
+						productSizeType: string | undefined;
 					}) =>
 						new ProductDetailModel(
 							e.id,
@@ -318,7 +323,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 							e.product_type_name,
 							e.size,
 							e.price,
-							e.productSizeType,
+							e.productSizeType
 						)
 				);
 
