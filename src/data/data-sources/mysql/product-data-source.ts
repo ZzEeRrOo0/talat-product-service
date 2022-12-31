@@ -148,11 +148,15 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		const getTotalItemSql =
 			"SELECT COUNT(*) AS total FROM products WHERE deleted_at IS NULL";
 		const getProductsSql =
-			`SELECT p.id,p.name,p.code,p.status,(SELECT price from product_size WHERE product_id = p.id AND deleted_at IS NULL LIMIT 1) AS price,` +
-			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL) AS image_url " +
-			`FROM products AS p WHERE ${this.findProductByQuery.whereSql(
-				req
-			)} LIMIT ? OFFSET ?`;
+			"SELECT p.id,p.name,p.code,p.status, ps.price, c.id AS category_id, sc.id AS sub_category_id, pt.id AS product_type_id, pst.name AS product_size_type, " +
+			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL LIMIT 1) AS image_url " +
+			"FROM products AS p " +
+			"LEFT JOIN categories AS c ON c.id = p.category_id " +
+			"LEFT JOIN sub_category AS sc ON sc.id = p.sub_category_id " +
+			"LEFT JOIN product_type AS pt ON pt.id = p.product_type_id " +
+			"LEFT JOIN product_size AS ps ON ps.product_id = p.id " +
+			"LEFT JOIN product_size_type AS pst ON pst.id = ps.product_size_type_id " +
+			`WHERE ${this.findProductByQuery.whereSql(req)} LIMIT ? OFFSET ?`;
 
 		return new Promise((resolve, reject) => {
 			db.query(getTotalItemSql, [], (error, result) => {
@@ -184,22 +188,24 @@ export class ProductDataSourceImpl implements ProductDataSource {
 								id: number;
 								name: string;
 								code: string;
-								product_type_id: number;
+								product_type_id: number | null;
 								category_id: number;
-								sub_category_id: number | undefined;
+								sub_category_id: number | null;
 								status: boolean;
 								price: number;
+								product_size_type: string;
 								image_url: string;
 							}) =>
 								new ProductModel(
 									e.id,
 									e.name,
 									e.code,
-									e.product_type_id,
+									e.product_type_id ?? null,
 									e.category_id,
-									e.sub_category_id,
+									e.sub_category_id ?? null,
 									e.status,
 									e.price,
+									e.product_size_type,
 									e.image_url
 								)
 						);

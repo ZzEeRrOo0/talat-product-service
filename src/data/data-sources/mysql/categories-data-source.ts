@@ -16,8 +16,8 @@ export class CategoriesDataSourceImpl implements CategoriesDataSource {
 				const data = JSON.parse(JSON.stringify(result));
 
 				const categories: CategoriesModel[] = data.map(
-					(e: { id: number; name: string; image_url: string }) =>
-						new CategoriesModel(e.id, e.name, e.image_url)
+					(e: { id: number; name_la: string; image_url: string }) =>
+						new CategoriesModel(e.id, e.name_la, e.image_url)
 				);
 
 				resolve(categories);

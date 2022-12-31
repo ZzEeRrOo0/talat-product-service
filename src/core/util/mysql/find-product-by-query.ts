@@ -9,16 +9,16 @@ export class FindProductByQueryImpl implements FindProductByQuery {
 		const query = req.query;
 		const sql = [];
 
-		if (query.category != undefined) {
-			sql.push(`p.category_id=${query.category}`);
+		if (query.categoryId != undefined) {
+			sql.push(`p.category_id=${query.categoryId}`);
 		}
 
-		if (query.subCategory != undefined) {
-			sql.push(`p.sub_category_id=${query.subCategory}`);
+		if (query.subCategoryId != undefined) {
+			sql.push(`p.sub_category_id=${query.subCategoryId}`);
 		}
 
-		if (query.productType != undefined) {
-			sql.push(`p.product_type_id=${query.productType}`);
+		if (query.productTypeId != undefined) {
+			sql.push(`p.product_type_id=${query.productTypeId}`);
 		}
 
 		sql.push("p.deleted_at IS NULL");
