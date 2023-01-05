@@ -41,6 +41,8 @@ import { UploadCategoryImage } from "../../../domain/use-cases/categories/upload
 import { UpdateProductPrice } from "../../../domain/use-cases/product-size/update-product-price";
 import { UpdateProductStatus } from "../../../domain/use-cases/product/update-product-status";
 import { GetProductByProductId } from "../../../domain/use-cases/product/get-by-product-id";
+import { AddSubCategoryImage } from "../../../domain/use-cases/sub-category/add-sub-category-image";
+import { UploadSubCategoryImage } from "../../../domain/use-cases/sub-category/upload-image";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -170,8 +172,23 @@ export const CategoriesMiddleWare = CategoriesRouter(
 
 export const SubCategoryMiddleWare = SubCategoryRouter(
 	new GetAllByCategoryId(
-		new SubCategoryRepositoryImpl(new SubCategoryDataSourceImpl())
-	)
+		new SubCategoryRepositoryImpl(
+			new SubCategoryDataSourceImpl(),
+			new CloudinaryDataSourceImpl(new Cloudinary()
+			))
+	),
+	new UploadSubCategoryImage(
+		new SubCategoryRepositoryImpl(
+			new SubCategoryDataSourceImpl(),
+			new CloudinaryDataSourceImpl(new Cloudinary())
+		)
+	),
+	new AddSubCategoryImage(
+		new SubCategoryRepositoryImpl(
+			new SubCategoryDataSourceImpl(),
+			new CloudinaryDataSourceImpl(new Cloudinary())
+		)
+	),
 );
 
 export const ProductSizeTypeMiddleWare = ProductSizeTypeRouter(

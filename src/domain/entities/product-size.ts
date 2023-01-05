@@ -1,7 +1,7 @@
 export interface ProductSize {
     id?: number;
     productId: number;
-    productSizeTypeId: number;
+    product_size_type_id: string;
     size: string;
     price: string;
 }

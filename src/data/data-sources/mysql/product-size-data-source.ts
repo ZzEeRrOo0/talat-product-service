@@ -43,7 +43,7 @@ export class ProductSizeDataSourceImpl implements ProductSizeDataSource {
                 sql,
                 [
                     productSize.productId,
-                    productSize.productSizeTypeId,
+                    productSize.product_size_type_id,
                     productSize.size,
                     productSize.price,
                 ],
