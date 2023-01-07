@@ -23,7 +23,7 @@ export class SubCategoryDataSourceImpl implements SubCategoryDataSource {
 			);
 		});
 	}
-	getAllById(categoryId: string): Promise<SubCategoryModel[]> {
+	getAllByCategoryId(categoryId: string): Promise<SubCategoryModel[]> {
 		const sql = `SELECT id,name_la AS name,category_id, image_url FROM sub_category WHERE category_id = ${categoryId} AND deleted_at IS NULL`;
 
 		return new Promise((resolve, reject) => {

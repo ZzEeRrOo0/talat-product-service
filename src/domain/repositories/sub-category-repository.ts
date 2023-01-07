@@ -31,7 +31,7 @@ export class SubCategoryRepositoryImpl implements SubCategoryRepository {
     }
 
     async getAllByCategoryId(categoryId: string): Promise<SubCategory[]> {
-        const result = await this.subCategoryDataSource.getAllById(categoryId)
+        const result = await this.subCategoryDataSource.getAllByCategoryId(categoryId)
         return result;
     }
 }
