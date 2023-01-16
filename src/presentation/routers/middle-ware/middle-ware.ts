@@ -43,6 +43,11 @@ import { UpdateProductStatus } from "../../../domain/use-cases/product/update-pr
 import { GetProductByProductId } from "../../../domain/use-cases/product/get-by-product-id";
 import { AddSubCategoryImage } from "../../../domain/use-cases/sub-category/add-sub-category-image";
 import { UploadSubCategoryImage } from "../../../domain/use-cases/sub-category/upload-image";
+import UserRouter from "../users-router";
+import { FindUserByQueryImpl } from "../../../core/util/mysql/find-user-by-query";
+import { UserDataSourceImpl } from "../../../data/data-sources/mysql/user-data-source";
+import { UserRepositoryImpl } from "../../../domain/repositories/user-repository";
+import { GetAllUsers } from "../../../domain/use-cases/users/get-all-users";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -201,4 +206,15 @@ export const ProductTypeMiddleWare = ProductTypeRouter(
 	new GetAllBySubCategoryId(
 		new ProductTypeRepositoryImpl(new ProductTypeDataSourceImpl())
 	)
+);
+
+export const UserMiddleWare = UserRouter(
+	new GetAllUsers(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl()
+			),
+		)
+	),
 );

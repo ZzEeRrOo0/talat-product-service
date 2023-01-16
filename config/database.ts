@@ -8,3 +8,10 @@ export const db = mysql.createConnection({
 	password: process.env.DB_PWD,
 	database: process.env.DB_NAME,
 });
+
+export const user_db = mysql.createConnection({
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PWD,
+	database: process.env.USER_DB_NAME,
+});
