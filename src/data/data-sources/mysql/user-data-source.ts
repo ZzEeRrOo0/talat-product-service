@@ -4,7 +4,6 @@ import { Pagination } from "../../../core/pagination";
 import { FindUserByQuery } from "../../../core/util/mysql/find-user-by-query";
 import { UserDataSource } from "../../interfaces/data-sources/mysql/user-data-source";
 import { AllUserModel } from "./models/all-user";
-import { OkPacket } from "mysql2";
 import { Request } from "express";
 import { UserModel } from "./models/user";
 
