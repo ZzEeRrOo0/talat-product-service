@@ -48,6 +48,14 @@ import { FindUserByQueryImpl } from "../../../core/util/mysql/find-user-by-query
 import { UserDataSourceImpl } from "../../../data/data-sources/mysql/user-data-source";
 import { UserRepositoryImpl } from "../../../domain/repositories/user-repository";
 import { GetAllUsers } from "../../../domain/use-cases/users/get-all-users";
+import { AddUser } from "../../../domain/use-cases/users/app-user";
+import { AddCustomer } from "../../../domain/use-cases/users/add-customer";
+import { AddCustomerIndividual } from "../../../domain/use-cases/users/add-customer-individual";
+import { AddCustomerJuristicPerson } from "../../../domain/use-cases/users/add-customer-juristic-person";
+import { AddRestaurant } from "../../../domain/use-cases/restaurant/add-restaurant";
+import { AddRestaurantDetail } from "../../../domain/use-cases/restaurant/add-restaurant-detail";
+import { RestaurantRepositoryImpl } from "../../../domain/repositories/restaurant-repository";
+import { RestaurantDataSourceImpl } from "../../../data/data-sources/mysql/restaurant-data-source";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -217,4 +225,47 @@ export const UserMiddleWare = UserRouter(
 			),
 		)
 	),
+	new AddUser(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl()
+			),
+		)
+	),
+	new AddCustomer(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl()
+			),
+		)
+	),
+	new AddCustomerIndividual(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl()
+			),
+		)
+	),
+	new AddCustomerJuristicPerson(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl()
+			),
+		)
+	),
+	new AddRestaurant(
+		new RestaurantRepositoryImpl(
+			new RestaurantDataSourceImpl(),
+		)
+	),
+	new AddRestaurantDetail(
+		new RestaurantRepositoryImpl(
+			new RestaurantDataSourceImpl(),
+		)
+	),
+
 );
