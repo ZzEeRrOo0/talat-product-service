@@ -123,7 +123,7 @@ export default function ProductRouter(
 	router.put("/update-status/:id", async (req: Request, res: Response) => {
 		try {
 			let status = req.body.status ?? 0;
-			if (status !== 0) {
+			if (status !== null) {
 				await updateProductStatusUseCase.execute(
 					req.params.id,
 					status as number
