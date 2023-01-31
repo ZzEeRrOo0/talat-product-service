@@ -10,6 +10,7 @@ import { CreateUser } from "../../../domain/entities/create-user";
 import { CreateCustomer } from "../../../domain/entities/create-customer";
 import { CreateCustomerIndividual } from "../../../domain/entities/create-customer-individual";
 import { CreateCustomerJuristicPerson } from "../../../domain/entities/create-customer-juristic-person";
+import { OkPacket } from "mysql2";
 
 
 export class UserDataSourceImpl implements UserDataSource {
