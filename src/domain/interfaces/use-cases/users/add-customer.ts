@@ -1,5 +1,5 @@
-import { CreateCustomer } from "../../../entities/create-customer";
+import { Customer } from "../../../entities/customer";
 
 export interface AddCustomerUseCase {
-    execute(customer: CreateCustomer): Promise<number>;
+	execute(customer: Customer): Promise<number>;
 }

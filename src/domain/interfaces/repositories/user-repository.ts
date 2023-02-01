@@ -1,21 +1,20 @@
-import { CreateCustomerJuristicPerson } from './../../entities/create-customer-juristic-person';
-import { CreateCustomerIndividual } from './../../entities/create-customer-individual';
+import { JuristicPersonCustomer } from "../../entities/juristic-person-customer";
+import { IndividualCustomer } from "../../entities/individual-customer";
 import { AllUser } from "../../entities/all-users";
 import { Request } from "express";
-import { CreateUser } from "../../entities/create-user";
-import { CreateCustomer } from "../../entities/create-customer";
+import { UserRequest } from "../../entities/user-request";
+import { Customer } from "../../entities/customer";
 
 export interface UserRepository {
-
-    getUsers(
-        currentPage: number,
-        pageSize: number,
-        req: Request
-    ): Promise<AllUser>;
-
-    addUser(user: CreateUser): Promise<number>;
-    addCustomer(customer: CreateCustomer): Promise<number>;
-    addCustomerIndividual(customer: CreateCustomerIndividual): Promise<number>;
-    addCustomerJuristicPerson(customer: CreateCustomerJuristicPerson): Promise<number>;
-
+	getUsers(
+		currentPage: number,
+		pageSize: number,
+		req: Request
+	): Promise<AllUser>;
+	addUser(user: UserRequest): Promise<number>;
+	addCustomer(customer: Customer): Promise<number>;
+	addCustomerIndividual(customer: IndividualCustomer): Promise<number>;
+	addCustomerJuristicPerson(
+		customer: JuristicPersonCustomer
+	): Promise<number>;
 }

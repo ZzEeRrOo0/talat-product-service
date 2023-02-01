@@ -1,5 +1,5 @@
-import { CreateUser } from "../../../entities/create-user";
+import { UserRequest } from "../../../entities/user-request";
 
 export interface AddUserUseCase {
-    execute(user: CreateUser): Promise<number>;
+	execute(user: UserRequest): Promise<number>;
 }

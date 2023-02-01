@@ -5,10 +5,9 @@ import { OkPacket } from "mysql2";
 import { ProductDetailModel } from "./models/product-detail";
 import { Pagination } from "../../../core/pagination/index";
 import { AllProductModel } from "./models/all-product";
-import { ProductImage } from "../../../domain/entities/product-image";
 import { FindProductByQuery } from "../../../core/util/mysql/find-product-by-query";
 import { Request } from "express";
-import { ProductDetail } from "../../../domain/entities/product-detail";
+import { ProductImageModel } from './models/product-image';
 
 export class ProductDataSourceImpl implements ProductDataSource {
 	paginationService: Pagination;
@@ -21,7 +20,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		this.paginationService = $paginationService;
 		this.findProductByQuery = $findProductByQuery;
 	}
-	getProductsByProductId(productId: string): Promise<ProductDetail[]> {
+	getProductsByProductId(productId: string): Promise<ProductDetailModel[]> {
 		const sql =
 			"SELECT p.id,p.name,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id,ps.size,ps.price," +
 			"(SELECT name FROM product_size_type WHERE id = ps.product_size_type_id AND deleted_at IS NULL) AS product_size_type, " +
@@ -96,7 +95,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		});
 	}
 
-	addProductImage(productImage: ProductImage): Promise<string> {
+	addProductImage(productImage: ProductImageModel): Promise<string> {
 		const sql =
 			"INSERT INTO product_images (product_id, image_url) VALUES(?, ?)";
 

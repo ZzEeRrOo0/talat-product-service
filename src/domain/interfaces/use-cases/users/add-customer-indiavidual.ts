@@ -1,6 +1,5 @@
-
-import { CreateCustomerIndividual } from "../../../entities/create-customer-individual";
+import { IndividualCustomer } from "../../../entities/individual-customer";
 
 export interface AddCustomerIndividualUseCase {
-    execute(customer: CreateCustomerIndividual): Promise<number>;
+	execute(customer: IndividualCustomer): Promise<number>;
 }

@@ -1,6 +1,8 @@
-import { CreateRestaurantDetail } from "../../../../domain/entities/create-restaurant-detail";
+import { RestaurantDetail } from '../../../../domain/entities/restaurant-detail'
 
 export interface RestaurantDataSource {
-    createRestaurant(customer_id: number): Promise<number>;
-    createRestaurantDetail(restaurant_details: CreateRestaurantDetail): Promise<number>;
+	createRestaurant(customerId: number): Promise<number>;
+	createRestaurantDetail(
+		restaurantDetails: RestaurantDetail
+	): Promise<number>;
 }
