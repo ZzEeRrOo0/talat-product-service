@@ -1,9 +1,10 @@
 import { Request } from "express";
 import { AllUser } from "../../../../domain/entities/all-users";
-import { UserRequest } from "../../../../domain/entities/user-request";
-import { Customer } from "../../../../domain/entities/customer";
-import { IndividualCustomer } from "../../../../domain/entities/individual-customer";
-import { JuristicPersonCustomer } from "../../../../domain/entities/juristic-person-customer";
+import { UserRequestModel } from '../../../data-sources/mysql/models/user-request';
+import { CustomerModel } from "../../../data-sources/mysql/models/customer";
+import { IndividualCustomerModel } from '../../../data-sources/mysql/models/individual-customer';
+import { JuristicPersonCustomerModel } from '../../../data-sources/mysql/models/juristic-person-customer';
+import { StaffModel } from '../../../data-sources/mysql/models/staff';
 
 export interface UserDataSource {
 	getAll(
@@ -11,12 +12,12 @@ export interface UserDataSource {
 		pageSize: number,
 		req: Request
 	): Promise<AllUser>;
-	createUser(user: UserRequest): Promise<number>;
-	createCustomer(customer: Customer): Promise<number>;
+	createUser(user: UserRequestModel): Promise<number>;
+	createCustomer(customer: CustomerModel): Promise<number>;
 	createIndividualCustomer(
-		individualCustomer: IndividualCustomer
+		individualCustomer: IndividualCustomerModel
 	): Promise<number>;
 	createJuristicPersonCustomer(
-		juristicPersonCustomer: JuristicPersonCustomer
+		juristicPersonCustomer: JuristicPersonCustomerModel
 	): Promise<number>;
 }

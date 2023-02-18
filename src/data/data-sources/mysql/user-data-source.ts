@@ -6,22 +6,27 @@ import { AllUserModel } from "./models/all-user";
 import { Request } from "express";
 import { UserModel } from "./models/user";
 import { OkPacket } from "mysql2";
-import { JuristicPersonCustomerModel } from './models/juristic-person-customer';
-import { IndividualCustomerModel } from './models/individual-customer';
-import { CustomerModel } from './models/customer';
-import { UserRequestModel } from './models/user-request';
+import { JuristicPersonCustomerModel } from "./models/juristic-person-customer";
+import { IndividualCustomerModel } from "./models/individual-customer";
+import { CustomerModel } from "./models/customer";
+import { UserRequestModel } from "./models/user-request";
+import { AuthenticationService } from "../../../core/util/authentication/index";
 
 export class UserDataSourceImpl implements UserDataSource {
 	paginationService: Pagination;
 	findUserByQuery: FindUserByQuery;
+	authenticationService: AuthenticationService;
 
 	constructor(
 		$paginationService: Pagination,
-		$findUserByQuery: FindUserByQuery
+		$findUserByQuery: FindUserByQuery,
+		$authenticationService: AuthenticationService
 	) {
 		this.paginationService = $paginationService;
 		this.findUserByQuery = $findUserByQuery;
+		this.authenticationService = $authenticationService;
 	}
+
 	createJuristicPersonCustomer(
 		juristicPersonCustomer: JuristicPersonCustomerModel
 	): Promise<number> {
@@ -51,7 +56,7 @@ export class UserDataSourceImpl implements UserDataSource {
 		individualCustomer: IndividualCustomerModel
 	): Promise<number> {
 		const sql =
-			"INSERT INTO customer_individual ( customer_id,full_name, id_card_number,address) VALUES(?, ?, ?,?)";
+			"INSERT INTO customer_individual (customer_id, full_name, id_card_number , address) VALUES(?, ?, ?,?)";
 
 		return new Promise((resolve, reject) => {
 			user_db.query(
@@ -75,16 +80,12 @@ export class UserDataSourceImpl implements UserDataSource {
 
 	createCustomer(customer: CustomerModel): Promise<number> {
 		const sql =
-			"INSERT INTO customers ( user_id,customer_type_id, customer_receipt_and_tax_invoice_id) VALUES(?, ?, ?)";
+			"INSERT INTO customers ( user_id, customer_type_id) VALUES(?, ?)";
 
 		return new Promise((resolve, reject) => {
 			user_db.query(
 				sql,
-				[
-					customer.user_id,
-					customer.customer_type_id,
-					customer.customer_receipt_and_tax_invoice_id,
-				],
+				[customer.user_id, customer.customer_type_id],
 				(error, result) => {
 					if (error) {
 						throw new Error("Internal server error.");
@@ -98,30 +99,28 @@ export class UserDataSourceImpl implements UserDataSource {
 
 	createUser(user: UserRequestModel): Promise<number> {
 		const sql =
-			"INSERT INTO users (fb_uid, full_name, date_of_birth, gender,phone,user_type_id,village_id,district_id,province_id ) VALUES(?, ?, ?, ?,?,?,?,?,?)";
+			"INSERT INTO users (fb_uid, password, phone, user_type_id) VALUES(?, ?, ?, ?)";
 
 		return new Promise((resolve, reject) => {
-			user_db.query(
-				sql,
-				[
-					user.fb_uid,
-					user.full_name,
-					user.date_of_birth,
-					user.gender,
-					user.phone,
-					user.user_type_id,
-					user.village,
-					user.district_id,
-					user.province_id,
-				],
-				(error, result) => {
-					if (error) {
-						throw new Error("Internal server error.");
-					}
-					const insertId = (<OkPacket>result).insertId;
-					resolve(insertId);
-				}
-			);
+			this.authenticationService
+				.encryptPassword(user.password)
+				.then((password) => {
+					user_db.query(
+						sql,
+						[user.fb_uid, password, user.phone, user.user_type_id],
+						(error, result) => {
+							if (error) {
+								// throw new Error("Internal server error.");
+								console.log(error);
+							}
+							const insertId = (<OkPacket>result).insertId;
+							resolve(insertId);
+						}
+					);
+				})
+				.catch((error) => {
+					throw new Error(error);
+				});
 		});
 	}
 

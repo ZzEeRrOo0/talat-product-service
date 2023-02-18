@@ -17,4 +17,5 @@ export interface UserRepository {
 	addCustomerJuristicPerson(
 		customer: JuristicPersonCustomer
 	): Promise<number>;
+	getUserByPhoneNumber(phone: string): Promise<boolean>;
 }

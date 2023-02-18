@@ -1,7 +1,7 @@
 import { OkPacket } from "mysql2";
 import { user_db } from "../../../../config/database";
 import { RestaurantDataSource } from "../../interfaces/data-sources/mysql/restaurant-data-source";
-import { RestaurantDetailModel } from './models/restuarant-detail';
+import { RestaurantDetailModel } from "./models/restuarant-detail";
 
 export class RestaurantDataSourceImpl implements RestaurantDataSource {
 	createRestaurantDetail(

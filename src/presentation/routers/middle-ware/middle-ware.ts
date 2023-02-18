@@ -48,7 +48,7 @@ import { FindUserByQueryImpl } from "../../../core/util/mysql/find-user-by-query
 import { UserDataSourceImpl } from "../../../data/data-sources/mysql/user-data-source";
 import { UserRepositoryImpl } from "../../../domain/repositories/user-repository";
 import { GetAllUsers } from "../../../domain/use-cases/users/get-all-users";
-import { AddUser } from "../../../domain/use-cases/users/app-user";
+import { AddUser } from "../../../domain/use-cases/users/add-user";
 import { AddCustomer } from "../../../domain/use-cases/users/add-customer";
 import { AddCustomerIndividual } from "../../../domain/use-cases/users/add-customer-individual";
 import { AddCustomerJuristicPerson } from "../../../domain/use-cases/users/add-customer-juristic-person";
@@ -56,6 +56,16 @@ import { AddRestaurant } from "../../../domain/use-cases/restaurant/add-restaura
 import { AddRestaurantDetail } from "../../../domain/use-cases/restaurant/add-restaurant-detail";
 import { RestaurantRepositoryImpl } from "../../../domain/repositories/restaurant-repository";
 import { RestaurantDataSourceImpl } from "../../../data/data-sources/mysql/restaurant-data-source";
+import { FirebaseStorageDataSourceImpl } from "../../../data/data-sources/firebase/firebase-storage-data-source";
+import { GoogleStorage } from "../../../core/upload/google-storage";
+import { AuthenticationServiceImpl } from "../../../core/util/authentication/index";
+import { GetUserByPhoneNumber } from "../../../domain/use-cases/users/get-user-by-phone-number";
+import { AddStaff } from "../../../domain/use-cases/staff/add-staff";
+import { StaffRepositoryImpl } from "../../../domain/repositories/staff-repository";
+import { StaffDataSourceImpl } from "../../../data/data-sources/mysql/staff-data-source";
+import { AddStaffDetail } from "../../../domain/use-cases/staff-detail/add-staff-detail";
+import { StaffDetailRepositoryImpl } from "../../../domain/repositories/staff-detail-repositiry";
+import { StaffDetailDataSourceImpl } from "../../../data/data-sources/mysql/staff-detail-data-source";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -165,7 +175,7 @@ export const ProductMiddleWare = ProductRouter(
 			),
 			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
-	),
+	)
 );
 
 export const CategoriesMiddleWare = CategoriesRouter(
@@ -187,8 +197,8 @@ export const SubCategoryMiddleWare = SubCategoryRouter(
 	new GetAllByCategoryId(
 		new SubCategoryRepositoryImpl(
 			new SubCategoryDataSourceImpl(),
-			new CloudinaryDataSourceImpl(new Cloudinary()
-			))
+			new CloudinaryDataSourceImpl(new Cloudinary())
+		)
 	),
 	new UploadSubCategoryImage(
 		new SubCategoryRepositoryImpl(
@@ -201,7 +211,7 @@ export const SubCategoryMiddleWare = SubCategoryRouter(
 			new SubCategoryDataSourceImpl(),
 			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
-	),
+	)
 );
 
 export const ProductSizeTypeMiddleWare = ProductSizeTypeRouter(
@@ -221,51 +231,88 @@ export const UserMiddleWare = UserRouter(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
 				new Pagination(),
-				new FindUserByQueryImpl()
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
 			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
 		)
 	),
 	new AddUser(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
 				new Pagination(),
-				new FindUserByQueryImpl()
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
 			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
 		)
 	),
 	new AddCustomer(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
 				new Pagination(),
-				new FindUserByQueryImpl()
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
 			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
 		)
 	),
 	new AddCustomerIndividual(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
 				new Pagination(),
-				new FindUserByQueryImpl()
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
 			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
 		)
 	),
 	new AddCustomerJuristicPerson(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
 				new Pagination(),
-				new FindUserByQueryImpl()
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
 			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
 		)
 	),
 	new AddRestaurant(
-		new RestaurantRepositoryImpl(
-			new RestaurantDataSourceImpl(),
-		)
+		new RestaurantRepositoryImpl(new RestaurantDataSourceImpl())
 	),
 	new AddRestaurantDetail(
-		new RestaurantRepositoryImpl(
-			new RestaurantDataSourceImpl(),
+		new RestaurantRepositoryImpl(new RestaurantDataSourceImpl())
+	),
+	new GetUserByPhoneNumber(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
 		)
 	),
-
+	new AddStaff(new StaffRepositoryImpl(new StaffDataSourceImpl())),
+	new AddStaffDetail(
+		new StaffDetailRepositoryImpl(new StaffDetailDataSourceImpl())
+	)
 );

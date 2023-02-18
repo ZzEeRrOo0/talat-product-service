@@ -1,11 +1,6 @@
-export interface UserRequest {
-	fb_uid: string;
-	full_name: string;
-	date_of_birth: string;
-	gender: string;
-	phone: number;
-	user_type_id: number;
-	village: string;
-	district_id: number;
-	province_id: number;
+export class UserRequest {
+	fb_uid: string = "";
+	password: string = "";
+	phone: number = 99999999;
+	user_type_id: number = 3;
 }
