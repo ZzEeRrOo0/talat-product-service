@@ -11,6 +11,11 @@ export interface UserRepository {
 		pageSize: number,
 		req: Request
 	): Promise<AllUser>;
+	getUserByPhoneNumberAndPasswordFromUserDB(
+		phone: string,
+		password: string
+	): Promise<boolean>;
+	getUserByPhoneNumberFromUserDB(phone: string): Promise<boolean>;
 	addUser(user: UserRequest): Promise<number>;
 	addCustomer(customer: Customer): Promise<number>;
 	addCustomerIndividual(customer: IndividualCustomer): Promise<number>;

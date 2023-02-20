@@ -7,7 +7,7 @@ export interface FindUserByQuery {
 export class FindUserByQueryImpl implements FindUserByQuery {
     whereSql(req: Request): String {
         const query = req.query;
-        const sql = [];
+        const sql : string[] = [];
 
         sql.push("u.deleted_at IS NULL");
 

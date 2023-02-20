@@ -1,6 +1,14 @@
 import server from "./server";
 import * as dotenv from "dotenv";
-import { CategoriesMiddleWare, ProductMiddleWare, ProductSizeTypeMiddleWare, ProductTypeMiddleWare, SubCategoryMiddleWare, UserMiddleWare } from "./presentation/routers/middle-ware/middle-ware";
+import {
+	CategoriesMiddleWare,
+	ProductMiddleWare,
+	ProductSizeTypeMiddleWare,
+	ProductTypeMiddleWare,
+	SubCategoryMiddleWare,
+	UserMiddleWare,
+	SignInRouterMiddleWare,
+} from "./presentation/routers/middle-ware/middle-ware";
 import { API_BASE_URL } from "../config/constants";
 
 dotenv.config();
@@ -13,5 +21,6 @@ dotenv.config();
 	server.use(API_BASE_URL + "/product-size-types", ProductSizeTypeMiddleWare);
 	server.use(API_BASE_URL + "/product-types", ProductTypeMiddleWare);
 	server.use(API_BASE_URL + "/users", UserMiddleWare);
+	server.use(API_BASE_URL + "/sign-in", SignInRouterMiddleWare);
 	server.listen(process.env.PORT, () => console.log("Running on server"));
 })();

@@ -5,7 +5,7 @@ import { UserDataSource } from "../../interfaces/data-sources/mysql/user-data-so
 import { AllUserModel } from "./models/all-user";
 import { Request } from "express";
 import { UserModel } from "./models/user";
-import { OkPacket } from "mysql2";
+import { OkPacket, RowDataPacket } from "mysql2";
 import { JuristicPersonCustomerModel } from "./models/juristic-person-customer";
 import { IndividualCustomerModel } from "./models/individual-customer";
 import { CustomerModel } from "./models/customer";
@@ -25,6 +25,56 @@ export class UserDataSourceImpl implements UserDataSource {
 		this.paginationService = $paginationService;
 		this.findUserByQuery = $findUserByQuery;
 		this.authenticationService = $authenticationService;
+	}
+
+	getUserByPhoneNumberAndVerifyPassword(
+		phone: string,
+		password: string
+	): Promise<boolean> {
+		const sql = "SELECT * FROM users WHERE phone=? AND deleted_at IS NULL";
+
+		return new Promise((resolve, reject) => {
+			user_db.query(sql, [phone], (error, result) => {
+				if (error) {
+					throw new Error("Internal server error.");
+				}
+
+				const data = <RowDataPacket>result;
+
+				if (data.length > 0) {
+					this.authenticationService
+						.decryptPassword(password, data[0]["password"])
+						.then((isVerify) => {
+							resolve(isVerify);
+						})
+						.catch((error) => {
+							resolve(error);
+						});
+				} else {
+					resolve(false);
+				}
+			});
+		});
+	}
+
+	getUserByPhoneNumber(phone: string): Promise<boolean> {
+		const sql = "SELECT * FROM users WHERE phone=? AND deleted_at IS NULL";
+
+		return new Promise((resolve, reject) => {
+			user_db.query(sql, [phone], (error, result) => {
+				if (error) {
+					throw new Error("Internal server error.");
+				}
+
+				const data = <RowDataPacket>result;
+
+				if (data.length > 0) {
+					resolve(true);
+				} else {
+					reject(false);
+				}
+			});
+		});
 	}
 
 	createJuristicPersonCustomer(

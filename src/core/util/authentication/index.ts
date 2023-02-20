@@ -6,6 +6,7 @@ export interface AuthenticationService {
 	verifyToken(token: string): Promise<boolean>;
 	getUserByPhoneNumber(phone: string): Promise<boolean>;
 	encryptPassword(password: string): Promise<string>;
+	decryptPassword(password: string, hash: string): Promise<boolean>;
 }
 
 export class AuthenticationServiceImpl implements AuthenticationService {
@@ -56,6 +57,18 @@ export class AuthenticationServiceImpl implements AuthenticationService {
 					reject(error);
 				} else {
 					reslove(hash);
+				}
+			});
+		});
+	}
+
+	decryptPassword(password: string, hash: string): Promise<boolean> {
+		return new Promise((reslove, reject) => {
+			bcrypt.compare(password, hash, (error, result) => {
+				if (error) {
+					reject(false);
+				} else {
+					reslove(result);
 				}
 			});
 		});

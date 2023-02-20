@@ -103,6 +103,7 @@
 		"rootDir": ".",
 		"declaration": true,
 		"types": ["node"],
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"noImplicitAny": false
 	}
 }

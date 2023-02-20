@@ -7,8 +7,8 @@ import { Customer } from "../entities/customer";
 import { IndividualCustomer } from "../entities/individual-customer";
 import { JuristicPersonCustomer } from "../entities/juristic-person-customer";
 import { FirebaseStorageDataSource } from "../../data/interfaces/data-sources/firebase/firebase-storage-data-source";
-import { JuristicPersonCustomerModel } from '../../data/data-sources/mysql/models/juristic-person-customer';
-import { IndividualCustomerModel } from '../../data/data-sources/mysql/models/individual-customer';
+import { JuristicPersonCustomerModel } from "../../data/data-sources/mysql/models/juristic-person-customer";
+import { IndividualCustomerModel } from "../../data/data-sources/mysql/models/individual-customer";
 import { CustomerModel } from "../../data/data-sources/mysql/models/customer";
 export class UserRepositoryImpl implements UserRepository {
 	userDataSource: UserDataSource;
@@ -24,21 +24,34 @@ export class UserRepositoryImpl implements UserRepository {
 	async addCustomerJuristicPerson(
 		customer: JuristicPersonCustomer
 	): Promise<number> {
-		const customerInfo = new JuristicPersonCustomerModel(customer.customer_id!, customer.company_name, customer.juristic_person_registration_number!, customer.registration_address);
+		const customerInfo = new JuristicPersonCustomerModel(
+			customer.customer_id!,
+			customer.company_name,
+			customer.juristic_person_registration_number!,
+			customer.registration_address
+		);
 		const result = await this.userDataSource.createJuristicPersonCustomer(
 			customerInfo
 		);
 		return result;
 	}
 	async addCustomerIndividual(customer: IndividualCustomer): Promise<number> {
-		const customerInfo = new IndividualCustomerModel(customer.customer_id!, customer.full_name, customer.id_card_number!, customer.address);
+		const customerInfo = new IndividualCustomerModel(
+			customer.customer_id!,
+			customer.full_name,
+			customer.id_card_number!,
+			customer.address
+		);
 		const result = await this.userDataSource.createIndividualCustomer(
 			customerInfo
 		);
 		return result;
 	}
 	async addCustomer(customer: Customer): Promise<number> {
-		const customerInfo = new CustomerModel(customer.user_id!, customer.customer_type_id);
+		const customerInfo = new CustomerModel(
+			customer.user_id!,
+			customer.customer_type_id
+		);
 		const result = await this.userDataSource.createCustomer(customerInfo);
 		return result;
 	}
@@ -66,5 +79,19 @@ export class UserRepositoryImpl implements UserRepository {
 		);
 
 		return result;
+	}
+
+	async getUserByPhoneNumberAndPasswordFromUserDB(
+		phone: string,
+		password: string
+	): Promise<boolean> {
+		return await this.userDataSource.getUserByPhoneNumberAndVerifyPassword(
+			phone,
+			password
+		);
+	}
+
+	async getUserByPhoneNumberFromUserDB(phone: string): Promise<boolean> {
+		return await this.userDataSource.getUserByPhoneNumber(phone);
 	}
 }

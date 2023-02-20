@@ -66,6 +66,12 @@ import { StaffDataSourceImpl } from "../../../data/data-sources/mysql/staff-data
 import { AddStaffDetail } from "../../../domain/use-cases/staff-detail/add-staff-detail";
 import { StaffDetailRepositoryImpl } from "../../../domain/repositories/staff-detail-repositiry";
 import { StaffDetailDataSourceImpl } from "../../../data/data-sources/mysql/staff-detail-data-source";
+import SignInRouter from "../sign-in-router";
+import { GetUserByPhoneNumberAndPasswordFromUserDB } from "../../../domain/use-cases/users/get-user-by-phone-number-and-password-from-user-db";
+import {
+	JsonWebTokenService,
+	JsonWebTokenServiceImpl,
+} from "../../../core/util/jwt/jwt-token";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -314,5 +320,34 @@ export const UserMiddleWare = UserRouter(
 	new AddStaff(new StaffRepositoryImpl(new StaffDataSourceImpl())),
 	new AddStaffDetail(
 		new StaffDetailRepositoryImpl(new StaffDetailDataSourceImpl())
+	)
+);
+
+export const SignInRouterMiddleWare = SignInRouter(
+	new GetUserByPhoneNumberAndPasswordFromUserDB(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
+		)
+	),
+	new JsonWebTokenServiceImpl(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
+		)
 	)
 );

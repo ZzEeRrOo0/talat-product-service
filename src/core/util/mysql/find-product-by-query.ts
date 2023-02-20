@@ -7,7 +7,7 @@ export interface FindProductByQuery {
 export class FindProductByQueryImpl implements FindProductByQuery {
 	whereSql(req: Request): String {
 		const query = req.query;
-		const sql = [];
+		const sql: string[] = [];
 
 		if (query.categoryId != undefined) {
 			sql.push(`p.category_id=${query.categoryId}`);
