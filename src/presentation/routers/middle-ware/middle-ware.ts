@@ -72,6 +72,7 @@ import {
 	JsonWebTokenService,
 	JsonWebTokenServiceImpl,
 } from "../../../core/util/jwt/jwt-token";
+import RefreshTokenRouter from "../refresh-token-router";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -337,6 +338,22 @@ export const SignInRouterMiddleWare = SignInRouter(
 			)
 		)
 	),
+	new JsonWebTokenServiceImpl(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
+		)
+	)
+);
+
+export const RefreshTokenRouterMiddleWare = RefreshTokenRouter(
 	new JsonWebTokenServiceImpl(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(

@@ -17,6 +17,7 @@ const publicKey = fs.readFileSync(
 export interface JsonWebTokenService {
 	generateToken(phone: string): Promise<UserToken>;
 	verifyAccessToken(req: Request, res: Response, next: NextFunction): void;
+	verifyRefreshToken(refreshToken: string): Promise<UserToken>;
 }
 
 export class JsonWebTokenServiceImpl implements JsonWebTokenService {
@@ -89,5 +90,26 @@ export class JsonWebTokenServiceImpl implements JsonWebTokenService {
 				new APIResponse(500, { message: "Internal server error." })
 			);
 		}
+	}
+
+	verifyRefreshToken(refreshToken: string): Promise<UserToken> {
+		return new Promise((resolve, reject) => {
+			jwt.verify(refreshToken, publicKey, async (err, decoded) => {
+				if (err) {
+					reject(err);
+				}
+
+				const payload = {
+					phone: decoded.phone,
+				};
+
+				const accessToken = jwt.sign(payload, privateKey, {
+					algorithm: "RS256",
+					expiresIn: "1d",
+				});
+
+				resolve(new UserToken(accessToken, refreshToken));
+			});
+		});
 	}
 }

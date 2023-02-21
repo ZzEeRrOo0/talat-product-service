@@ -1,5 +1,5 @@
 import express from "express";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response} from "express";
 import { APIResponse } from "../../core/response/api-response";
 import { GetUserByPhoneNumberAndPasswordFromUserDBUseCase } from "../../domain/interfaces/use-cases/users/get-user-by-phone-number-and-password-from-user-db";
 import { JsonWebTokenService } from "../../core/util/jwt/jwt-token";
