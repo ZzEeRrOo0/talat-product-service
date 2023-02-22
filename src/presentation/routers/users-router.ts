@@ -182,7 +182,7 @@ export default function UserRouter(
 			req.body["restaurant_purchase_order_id"];
 		restuarantDetail.location = req.body["location"];
 		await addRestaurantDetailUseCase.execute(restuarantDetail);
-		res.send(new APIResponse(200, { message: "Register success." }));
+		res.send(new APIResponse(201, { message: "Register success." }));
 	}
 
 	return router;
