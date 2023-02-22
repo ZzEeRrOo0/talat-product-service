@@ -105,7 +105,7 @@ export default function UserRouter(
 				staffDetail.village = req.body["village"];
 				await addStaffDetailUseCase.execute(staffDetail);
 				res.send(
-					new APIResponse(200, { message: "Register success." })
+					new APIResponse(201, { message: "Register success." })
 				);
 			} catch (err) {
 				res.send(
