@@ -4,6 +4,6 @@ export class StaffDetail {
 	date_of_birth?: Date;
 	gender?: string;
 	province_id: number = 14;
-	distric_id?: number;
+	district: string = "";
 	village: string = "";
 }

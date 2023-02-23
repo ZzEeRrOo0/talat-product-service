@@ -6,7 +6,7 @@ export class StaffDetailModel implements StaffDetail {
 	date_of_birth: Date;
 	gender: string;
 	province_id: number;
-	distric_id: number;
+	district: string;
 	village: string;
 
 	constructor(
@@ -15,7 +15,7 @@ export class StaffDetailModel implements StaffDetail {
 		$date_of_birth: Date,
 		$gender: string,
 		$province_id: number,
-		$distric_id: number,
+		$district: string,
 		$village: string
 	) {
 		this.staff_id = $staff_id;
@@ -23,7 +23,7 @@ export class StaffDetailModel implements StaffDetail {
 		this.date_of_birth = $date_of_birth;
 		this.gender = $gender;
 		this.province_id = $province_id;
-		this.distric_id = $distric_id;
+		this.district = $district;
 		this.village = $village;
 	}
 }

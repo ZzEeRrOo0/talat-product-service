@@ -17,7 +17,7 @@ export class StaffDetailRepositoryImpl implements StaffDetailRepository {
 			staffDetail.date_of_birth!,
 			staffDetail.gender!,
 			staffDetail.province_id!,
-			staffDetail.distric_id!,
+			staffDetail.district,
 			staffDetail.village
 		);
 		const result = await this.staffDetailDataSource.createStaffDetail(

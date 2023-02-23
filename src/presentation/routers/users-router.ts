@@ -101,7 +101,7 @@ export default function UserRouter(
 				staffDetail.date_of_birth = new Date(req.body["date_of_birth"]);
 				staffDetail.gender = req.body["gender"];
 				staffDetail.province_id = req.body["province_id"];
-				staffDetail.distric_id = req.body["district_id"];
+				staffDetail.district = req.body["district"];
 				staffDetail.village = req.body["village"];
 				await addStaffDetailUseCase.execute(staffDetail);
 				res.send(
@@ -199,8 +199,9 @@ function verifyEmployeeRegisterForm(req: Request): boolean {
 		req.body["gender"] == null ||
 		req.body["province_id"] == undefined ||
 		req.body["province_id"] == null ||
-		req.body["district_id"] == undefined ||
-		req.body["district_id"] == null ||
+		req.body["district"] == undefined ||
+		req.body["district"] == null ||
+		req.body["district"] == "" ||
 		req.body["village"] == undefined ||
 		req.body["village"] == null ||
 		req.body["village"] == "" ||
