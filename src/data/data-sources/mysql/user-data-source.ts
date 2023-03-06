@@ -30,7 +30,7 @@ export class UserDataSourceImpl implements UserDataSource {
 	getUserByPhoneNumberAndVerifyPassword(
 		phone: string,
 		password: string
-	): Promise<boolean> {
+	): Promise<UserModel | null> {
 		const sql = "SELECT * FROM users WHERE phone=? AND deleted_at IS NULL";
 
 		return new Promise((resolve, reject) => {
@@ -45,13 +45,22 @@ export class UserDataSourceImpl implements UserDataSource {
 					this.authenticationService
 						.decryptPassword(password, data[0]["password"])
 						.then((isVerify) => {
-							resolve(isVerify);
+							if (isVerify) {
+								const user = new UserModel(
+									data[0]["id"],
+									data[0]["user_type_id"],
+									data[0]["phone"]
+								);
+								resolve(user);
+							} else {
+								resolve(null);
+							}
 						})
 						.catch((error) => {
-							resolve(error);
+							resolve(null);
 						});
 				} else {
-					resolve(false);
+					resolve(null);
 				}
 			});
 		});
@@ -182,9 +191,8 @@ export class UserDataSourceImpl implements UserDataSource {
 		const getTotalItemSql =
 			"SELECT COUNT(*) AS total FROM users WHERE deleted_at IS NULL";
 		const getUsersSql =
-			"SELECT u.id,CONCAT(u.firstname,' ',u.lastname) AS full_name,u.gender,u.phone,u.user_type_id,ut.name AS user_type_name " +
+			"SELECT u.id,u.phone,u.user_type_id " +
 			"FROM users AS u " +
-			"LEFT JOIN user_type AS ut ON ut.id = u.user_type_id " +
 			`WHERE ${this.findUserByQuery.whereSql(req)} LIMIT ? OFFSET ?`;
 
 		return new Promise((resolve, reject) => {
@@ -216,19 +224,8 @@ export class UserDataSourceImpl implements UserDataSource {
 							(e: {
 								id: number;
 								user_type_id: number;
-								full_name: string;
-								gender: string;
-								user_type_name: string;
 								phone: string;
-							}) =>
-								new UserModel(
-									e.id,
-									e.user_type_id,
-									e.full_name,
-									e.gender,
-									e.user_type_name,
-									e.phone
-								)
+							}) => new UserModel(e.id, e.user_type_id, e.phone)
 						);
 
 						const allUserResponse = new AllUserModel(

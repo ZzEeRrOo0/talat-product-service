@@ -68,11 +68,13 @@ import { StaffDetailRepositoryImpl } from "../../../domain/repositories/staff-de
 import { StaffDetailDataSourceImpl } from "../../../data/data-sources/mysql/staff-detail-data-source";
 import SignInRouter from "../sign-in-router";
 import { GetUserByPhoneNumberAndPasswordFromUserDB } from "../../../domain/use-cases/users/get-user-by-phone-number-and-password-from-user-db";
-import {
-	JsonWebTokenService,
-	JsonWebTokenServiceImpl,
-} from "../../../core/util/jwt/jwt-token";
+import { JsonWebTokenServiceImpl } from "../../../core/util/jwt/jwt-token";
 import RefreshTokenRouter from "../refresh-token-router";
+import { GetCustomer } from "../../../domain/use-cases/customer/get-customer";
+import { CustomerRepositoryImpl } from "../../../domain/repositories/customer-repository";
+import { CustomerDataSourceImpl } from "../../../data/data-sources/mysql/customer-data-source";
+import { GetIndividualCustomer } from "../../../domain/use-cases/customer/get-individual-customer";
+import { GetJuristicPersonCustomer } from "../../../domain/use-cases/customer/get-juristic-person-customer";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -337,6 +339,13 @@ export const SignInRouterMiddleWare = SignInRouter(
 				new AuthenticationServiceImpl()
 			)
 		)
+	),
+	new GetCustomer(new CustomerRepositoryImpl(new CustomerDataSourceImpl())),
+	new GetIndividualCustomer(
+		new CustomerRepositoryImpl(new CustomerDataSourceImpl())
+	),
+	new GetJuristicPersonCustomer(
+		new CustomerRepositoryImpl(new CustomerDataSourceImpl())
 	),
 	new JsonWebTokenServiceImpl(
 		new UserRepositoryImpl(

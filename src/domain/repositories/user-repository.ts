@@ -10,6 +10,7 @@ import { FirebaseStorageDataSource } from "../../data/interfaces/data-sources/fi
 import { JuristicPersonCustomerModel } from "../../data/data-sources/mysql/models/juristic-person-customer";
 import { IndividualCustomerModel } from "../../data/data-sources/mysql/models/individual-customer";
 import { CustomerModel } from "../../data/data-sources/mysql/models/customer";
+import { User } from "../entities/user";
 export class UserRepositoryImpl implements UserRepository {
 	userDataSource: UserDataSource;
 	firebaseDataSource: FirebaseStorageDataSource;
@@ -84,7 +85,7 @@ export class UserRepositoryImpl implements UserRepository {
 	async getUserByPhoneNumberAndPasswordFromUserDB(
 		phone: string,
 		password: string
-	): Promise<boolean> {
+	): Promise<User | null> {
 		return await this.userDataSource.getUserByPhoneNumberAndVerifyPassword(
 			phone,
 			password

@@ -4,6 +4,7 @@ import { AllUser } from "../../entities/all-users";
 import { Request } from "express";
 import { UserRequest } from "../../entities/user-request";
 import { Customer } from "../../entities/customer";
+import { User } from "../../entities/user";
 
 export interface UserRepository {
 	getUsers(
@@ -14,7 +15,7 @@ export interface UserRepository {
 	getUserByPhoneNumberAndPasswordFromUserDB(
 		phone: string,
 		password: string
-	): Promise<boolean>;
+	): Promise<User | null>;
 	getUserByPhoneNumberFromUserDB(phone: string): Promise<boolean>;
 	addUser(user: UserRequest): Promise<number>;
 	addCustomer(customer: Customer): Promise<number>;

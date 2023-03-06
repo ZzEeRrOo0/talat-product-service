@@ -33,7 +33,7 @@ export default function UserRouter(
 ) {
 	const router = express.Router();
 
-	router.get("/", async (req: Request, res: Response) => {
+	router.get("/all", async (req: Request, res: Response) => {
 		try {
 			const currentPage = req.query["currentPage"]?.toString() ?? "1";
 			const pageSize = req.query["pageSize"]?.toString() ?? "5";
@@ -127,8 +127,11 @@ export default function UserRouter(
 				const userId = await addUserUseCase.execute(user);
 				const customer = new Customer();
 				customer.user_id = userId;
-				const customerId = await addCustomerUseCase.execute(customer);
 				if (req.body["owner_type_id"] == 1) {
+					customer.customer_type_id = 1;
+					const customerId = await addCustomerUseCase.execute(
+						customer
+					);
 					const individualCustomer = new IndividualCustomer();
 					individualCustomer.customer_id = customerId;
 					individualCustomer.full_name = req.body["full_name"];
@@ -143,6 +146,10 @@ export default function UserRouter(
 					);
 					addRestaurantDetail(req, res, restaurantId);
 				} else {
+					customer.customer_type_id = 2;
+					const customerId = await addCustomerUseCase.execute(
+						customer
+					);
 					const juristicPersonCustomer = new JuristicPersonCustomer();
 					juristicPersonCustomer.customer_id = customerId;
 					juristicPersonCustomer.company_name =

@@ -15,7 +15,7 @@ const publicKey = fs.readFileSync(
 );
 
 export interface JsonWebTokenService {
-	generateToken(phone: string): Promise<UserToken>;
+	generateToken(name: string, phone: string): Promise<UserToken>;
 	verifyAccessToken(req: Request, res: Response, next: NextFunction): void;
 	verifyRefreshToken(refreshToken: string): Promise<UserToken>;
 }
@@ -27,10 +27,11 @@ export class JsonWebTokenServiceImpl implements JsonWebTokenService {
 		this.userRepository = userRepository;
 	}
 
-	generateToken(phone: string): Promise<UserToken> {
+	generateToken(name: string, phone: string): Promise<UserToken> {
 		return new Promise((resolve, reject) => {
 			try {
 				const payload = {
+					name: name,
 					phone: phone,
 				};
 
@@ -44,7 +45,11 @@ export class JsonWebTokenServiceImpl implements JsonWebTokenService {
 					expiresIn: "30d",
 				});
 
-				const userToken = new UserToken(accessToken, refreshToken);
+				const userToken = new UserToken(
+					name,
+					accessToken,
+					refreshToken
+				);
 
 				resolve(userToken);
 			} catch (err) {
@@ -82,7 +87,9 @@ export class JsonWebTokenServiceImpl implements JsonWebTokenService {
 				});
 			} else {
 				res.send(
-					new APIResponse(400, { token: req.header["authorization"] })
+					new APIResponse(400, {
+						token: req.headers["authorization"],
+					})
 				);
 			}
 		} catch (err) {
@@ -100,6 +107,7 @@ export class JsonWebTokenServiceImpl implements JsonWebTokenService {
 				}
 
 				const payload = {
+					name: decoded.name,
 					phone: decoded.phone,
 				};
 
@@ -108,7 +116,7 @@ export class JsonWebTokenServiceImpl implements JsonWebTokenService {
 					expiresIn: "1d",
 				});
 
-				resolve(new UserToken(accessToken, refreshToken));
+				resolve(new UserToken(decoded.name, accessToken, refreshToken));
 			});
 		});
 	}
