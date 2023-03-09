@@ -15,4 +15,8 @@ export class StaffRepositoryImpl implements StaffRepository {
 		const result = await this.staffDataSource.createStaff(staffInfo);
 		return result;
 	}
+
+	async getStaff(userId: number): Promise<Staff | null> {
+		return await this.staffDataSource.getStaffByUserId(userId);
+	}
 }

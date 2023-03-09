@@ -9,7 +9,7 @@ export class GetStaffDetail implements GetStaffDetailUseCase {
 		this.staffDetailRepository = $staffDetailRepository;
 	}
 
-	async execute(userId: number): Promise<StaffDetail> {
-		return await this.staffDetailRepository.getStaffDetail(userId);
+	async execute(staffId: number): Promise<StaffDetail | null> {
+		return await this.staffDetailRepository.getStaffDetail(staffId);
 	}
 }

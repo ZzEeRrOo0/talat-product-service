@@ -1,5 +1,5 @@
 import { StaffDetail } from "../../../entities/staff-detail";
 
 export interface GetStaffDetailUseCase {
-	execute(userId: number): Promise<StaffDetail>;
+	execute(staffId: number): Promise<StaffDetail | null>;
 }

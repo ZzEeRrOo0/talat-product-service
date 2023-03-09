@@ -1,5 +1,6 @@
-import { StaffModel } from "../../../data-sources/mysql/models/staff";
+import { Staff } from "../../../../domain/entities/staff";
 
 export interface StaffDataSource {
-	createStaff(staff: StaffModel): Promise<number>;
+	createStaff(staff: Staff): Promise<number>;
+	getStaffByUserId(userId: number): Promise<Staff | null>;
 }

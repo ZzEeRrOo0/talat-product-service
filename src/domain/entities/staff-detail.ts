@@ -1,4 +1,5 @@
 export class StaffDetail {
+	id?: number;
 	staff_id?: number;
 	full_name: string = "";
 	date_of_birth?: Date;

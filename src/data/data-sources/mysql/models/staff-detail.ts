@@ -1,6 +1,7 @@
 import { StaffDetail } from "../../../../domain/entities/staff-detail";
 
 export class StaffDetailModel implements StaffDetail {
+	id?: number;
 	staff_id: number;
 	full_name: string;
 	date_of_birth: Date;
@@ -16,7 +17,8 @@ export class StaffDetailModel implements StaffDetail {
 		$gender: string,
 		$province_id: number,
 		$district: string,
-		$village: string
+		$village: string,
+		$id?: number
 	) {
 		this.staff_id = $staff_id;
 		this.full_name = $full_name;
@@ -25,5 +27,6 @@ export class StaffDetailModel implements StaffDetail {
 		this.province_id = $province_id;
 		this.district = $district;
 		this.village = $village;
+		this.id = $id;
 	}
 }

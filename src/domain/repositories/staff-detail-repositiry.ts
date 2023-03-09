@@ -26,9 +26,9 @@ export class StaffDetailRepositoryImpl implements StaffDetailRepository {
 		return result;
 	}
 
-	async getStaffDetail(userId: number): Promise<StaffDetail> {
-		const result = await this.staffDetailDataSource.getStaffDetailByUserId(
-			userId
+	async getStaffDetail(staffId: number): Promise<StaffDetail | null> {
+		const result = await this.staffDetailDataSource.getStaffDetailByStaffId(
+			staffId
 		);
 		return result;
 	}

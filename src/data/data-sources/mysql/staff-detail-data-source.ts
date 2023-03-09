@@ -33,16 +33,12 @@ export class StaffDetailDataSourceImpl implements StaffDetailDataSource {
 		});
 	}
 
-	getStaffDetailByUserId(userId: number): Promise<StaffDetail> {
+	getStaffDetailByStaffId(staffId: number): Promise<StaffDetail | null> {
 		const sql =
-			"SELECT std.staff_id, std.full_name, std.date_of_birth, std.gender, std.province_id, std.district, std.village " +
-			"FROM users AS u " +
-			"LEFT JOIN staff AS s ON s.user_id = u.id" +
-			"LEFT JOIN staff_details AS std ON std.staff_id = s.id" +
-			"WHERE u.id = ? AND deleted_at IS NULL";
+			"SELECT * FROM staff_details WHERE staff_id = ? AND deleted_at IS NULL";
 
 		return new Promise((resolve, reject) => {
-			user_db.query(sql, [userId], (error, result) => {
+			user_db.query(sql, [staffId], (error, result) => {
 				if (error) {
 					// throw new Error("Internal server error.");
 					console.log(error);
@@ -56,7 +52,8 @@ export class StaffDetailDataSourceImpl implements StaffDetailDataSource {
 					data[0]["gender"],
 					data[0]["province_id"],
 					data[0]["district"],
-					data[0]["village"]
+					data[0]["village"],
+					data[0]["id"]
 				);
 
 				resolve(staffDetail);
