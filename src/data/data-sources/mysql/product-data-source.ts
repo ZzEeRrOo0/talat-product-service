@@ -1,13 +1,14 @@
 import { ProductDataSource } from "../../interfaces/data-sources/mysql/product-data-source";
 import { db } from "../../../../config/database";
 import { ProductModel } from "./models/product";
-import { OkPacket } from "mysql2";
+import { OkPacket, RowDataPacket } from "mysql2";
 import { ProductDetailModel } from "./models/product-detail";
 import { Pagination } from "../../../core/pagination/index";
 import { AllProductModel } from "./models/all-product";
 import { FindProductByQuery } from "../../../core/util/mysql/find-product-by-query";
 import { Request } from "express";
-import { ProductImageModel } from './models/product-image';
+import { ProductImageModel } from "./models/product-image";
+import { FilterProductModel } from "./models/filter-product";
 
 export class ProductDataSourceImpl implements ProductDataSource {
 	paginationService: Pagination;
@@ -20,6 +21,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		this.paginationService = $paginationService;
 		this.findProductByQuery = $findProductByQuery;
 	}
+
 	getProductsByProductId(productId: string): Promise<ProductDetailModel[]> {
 		const sql =
 			"SELECT p.id,p.name,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id,ps.size,ps.price," +
@@ -36,7 +38,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					throw new Error("Internal server error.");
 				}
 
-				const data = JSON.parse(JSON.stringify(result));
+				const data = <RowDataPacket>result;
 
 				const products: ProductDetailModel[] = data.map(
 					(e: {
@@ -163,7 +165,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					throw new Error("Internal server error.");
 				}
 
-				const data = JSON.parse(JSON.stringify(result));
+				const data = <RowDataPacket>result;
 
 				const paginate = this.paginationService.paginate(
 					data[0].total,
@@ -180,7 +182,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 							throw new Error("Internal server error.");
 						}
 
-						const data = JSON.parse(JSON.stringify(pResult));
+						const data = <RowDataPacket>result;
 
 						const products: ProductModel[] = data.map(
 							(e: {
@@ -236,7 +238,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					throw new Error("Internal server error.");
 				}
 
-				const data = JSON.parse(JSON.stringify(result));
+				const data = <RowDataPacket>result;
 
 				const products: ProductDetailModel[] = data.map(
 					(e: {
@@ -295,7 +297,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					throw new Error("Internal server error.");
 				}
 
-				const data = JSON.parse(JSON.stringify(result));
+				const data = <RowDataPacket>result;
 
 				const products: ProductDetailModel[] = data.map(
 					(e: {
@@ -333,6 +335,26 @@ export class ProductDataSourceImpl implements ProductDataSource {
 				);
 
 				resolve(products);
+			});
+		});
+	}
+
+	getListFilterProduct(name: string): Promise<FilterProductModel[]> {
+		const sql = `SELECT * FROM products WHERE name LIKE '%${name}%' AND deleted_at is NULL LIMIT 20`;
+
+		return new Promise((reslove, reject) => {
+			db.query(sql, [], (error, result) => {
+				if (error) {
+					throw new Error("Internal server error.");
+				}
+
+				const data = <RowDataPacket>result;
+
+				const listFilterProduct: FilterProductModel[] = data.map(
+					(e: { name: string }) => new FilterProductModel(e.name)
+				);
+
+				reslove(listFilterProduct);
 			});
 		});
 	}

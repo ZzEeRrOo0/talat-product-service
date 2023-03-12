@@ -6,6 +6,7 @@ import { AllProduct } from "../entities/all-product";
 import { ProductImage } from "../entities/product-image";
 import { Request } from "express";
 import { CloudinaryDataSource } from "../../data/interfaces/data-sources/cloudinary/cloudinary-data-source";
+import { FilterProduct } from "../entities/filter-product";
 
 export class ProductRepositoryImpl implements ProductRepository {
 	productDataSource: ProductDataSource;
@@ -18,6 +19,7 @@ export class ProductRepositoryImpl implements ProductRepository {
 		this.productDataSource = $productDataSource;
 		this.cloudinaryDataSource = $cloudinaryDataSource;
 	}
+	
 	async getProductByProductId(productId: string): Promise<ProductDetail[]> {
 		const result = await this.productDataSource.getProductsByProductId(
 			productId
@@ -81,5 +83,9 @@ export class ProductRepositoryImpl implements ProductRepository {
 			folderName
 		);
 		return result;
+	}
+
+	async getFilterProducts(name: string): Promise<FilterProduct[]> {
+		return await this.productDataSource.getListFilterProduct(name);
 	}
 }

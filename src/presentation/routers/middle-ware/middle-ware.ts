@@ -77,6 +77,8 @@ import { GetIndividualCustomer } from "../../../domain/use-cases/customer/get-in
 import { GetJuristicPersonCustomer } from "../../../domain/use-cases/customer/get-juristic-person-customer";
 import { GetStaff } from "../../../domain/use-cases/staff/get-staff";
 import { GetStaffDetail } from "../../../domain/use-cases/staff-detail/get-staff-detail";
+import SearchRouter from "../search-router";
+import { GetListFilterProduct } from "../../../domain/use-cases/product/get-list-filter-product";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -380,6 +382,18 @@ export const RefreshTokenRouterMiddleWare = RefreshTokenRouter(
 				new GoogleStorage(),
 				new AuthenticationServiceImpl()
 			)
+		)
+	)
+);
+
+export const SearchRouterMiddleWare = SearchRouter(
+	new GetListFilterProduct(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
+			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
 	)
 );
