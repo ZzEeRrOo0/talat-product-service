@@ -21,5 +21,5 @@ export interface ProductDataSource {
 		productStatus: number
 	): Promise<string>;
 	getProductsByProductId(productId: string): Promise<ProductDetail[]>;
-	getListFilterProduct(name: string): Promise<FilterProduct[]>;
+	getListFilterProductName(name: string): Promise<FilterProduct[]>;
 }

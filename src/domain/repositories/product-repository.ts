@@ -86,6 +86,6 @@ export class ProductRepositoryImpl implements ProductRepository {
 	}
 
 	async getFilterProducts(name: string): Promise<FilterProduct[]> {
-		return await this.productDataSource.getListFilterProduct(name);
+		return await this.productDataSource.getListFilterProductName(name);
 	}
 }

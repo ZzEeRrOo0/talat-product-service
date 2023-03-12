@@ -339,7 +339,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		});
 	}
 
-	getListFilterProduct(name: string): Promise<FilterProductModel[]> {
+	getListFilterProductName(name: string): Promise<FilterProductModel[]> {
 		const sql = `SELECT * FROM products WHERE name LIKE '%${name}%' AND deleted_at is NULL LIMIT 20`;
 
 		return new Promise((reslove, reject) => {

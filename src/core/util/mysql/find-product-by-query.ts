@@ -21,6 +21,10 @@ export class FindProductByQueryImpl implements FindProductByQuery {
 			sql.push(`p.product_type_id=${query.productTypeId}`);
 		}
 
+		if (query.name != undefined) {
+			sql.push(`p.name LIKE '%${query.name}%'`);
+		}
+
 		sql.push("p.deleted_at IS NULL");
 
 		if (sql.length > 1) {
