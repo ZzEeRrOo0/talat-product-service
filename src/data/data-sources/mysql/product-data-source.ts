@@ -182,7 +182,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 							throw new Error("Internal server error.");
 						}
 
-						const data = <RowDataPacket>result;
+						const data = <RowDataPacket>pResult;
 
 						const products: ProductModel[] = data.map(
 							(e: {
