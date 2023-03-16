@@ -146,8 +146,9 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		pageSize: number,
 		req: Request
 	): Promise<AllProductModel> {
-		const getTotalItemSql =
-			"SELECT COUNT(*) AS total FROM products WHERE deleted_at IS NULL";
+		const getTotalItemSql = req.query.name
+			? `SELECT COUNT(*) AS total FROM products WHERE name LIKE '%${req.query.name}%' AND deleted_at IS NULL`
+			: "SELECT COUNT(*) AS total FROM products WHERE deleted_at IS NULL";
 		const getProductsSql =
 			"SELECT p.id,p.name,p.code,p.status, ps.price, c.id AS category_id, sc.id AS sub_category_id, pt.id AS product_type_id, pst.name AS product_size_type, " +
 			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL LIMIT 1) AS image_url " +
