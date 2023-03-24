@@ -27,6 +27,6 @@ dotenv.config();
 	server.use(API_BASE_URL + "/sign-in", SignInRouterMiddleWare);
 	server.use(API_BASE_URL + "/refresh-token", RefreshTokenRouterMiddleWare);
 	server.use(API_BASE_URL + "/search", SearchRouterMiddleWare);
-	server.use(API_BASE_URL + "/restuarants", RestuarantRouterMiddleWare);
+	server.use(API_BASE_URL + "/restaurants", RestuarantRouterMiddleWare);
 	server.listen(process.env.PORT, () => console.log("Running on server"));
 })();
