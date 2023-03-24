@@ -9,9 +9,10 @@ import {
 	UserMiddleWare,
 	SignInRouterMiddleWare,
 	SearchRouterMiddleWare,
+	RefreshTokenRouterMiddleWare,
+	RestuarantRouterMiddleWare,
 } from "./presentation/routers/middle-ware/middle-ware";
 import { API_BASE_URL } from "../config/constants";
-import { RefreshTokenRouterMiddleWare } from "./presentation/routers/middle-ware/middle-ware";
 
 dotenv.config();
 
@@ -26,5 +27,6 @@ dotenv.config();
 	server.use(API_BASE_URL + "/sign-in", SignInRouterMiddleWare);
 	server.use(API_BASE_URL + "/refresh-token", RefreshTokenRouterMiddleWare);
 	server.use(API_BASE_URL + "/search", SearchRouterMiddleWare);
+	server.use(API_BASE_URL + "/restuarants", RestuarantRouterMiddleWare);
 	server.listen(process.env.PORT, () => console.log("Running on server"));
 })();

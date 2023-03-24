@@ -7,6 +7,17 @@ export class RestaurantRepositoryImpl implements RestaurantRepository {
 	constructor(restaurantDataSource: RestaurantDataSource) {
 		this.restaurantDataSource = restaurantDataSource;
 	}
+
+	async getRestaurantDetail(
+		customerId: number
+	): Promise<RestaurantDetail | null> {
+		const result =
+			await this.restaurantDataSource.getRestaurantDetailByCustomerId(
+				customerId
+			);
+		return result;
+	}
+
 	async AddRestaurantDetail(
 		restaurant_details: RestaurantDetail
 	): Promise<number> {

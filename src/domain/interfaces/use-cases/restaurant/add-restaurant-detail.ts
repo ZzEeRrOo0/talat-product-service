@@ -1,5 +1,5 @@
-import { CreateRestaurantDetail } from "../../../entities/restaurant-detail";
+import { RestaurantDetail } from '../../../entities/restaurant-detail';
 
 export interface AddRestaurantDetailUseCase {
-	execute(restaurant_details: CreateRestaurantDetail): Promise<number>;
+	execute(restaurant_details: RestaurantDetail): Promise<number>;
 }

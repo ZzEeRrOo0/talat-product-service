@@ -5,4 +5,5 @@ export interface RestaurantDataSource {
 	createRestaurantDetail(
 		restaurantDetails: RestaurantDetail
 	): Promise<number>;
+	getRestaurantDetailByCustomerId(customerId: number): Promise<RestaurantDetail | null>;
 }

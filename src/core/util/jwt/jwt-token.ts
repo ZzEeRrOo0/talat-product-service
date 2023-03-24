@@ -1,8 +1,7 @@
 import path from "path";
 import { UserToken } from "../../../domain/entities/user-token";
 import jwt from "jsonwebtoken";
-import { NextFunction, Response, Request } from "express";
-import { APIResponse } from "../../response/api-response";
+import { Request } from "express";
 import { UserRepository } from "../../../domain/interfaces/repositories/user-repository";
 
 var fs = require("fs");
@@ -16,7 +15,7 @@ const publicKey = fs.readFileSync(
 
 export interface JsonWebTokenService {
 	generateToken(name: string, phone: string): Promise<UserToken>;
-	verifyAccessToken(req: Request, res: Response, next: NextFunction): void;
+	verifyAccessToken(req: Request): Promise<boolean>;
 	verifyRefreshToken(refreshToken: string): Promise<UserToken>;
 }
 
@@ -58,45 +57,37 @@ export class JsonWebTokenServiceImpl implements JsonWebTokenService {
 		});
 	}
 
-	verifyAccessToken(req: Request, res: Response, next: NextFunction) {
-		try {
-			let authHeader = req.headers["authorization"];
+	verifyAccessToken(req: Request): Promise<boolean> {
+		return new Promise((resolve, reject) => {
+			try {
+				let authHeader = req.headers["authorization"];
 
-			if (authHeader?.startsWith("Bearer ")) {
-				const token = authHeader!.substring(7, authHeader!.length);
+				if (authHeader?.startsWith("Bearer ")) {
+					const token = authHeader!.substring(7, authHeader!.length);
 
-				jwt.verify(token, publicKey, async (err, decoded) => {
-					if (err) {
-						res.send(
-							new APIResponse(401, { message: "Unauthorized." })
-						);
-					}
+					jwt.verify(token, publicKey, async (err, decoded) => {
+						if (err) {
+							resolve(false);
+						}
 
-					const isExistUser =
-						await this.userRepository.getUserByPhoneNumberFromUserDB(
-							decoded.phone
-						);
+						const isExistUser =
+							await this.userRepository.getUserByPhoneNumberFromUserDB(
+								decoded.phone
+							);
 
-					if (isExistUser) {
-						next();
-					} else {
-						res.send(
-							new APIResponse(401, { message: "Unauthorized." })
-						);
-					}
-				});
-			} else {
-				res.send(
-					new APIResponse(400, {
-						token: req.headers["authorization"],
-					})
-				);
+						if (isExistUser) {
+							resolve(true);
+						} else {
+							resolve(false);
+						}
+					});
+				} else {
+					resolve(false);
+				}
+			} catch (err) {
+				resolve(false);
 			}
-		} catch (err) {
-			res.send(
-				new APIResponse(500, { message: "Internal server error." })
-			);
-		}
+		});
 	}
 
 	verifyRefreshToken(refreshToken: string): Promise<UserToken> {

@@ -79,6 +79,8 @@ import { GetStaff } from "../../../domain/use-cases/staff/get-staff";
 import { GetStaffDetail } from "../../../domain/use-cases/staff-detail/get-staff-detail";
 import SearchRouter from "../search-router";
 import { GetListFilterProduct } from "../../../domain/use-cases/product/get-list-filter-product";
+import RestuarantRouter from "../restuarant-router";
+import { GetRestaurantDetail } from "../../../domain/use-cases/restaurant/get-restaurant-detail";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -394,6 +396,26 @@ export const SearchRouterMiddleWare = SearchRouter(
 				new FindProductByQueryImpl()
 			),
 			new CloudinaryDataSourceImpl(new Cloudinary())
+		)
+	)
+);
+
+export const RestuarantRouterMiddleWare = RestuarantRouter(
+	new GetRestaurantDetail(
+		new RestaurantRepositoryImpl(new RestaurantDataSourceImpl())
+	),
+	new GetCustomer(new CustomerRepositoryImpl(new CustomerDataSourceImpl())),
+	new JsonWebTokenServiceImpl(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
 		)
 	)
 );
