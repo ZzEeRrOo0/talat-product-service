@@ -81,6 +81,7 @@ import SearchRouter from "../search-router";
 import { GetListFilterProduct } from "../../../domain/use-cases/product/get-list-filter-product";
 import RestuarantRouter from "../restuarant-router";
 import { GetRestaurantDetail } from "../../../domain/use-cases/restaurant/get-restaurant-detail";
+import OrderRouter from "../order-router";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -332,7 +333,7 @@ export const UserMiddleWare = UserRouter(
 	)
 );
 
-export const SignInRouterMiddleWare = SignInRouter(
+export const SignInMiddleWare = SignInRouter(
 	new GetUserByPhoneNumberAndPasswordFromUserDB(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
@@ -372,7 +373,7 @@ export const SignInRouterMiddleWare = SignInRouter(
 	)
 );
 
-export const RefreshTokenRouterMiddleWare = RefreshTokenRouter(
+export const RefreshTokenMiddleWare = RefreshTokenRouter(
 	new JsonWebTokenServiceImpl(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
@@ -388,7 +389,7 @@ export const RefreshTokenRouterMiddleWare = RefreshTokenRouter(
 	)
 );
 
-export const SearchRouterMiddleWare = SearchRouter(
+export const SearchMiddleWare = SearchRouter(
 	new GetListFilterProduct(
 		new ProductRepositoryImpl(
 			new ProductDataSourceImpl(
@@ -400,7 +401,7 @@ export const SearchRouterMiddleWare = SearchRouter(
 	)
 );
 
-export const RestuarantRouterMiddleWare = RestuarantRouter(
+export const RestuarantMiddleWare = RestuarantRouter(
 	new GetRestaurantDetail(
 		new RestaurantRepositoryImpl(new RestaurantDataSourceImpl())
 	),
@@ -419,3 +420,5 @@ export const RestuarantRouterMiddleWare = RestuarantRouter(
 		)
 	)
 );
+
+export const OrderMiddleWare = OrderRouter();
