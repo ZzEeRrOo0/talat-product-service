@@ -4,10 +4,12 @@ import { APIResponse } from "../../core/response/api-response";
 import { GetRestaurantDetailUseCase } from "../../domain/interfaces/use-cases/restaurant/get-retaurant-detail";
 import { JsonWebTokenService } from "../../core/util/jwt/jwt-token";
 import { GetCustomerUseCase } from "../../domain/interfaces/use-cases/customer/get-customer";
+import { AuthenticationService } from "../../core/util/authentication/index";
 
 export default function RestuarantRouter(
 	getResTaurantDetailUseCase: GetRestaurantDetailUseCase,
 	getCustomerUseCase: GetCustomerUseCase,
+	authenticationService: AuthenticationService,
 	jsonWebTokenService: JsonWebTokenService
 ) {
 	const router = express.Router();
@@ -19,38 +21,33 @@ export default function RestuarantRouter(
 				const isLogedIn = await jsonWebTokenService.verifyAccessToken(
 					req
 				);
-				if (isLogedIn) {
+				const isCorrectHeaders =
+					authenticationService.checkHeaders(req);
+				if (isLogedIn && isCorrectHeaders) {
 					const userId = req.headers["user-id"]?.toString();
-					if (userId != null) {
-						const customer = await getCustomerUseCase.execute(
-							Number.parseInt(userId)
-						);
-						if (customer != null) {
-							const restaurantDetail =
-								await getResTaurantDetailUseCase.execute(
-									customer.id!
-								);
-							if (restaurantDetail != null) {
-								res.send(
-									new APIResponse(200, restaurantDetail)
-								);
-							} else {
-								res.send(
-									new APIResponse(404, {
-										message: "Not found.",
-									})
-								);
-							}
+					const customer = await getCustomerUseCase.execute(
+						Number.parseInt(userId!)
+					);
+
+					if (customer != null) {
+						const restaurantDetail =
+							await getResTaurantDetailUseCase.execute(
+								customer.id!
+							);
+						if (restaurantDetail != null) {
+							res.send(new APIResponse(200, restaurantDetail));
 						} else {
 							res.send(
 								new APIResponse(404, {
-									message: "User not found.",
+									message: "Not found.",
 								})
 							);
 						}
 					} else {
 						res.send(
-							new APIResponse(400, { message: "Bad Request." })
+							new APIResponse(404, {
+								message: "User not found.",
+							})
 						);
 					}
 				} else {

@@ -82,6 +82,10 @@ import { GetListFilterProduct } from "../../../domain/use-cases/product/get-list
 import RestuarantRouter from "../restuarant-router";
 import { GetRestaurantDetail } from "../../../domain/use-cases/restaurant/get-restaurant-detail";
 import OrderRouter from "../order-router";
+import { CreateNewOrderUseCaseImpl } from "../../../domain/use-cases/order/create-new-order";
+import { OrderRepositoryImpl } from "../../../domain/repositories/order-repository";
+import { OrderDataSourceImpl } from "../../../data/data-sources/mysql/order-data-source";
+import { AddOrderDetailUseCaseImpl } from "../../../domain/use-cases/order/add-order-detail";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -406,6 +410,7 @@ export const RestuarantMiddleWare = RestuarantRouter(
 		new RestaurantRepositoryImpl(new RestaurantDataSourceImpl())
 	),
 	new GetCustomer(new CustomerRepositoryImpl(new CustomerDataSourceImpl())),
+	new AuthenticationServiceImpl(),
 	new JsonWebTokenServiceImpl(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
@@ -421,4 +426,25 @@ export const RestuarantMiddleWare = RestuarantRouter(
 	)
 );
 
-export const OrderMiddleWare = OrderRouter();
+export const OrderMiddleWare = OrderRouter(
+	new CreateNewOrderUseCaseImpl(
+		new OrderRepositoryImpl(new OrderDataSourceImpl())
+	),
+	new AddOrderDetailUseCaseImpl(
+		new OrderRepositoryImpl(new OrderDataSourceImpl())
+	),
+	new AuthenticationServiceImpl(),
+	new JsonWebTokenServiceImpl(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
+		)
+	)
+);
