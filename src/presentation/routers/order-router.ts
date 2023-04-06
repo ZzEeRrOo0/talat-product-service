@@ -33,7 +33,6 @@ export default function OrderRouter(
 						orderId,
 						e.product_id,
 						e.amount,
-						req.body["order_time"],
 						req.body["delivery_time"],
 						1
 					);
@@ -57,7 +56,6 @@ function verifyOrderRequest(req: Request): boolean {
 	const keys = [
 		"restaurant_id",
 		"order_products",
-		"order_time",
 		"delivery_time",
 	];
 

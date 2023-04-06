@@ -21,7 +21,7 @@ export class OrderDataSourceImpl implements OrderDataSource {
 	}
 	addOrderDetail(orderDetail: OrderDetailModel): Promise<number> {
 		const sql =
-			"INSERT INTO order_details (order_id, product_id, amount, order_time, delivery_time, order_status_id) VALUES(?, ?, ?, ?, ?, ?)";
+			"INSERT INTO order_details (order_id, product_id, amount, delivery_time, order_status_id) VALUES(?, ?, ?, ?, ?)";
 
 		return new Promise((resolve, reject) => {
 			transection_db.query(
@@ -30,7 +30,6 @@ export class OrderDataSourceImpl implements OrderDataSource {
 					orderDetail.order_id,
 					orderDetail.product_id,
 					orderDetail.amount,
-					orderDetail.order_time,
 					orderDetail.delivery_time,
 					orderDetail.order_status_id,
 				],

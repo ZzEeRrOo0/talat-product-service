@@ -5,7 +5,6 @@ export class OrderDetailModel implements OrderDetail {
 	order_id: number;
 	product_id: number;
 	amount: number;
-	order_time: Date;
 	delivery_time: Date;
 	delivery_location: string | undefined;
 	order_status_id: number;
@@ -25,7 +24,6 @@ export class OrderDetailModel implements OrderDetail {
 		this.order_id = $order_id;
 		this.product_id = $product_id;
 		this.amount = $amount;
-		this.order_time = $order_time;
 		this.delivery_time = $delivery_time;
 		this.order_status_id = $order_status_id;
 		this.delivery_location = $delivery_location;
