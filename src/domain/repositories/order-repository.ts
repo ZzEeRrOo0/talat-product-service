@@ -1,6 +1,8 @@
 import { OrderDetail } from "../entities/order-detail";
 import { OrderRepository } from "../interfaces/repositories/order-repository";
 import { OrderDataSource } from "../../data/interfaces/data-sources/mysql/order-data-source";
+import { OrderListItem } from "../entities/order-list-item";
+import { Order } from "../entities/order";
 
 export class OrderRepositoryImpl implements OrderRepository {
 	orderDataSource: OrderDataSource;
@@ -9,11 +11,15 @@ export class OrderRepositoryImpl implements OrderRepository {
 		this.orderDataSource = $orderDataSource;
 	}
 
-	async createNewOrder(restaurantId: number): Promise<number> {
-		return await this.orderDataSource.createNewOrder(restaurantId);
+	async createNewOrder(order: Order): Promise<number> {
+		return await this.orderDataSource.createNewOrder(order);
 	}
 
 	async addOrderDetail(orderDetail: OrderDetail): Promise<number> {
 		return await this.orderDataSource.addOrderDetail(orderDetail);
+	}
+
+	async getOrders(): Promise<OrderListItem[]> {
+		return await this.orderDataSource.getOrders();
 	}
 }

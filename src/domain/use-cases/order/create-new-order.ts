@@ -1,3 +1,4 @@
+import { Order } from "../../entities/order";
 import { OrderRepository } from "../../interfaces/repositories/order-repository";
 import { CreateNewOrderUseCase } from "../../interfaces/use-cases/order/create-new-order";
 
@@ -8,7 +9,7 @@ export class CreateNewOrderUseCaseImpl implements CreateNewOrderUseCase {
 		this.orderRepository = $orderRepository;
 	}
 
-	execute(restaurantId: number): Promise<number> {
-		return this.orderRepository.createNewOrder(restaurantId);
+	execute(order: Order): Promise<number> {
+		return this.orderRepository.createNewOrder(order);
 	}
 }

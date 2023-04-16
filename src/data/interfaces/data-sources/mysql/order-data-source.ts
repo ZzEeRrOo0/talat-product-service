@@ -1,6 +1,9 @@
 import { OrderDetail } from "../../../../domain/entities/order-detail";
+import { OrderListItem } from "../../../../domain/entities/order-list-item";
+import { Order } from '../../../../domain/entities/order';
 
 export interface OrderDataSource {
-	createNewOrder(restaurantId: number): Promise<number>;
+	createNewOrder(order: Order): Promise<number>;
 	addOrderDetail(orderDetail: OrderDetail): Promise<number>;
+	getOrders(): Promise<OrderListItem[]>;
 }

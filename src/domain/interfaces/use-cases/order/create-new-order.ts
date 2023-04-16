@@ -1,3 +1,5 @@
+import { Order } from "../../../entities/order";
+
 export interface CreateNewOrderUseCase {
-	execute(restaurantId: number): Promise<number>;
+	execute(order: Order): Promise<number>;
 }

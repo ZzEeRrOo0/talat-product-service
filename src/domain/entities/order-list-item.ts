@@ -1,18 +1,21 @@
-export class Order {
-	id?: number;
+export class OrderListItem {
+	order_id: number;
 	restaurant_id: number;
 	delivery_time: Date;
-	delivery_location?: string;
-	order_status_id: number | 1;
-	remark?: string;
+	order_status_id: number;
+	total_product: number;
 
 	constructor(
+		$order_id: number,
 		$restaurant_id: number,
 		$delivery_time: Date,
-		$order_status_id: number | 1
+		$order_status_id: number,
+		$total_product: number
 	) {
+		this.order_id = $order_id;
 		this.restaurant_id = $restaurant_id;
 		this.delivery_time = $delivery_time;
 		this.order_status_id = $order_status_id;
+		this.total_product = $total_product;
 	}
 }

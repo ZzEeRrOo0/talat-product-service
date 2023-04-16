@@ -86,6 +86,7 @@ import { CreateNewOrderUseCaseImpl } from "../../../domain/use-cases/order/creat
 import { OrderRepositoryImpl } from "../../../domain/repositories/order-repository";
 import { OrderDataSourceImpl } from "../../../data/data-sources/mysql/order-data-source";
 import { AddOrderDetailUseCaseImpl } from "../../../domain/use-cases/order/add-order-detail";
+import { GetOrderListUseCaseImpl } from "../../../domain/use-cases/order/get-list-order";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -431,6 +432,9 @@ export const OrderMiddleWare = OrderRouter(
 		new OrderRepositoryImpl(new OrderDataSourceImpl())
 	),
 	new AddOrderDetailUseCaseImpl(
+		new OrderRepositoryImpl(new OrderDataSourceImpl())
+	),
+	new GetOrderListUseCaseImpl(
 		new OrderRepositoryImpl(new OrderDataSourceImpl())
 	),
 	new AuthenticationServiceImpl(),
