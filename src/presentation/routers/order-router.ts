@@ -22,8 +22,11 @@ export default function OrderRouter(
 		try {
 			const isLogedIn = await jsonWebTokenService.verifyAccessToken(req);
 			const isCorrectHeaders = authenticationService.checkHeaders(req);
+			const status = req.query["status"]
+				? Number.parseInt(req.query["status"].toString())
+				: undefined;
 			if (isLogedIn && isCorrectHeaders) {
-				const orders = await getOrderListUseCase.execute();
+				const orders = await getOrderListUseCase.execute(status);
 				res.send(new APIResponse(200, orders));
 			} else {
 				res.send(new APIResponse(400, { message: "Unauthorize." }));

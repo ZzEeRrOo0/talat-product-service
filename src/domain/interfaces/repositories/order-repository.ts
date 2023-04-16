@@ -5,5 +5,5 @@ import { OrderListItem } from "../../entities/order-list-item";
 export interface OrderRepository {
 	createNewOrder(order: Order): Promise<number>;
 	addOrderDetail(orderDetail: OrderDetail): Promise<number>;
-	getOrders(): Promise<OrderListItem[]>;
+	getOrders(status?: number): Promise<OrderListItem[]>;
 }

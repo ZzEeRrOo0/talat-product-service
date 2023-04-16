@@ -55,13 +55,13 @@ export class OrderDataSourceImpl implements OrderDataSource {
 		});
 	}
 
-	getOrders(): Promise<OrderListItemModel[]> {
+	getOrders(status?: number): Promise<OrderListItemModel[]> {
 		const sql =
 			"SELECT id, restaurant_id, delivery_time, order_status_id, (SELECT COUNT(*) FROM order_details WHERE order_id=id) AS total FROM orders " +
-			"WHERE deleted_at IS NULL";
+			"WHERE order_status_id=? AND deleted_at IS NULL";
 
 		return new Promise((resolve, reject) => {
-			transection_db.query(sql, [], (error, result) => {
+			transection_db.query(sql, [status ?? 1], (error, result) => {
 				if (error) {
 					// throw new Error("Internal server error.");
 					console.log(error);
