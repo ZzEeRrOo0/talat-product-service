@@ -58,35 +58,41 @@ export class OrderDataSourceImpl implements OrderDataSource {
 	getOrders(status?: number): Promise<OrderListItemModel[]> {
 		const sql =
 			"SELECT id, restaurant_id, delivery_time, order_status_id, (SELECT COUNT(*) FROM order_details WHERE order_id=id) AS total FROM orders " +
-			"WHERE order_status_id=? AND deleted_at IS NULL";
+			`WHERE ${
+				status != undefined ? "order_status_id=?" : "order_status_id!=4"
+			} AND deleted_at IS NULL`;
 
 		return new Promise((resolve, reject) => {
-			transection_db.query(sql, [status ?? 1], (error, result) => {
-				if (error) {
-					// throw new Error("Internal server error.");
-					console.log(error);
+			transection_db.query(
+				sql,
+				status != undefined ? [status] : [],
+				(error, result) => {
+					if (error) {
+						// throw new Error("Internal server error.");
+						console.log(error);
+					}
+
+					const data = <RowDataPacket>result;
+					const orders: OrderListItemModel[] = data.map(
+						(e: {
+							id: number;
+							restaurant_id: number;
+							delivery_time: Date;
+							order_status_id: number;
+							total: number;
+						}) =>
+							new OrderListItemModel(
+								e.id,
+								e.restaurant_id,
+								e.delivery_time,
+								e.order_status_id,
+								e.total
+							)
+					);
+
+					resolve(orders);
 				}
-
-				const data = <RowDataPacket>result;
-				const orders: OrderListItemModel[] = data.map(
-					(e: {
-						order_id: number;
-						restaurant_id: number;
-						delivery_time: Date;
-						order_status_id: number;
-						total: number;
-					}) =>
-						new OrderListItemModel(
-							e.order_id,
-							e.restaurant_id,
-							e.delivery_time,
-							e.order_status_id,
-							e.total
-						)
-				);
-
-				resolve(orders);
-			});
+			);
 		});
 	}
 }
