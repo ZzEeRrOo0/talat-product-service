@@ -1,9 +1,13 @@
-import { RestaurantDetail } from '../../../../domain/entities/restaurant-detail'
+import { Restaurant } from "../../../../domain/entities/restaurant";
+import { RestaurantDetail } from "../../../../domain/entities/restaurant-detail";
 
 export interface RestaurantDataSource {
 	createRestaurant(customerId: number): Promise<number>;
 	createRestaurantDetail(
 		restaurantDetails: RestaurantDetail
 	): Promise<number>;
-	getRestaurantDetailByCustomerId(customerId: number): Promise<RestaurantDetail | null>;
+	getRestaurants(customerId: number): Promise<Array<Restaurant>>;
+	getRestaurantDetailByRestaurantId(
+		restaurantId: number
+	): Promise<RestaurantDetail | null>;
 }

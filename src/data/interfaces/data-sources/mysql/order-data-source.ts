@@ -5,5 +5,5 @@ import { Order } from "../../../../domain/entities/order";
 export interface OrderDataSource {
 	createNewOrder(order: Order): Promise<number>;
 	addOrderDetail(orderDetail: OrderDetail): Promise<number>;
-	getOrders(status?: number): Promise<OrderListItem[]>;
+	getOrders(restaurants: Array<number>, status?: number): Promise<OrderListItem[]>;
 }

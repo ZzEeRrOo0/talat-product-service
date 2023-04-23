@@ -25,11 +25,22 @@ export default function OrderRouter(
 			const status = req.query["status"]
 				? Number.parseInt(req.query["status"].toString())
 				: undefined;
-			if (isLogedIn && isCorrectHeaders) {
-				const orders = await getOrderListUseCase.execute(status);
-				res.send(new APIResponse(200, orders));
+			const restaurants = req.query["restaurants"]
+				? (req.query["restaurants"] as Array<string>)
+				: [];
+			const restaurantsValue = restaurants.map((e) => Number.parseInt(e));
+			if (restaurantsValue.length > 0) {
+				res.send(new APIResponse(400, { message: "Bad request." }));
 			} else {
-				res.send(new APIResponse(400, { message: "Unauthorize." }));
+				if (isLogedIn && isCorrectHeaders) {
+					const orders = await getOrderListUseCase.execute(
+						restaurantsValue,
+						status
+					);
+					res.send(new APIResponse(200, orders));
+				} else {
+					res.send(new APIResponse(400, { message: "Unauthorize." }));
+				}
 			}
 		} catch (err) {
 			res.send(new APIResponse(500, { message: "Error saving data" }));

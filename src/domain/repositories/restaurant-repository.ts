@@ -1,4 +1,5 @@
 import { RestaurantDataSource } from "../../data/interfaces/data-sources/mysql/restaurant-data-source";
+import { Restaurant } from "../entities/restaurant";
 import { RestaurantDetail } from "../entities/restaurant-detail";
 import { RestaurantRepository } from "../interfaces/repositories/restaurant-repository";
 
@@ -8,12 +9,19 @@ export class RestaurantRepositoryImpl implements RestaurantRepository {
 		this.restaurantDataSource = restaurantDataSource;
 	}
 
+	async getRestaurants(customerId: number): Promise<Restaurant[]> {
+		const result = await this.restaurantDataSource.getRestaurants(
+			customerId
+		);
+		return result;
+	}
+
 	async getRestaurantDetail(
-		customerId: number
+		restaurantId: number
 	): Promise<RestaurantDetail | null> {
 		const result =
-			await this.restaurantDataSource.getRestaurantDetailByCustomerId(
-				customerId
+			await this.restaurantDataSource.getRestaurantDetailByRestaurantId(
+				restaurantId
 			);
 		return result;
 	}

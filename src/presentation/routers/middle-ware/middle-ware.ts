@@ -87,6 +87,7 @@ import { OrderRepositoryImpl } from "../../../domain/repositories/order-reposito
 import { OrderDataSourceImpl } from "../../../data/data-sources/mysql/order-data-source";
 import { AddOrderDetailUseCaseImpl } from "../../../domain/use-cases/order/add-order-detail";
 import { GetOrderListUseCaseImpl } from "../../../domain/use-cases/order/get-list-order";
+import { GetRestaurantList } from "../../../domain/use-cases/restaurant/get-restaurant-list";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -407,6 +408,9 @@ export const SearchMiddleWare = SearchRouter(
 );
 
 export const RestuarantMiddleWare = RestuarantRouter(
+	new GetRestaurantList(
+		new RestaurantRepositoryImpl(new RestaurantDataSourceImpl())
+	),
 	new GetRestaurantDetail(
 		new RestaurantRepositoryImpl(new RestaurantDataSourceImpl())
 	),

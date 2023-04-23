@@ -55,12 +55,17 @@ export class OrderDataSourceImpl implements OrderDataSource {
 		});
 	}
 
-	getOrders(status?: number): Promise<OrderListItemModel[]> {
+	getOrders(
+		restaurants: Array<number>,
+		status?: number
+	): Promise<OrderListItemModel[]> {
 		const sql =
 			"SELECT id, restaurant_id, delivery_time, order_status_id, (SELECT COUNT(*) FROM order_details WHERE order_id=id) AS total FROM orders " +
 			`WHERE ${
-				status != undefined ? "order_status_id=?" : "order_status_id!=4"
-			} AND deleted_at IS NULL`;
+				status != undefined ? "order_status_id=?" : "order_status_id!=5"
+			} ${restaurants.length > 0 ? "AND" : ""} ${restaurants
+				.map((e) => "restaurant_id=" + e)
+				.join(" OR ")} AND deleted_at IS NULL`;
 
 		return new Promise((resolve, reject) => {
 			transection_db.query(

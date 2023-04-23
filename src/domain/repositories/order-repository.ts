@@ -19,7 +19,10 @@ export class OrderRepositoryImpl implements OrderRepository {
 		return await this.orderDataSource.addOrderDetail(orderDetail);
 	}
 
-	async getOrders(status?: number): Promise<OrderListItem[]> {
-		return await this.orderDataSource.getOrders(status);
+	async getOrders(
+		restaurants: Array<number>,
+		status?: number
+	): Promise<OrderListItem[]> {
+		return await this.orderDataSource.getOrders(restaurants, status);
 	}
 }

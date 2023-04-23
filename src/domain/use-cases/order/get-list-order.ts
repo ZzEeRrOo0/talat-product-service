@@ -9,7 +9,7 @@ export class GetOrderListUseCaseImpl implements GetOrderListUseCase {
 		this.orderRepository = $orderRepository;
 	}
 
-	execute(status?: number): Promise<OrderListItem[]> {
-		return this.orderRepository.getOrders(status);
+	execute(restaurants: Array<number>, status?: number): Promise<OrderListItem[]> {
+		return this.orderRepository.getOrders(restaurants, status);
 	}
 }

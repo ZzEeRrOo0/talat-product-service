@@ -8,7 +8,9 @@ export class GetRestaurantDetail implements GetRestaurantDetailUseCase {
 		this.restaurantRepository = restaurantRepository;
 	}
 
-	async execute(customerId: number): Promise<RestaurantDetail | null> {
-		return await this.restaurantRepository.getRestaurantDetail(customerId);
+	async execute(restaurantId: number): Promise<RestaurantDetail | null> {
+		return await this.restaurantRepository.getRestaurantDetail(
+			restaurantId
+		);
 	}
 }
