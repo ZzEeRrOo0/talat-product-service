@@ -100,4 +100,63 @@ export class OrderDataSourceImpl implements OrderDataSource {
 			);
 		});
 	}
+	getOrderByOrderId(orderId: number): Promise<OrderModel | null> {
+		const sql = "SELECT * FROM orders WHERE id=? AND deleted_at IS NULL";
+
+		return new Promise((resolve, reject) => {
+			transection_db.query(sql, [orderId], (error, result) => {
+				if (error) {
+					// throw new Error("Internal server error.");
+					console.log(error);
+				}
+
+				const data = <RowDataPacket>result;
+				if (data.length > 0) {
+					const order = new OrderModel(
+						data[0].restaurant_id,
+						data[0].order_status_id,
+						data[0].delivery_time,
+						data[0].created_at,
+						data[0].id
+					);
+
+					resolve(order);
+				} else {
+					resolve(null);
+				}
+			});
+		});
+	}
+	getOrderDetailByOrderId(orderId: number): Promise<OrderDetailModel[]> {
+		const sql =
+			"SELECT * FROM order_details WHERE order_id=? AND deleted_at IS NULL";
+
+		return new Promise((resolve, reject) => {
+			transection_db.query(sql, [orderId], (error, result) => {
+				if (error) {
+					// throw new Error("Internal server error.");
+					console.log(error);
+				}
+
+				const data = <RowDataPacket>result;
+
+				const orderDetails: OrderDetailModel[] = data.map(
+					(e: {
+						id: number;
+						order_id: number;
+						product_id: number;
+						amount: number;
+					}) =>
+						new OrderDetailModel(
+							e.order_id,
+							e.product_id,
+							e.amount,
+							e.id
+						)
+				);
+
+				resolve(orderDetails);
+			});
+		});
+	}
 }

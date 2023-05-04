@@ -88,6 +88,8 @@ import { OrderDataSourceImpl } from "../../../data/data-sources/mysql/order-data
 import { AddOrderDetailUseCaseImpl } from "../../../domain/use-cases/order/add-order-detail";
 import { GetOrderListUseCaseImpl } from "../../../domain/use-cases/order/get-list-order";
 import { GetRestaurantList } from "../../../domain/use-cases/restaurant/get-restaurant-list";
+import { GetOrderDetailsUseCaseImpl } from "../../../domain/use-cases/order/get-order-detail";
+import { GetOrderUseCaseImpl } from "../../../domain/use-cases/order/get-order";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -440,6 +442,19 @@ export const OrderMiddleWare = OrderRouter(
 	),
 	new GetOrderListUseCaseImpl(
 		new OrderRepositoryImpl(new OrderDataSourceImpl())
+	),
+	new GetOrderUseCaseImpl(new OrderRepositoryImpl(new OrderDataSourceImpl())),
+	new GetOrderDetailsUseCaseImpl(
+		new OrderRepositoryImpl(new OrderDataSourceImpl())
+	),
+	new GetProductByProductId(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
+			new CloudinaryDataSourceImpl(new Cloudinary())
+		)
 	),
 	new AuthenticationServiceImpl(),
 	new JsonWebTokenServiceImpl(
