@@ -8,12 +8,13 @@ import { OrderModel } from "./models/order";
 export class OrderDataSourceImpl implements OrderDataSource {
 	createNewOrder(order: OrderModel): Promise<number> {
 		const sql =
-			"INSERT INTO orders (restaurant_id, delivery_time, order_status_id) VALUES(?, ?, ?)";
+			"INSERT INTO orders (no, restaurant_id, delivery_time, order_status_id) VALUES(?, ?, ?, ?)";
 
 		return new Promise((resolve, reject) => {
 			transection_db.query(
 				sql,
 				[
+					order.order_no,
 					order.restaurant_id,
 					order.delivery_time,
 					order.order_status_id,
@@ -113,6 +114,7 @@ export class OrderDataSourceImpl implements OrderDataSource {
 				const data = <RowDataPacket>result;
 				if (data.length > 0) {
 					const order = new OrderModel(
+						data[0].no,
 						data[0].restaurant_id,
 						data[0].order_status_id,
 						data[0].delivery_time,

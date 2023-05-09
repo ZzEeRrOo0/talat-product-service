@@ -54,7 +54,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						sub_category_name?: string | undefined;
 						product_type_name?: string | undefined;
 						size: number | undefined;
-						price: number | undefined;
+						price: number;
 						product_size_type: string | undefined;
 					}) =>
 						new ProductDetailModel(
@@ -255,7 +255,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						sub_category_name?: string | undefined;
 						product_type_name?: string | undefined;
 						size: number | undefined;
-						price: number | undefined;
+						price: number;
 						productSizeType: string | undefined;
 					}) =>
 						new ProductDetailModel(
@@ -314,7 +314,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						sub_category_name?: string | undefined;
 						product_type_name?: string | undefined;
 						size: number | undefined;
-						price: number | undefined;
+						price: number;
 						productSizeType: string | undefined;
 					}) =>
 						new ProductDetailModel(

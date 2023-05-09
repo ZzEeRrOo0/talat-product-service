@@ -2,20 +2,24 @@ export class ProductItemDetail {
 	product_id: number;
 	product_name: string;
 	product_qty: number;
+	product_price: number;
 
 	constructor(
 		$product_id: number,
 		$product_name: string,
-		$product_qty: number
+		$product_qty: number,
+		$product_price: number
 	) {
 		this.product_id = $product_id;
 		this.product_name = $product_name;
 		this.product_qty = $product_qty;
+		this.product_price = $product_price;
 	}
 }
 
 export class OrderDetailResponse {
 	order_id: number;
+	order_no: string;
 	restaurant_id: number;
 	order_status_id: number;
 	order_time: Date;
@@ -24,6 +28,7 @@ export class OrderDetailResponse {
 
 	constructor(
 		$order_id: number,
+		$order_no: string,
 		$restaurant_id: number,
 		$order_status_id: number,
 		$order_time: Date,
@@ -31,6 +36,7 @@ export class OrderDetailResponse {
 		$products: Array<ProductItemDetail>
 	) {
 		this.order_id = $order_id;
+		this.order_no = $order_no;
 		this.restaurant_id = $restaurant_id;
 		this.order_status_id = $order_status_id;
 		this.order_time = $order_time;

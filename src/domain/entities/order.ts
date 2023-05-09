@@ -1,5 +1,6 @@
 export class Order {
 	id?: number;
+	order_no: string;
 	restaurant_id: number;
 	order_time?: Date;
 	delivery_time: Date;
@@ -8,13 +9,15 @@ export class Order {
 	remark?: string;
 
 	constructor(
+		$order_no: string,
 		$restaurant_id: number,
 		$delivery_time: Date,
 		$order_status_id: number | 1,
 		$order_time?: Date,
 		$id?: number
 	) {
-		this.restaurant_id = $restaurant_id;
+		this.order_no = $order_no,
+		this.restaurant_id = $restaurant_id,
 		this.delivery_time = $delivery_time;
 		this.order_status_id = $order_status_id;
 		this.order_time = $order_time;

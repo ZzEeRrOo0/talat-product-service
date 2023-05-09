@@ -13,7 +13,7 @@ export class ProductDetailModel implements ProductDetail {
     subCategoryName?: string | undefined;
     productTypeName?: string | undefined;
     size?: number | undefined;
-    price?: number | undefined;
+    price: number;
     productSizeType?: string | undefined;
 
     constructor(
@@ -29,7 +29,7 @@ export class ProductDetailModel implements ProductDetail {
         subCategoryName: string | undefined,
         productTypeName: string | undefined,
         size: number | undefined,
-        price: number | undefined,
+        price: number,
         productSizeType: string | undefined,
 
 

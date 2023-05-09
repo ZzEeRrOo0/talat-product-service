@@ -80,18 +80,22 @@ export default function OrderRouter(
 								async (e): Promise<ProductItemDetail> => {
 									const productDetail =
 										await getProductByProductIdUseCase.execute(
-											e.id!.toString()
+											e.product_id!.toString()
 										);
 									return new ProductItemDetail(
-										e.id!,
+										e.product_id!,
 										productDetail[0].name,
-										e.amount
+										Number.parseFloat(e.amount.toString()),
+										Number.parseInt(
+											productDetail[0].price.toString()
+										)
 									);
 								}
 							)
 						);
 						const orderDetail = new OrderDetailResponse(
 							order.id!,
+							order.order_no,
 							order.restaurant_id,
 							order.order_status_id,
 							order.order_time!,
@@ -119,7 +123,9 @@ export default function OrderRouter(
 			const isCorrectHeaders = authenticationService.checkHeaders(req);
 			if (isLogedIn && isCorrectHeaders) {
 				if (verifyOrderRequest(req)) {
+					const orderNo = generateOrderNumber();
 					const order = new Order(
+						orderNo,
 						req.body["restaurant_id"],
 						req.body["delivery_time"],
 						1
@@ -163,4 +169,13 @@ function verifyOrderRequest(req: Request): boolean {
 	}
 
 	return false;
+}
+
+function generateOrderNumber(): string {
+	const timestamp = Date.now().toString().slice(-6); // get last 6 digits of current timestamp
+	const random = Math.floor(Math.random() * 100)
+		.toString()
+		.padStart(2, "0"); // generate a 2-digit random number and pad it with leading zeros if necessary
+	const orderNumber = `${timestamp}${random}`; // concatenate timestamp and random number
+	return orderNumber;
 }
