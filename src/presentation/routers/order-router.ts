@@ -87,7 +87,7 @@ export default function OrderRouter(
 										productDetail[0].name,
 										Number.parseFloat(e.amount.toString()),
 										Number.parseInt(
-											productDetail[0].price.toString()
+											e.price?.toString() ?? "0"
 										)
 									);
 								}

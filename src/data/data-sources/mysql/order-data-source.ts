@@ -146,6 +146,7 @@ export class OrderDataSourceImpl implements OrderDataSource {
 					(e: {
 						id: number;
 						order_id: number;
+						price: number | null;
 						product_id: number;
 						amount: number;
 					}) =>
@@ -153,6 +154,7 @@ export class OrderDataSourceImpl implements OrderDataSource {
 							e.order_id,
 							e.product_id,
 							e.amount,
+							e.price,
 							e.id
 						)
 				);
