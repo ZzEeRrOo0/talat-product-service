@@ -10,9 +10,7 @@ import { GetRestaurantListUseCase } from "../../domain/interfaces/use-cases/rest
 export default function RestuarantRouter(
 	getRestaurantList: GetRestaurantListUseCase,
 	getResTaurantDetailUseCase: GetRestaurantDetailUseCase,
-	getCustomerUseCase: GetCustomerUseCase,
-	authenticationService: AuthenticationService,
-	jsonWebTokenService: JsonWebTokenService
+	getCustomerUseCase: GetCustomerUseCase
 ) {
 	const router = express.Router();
 
@@ -20,31 +18,22 @@ export default function RestuarantRouter(
 		"/list",
 		async (req: Request, res: Response, next: NextFunction) => {
 			try {
-				const isLogedIn = await jsonWebTokenService.verifyAccessToken(
-					req
+				const userId = req.headers["user-id"]?.toString();
+				const customer = await getCustomerUseCase.execute(
+					Number.parseInt(userId!)
 				);
-				const isCorrectHeaders =
-					authenticationService.checkHeaders(req);
-				if (isLogedIn && isCorrectHeaders) {
-					const userId = req.headers["user-id"]?.toString();
-					const customer = await getCustomerUseCase.execute(
-						Number.parseInt(userId!)
-					);
 
-					if (customer != null) {
-						const restaurants = await getRestaurantList.execute(
-							customer.id!
-						);
-						res.send(new APIResponse(200, restaurants));
-					} else {
-						res.send(
-							new APIResponse(404, {
-								message: "User not found.",
-							})
-						);
-					}
+				if (customer != null) {
+					const restaurants = await getRestaurantList.execute(
+						customer.id!
+					);
+					res.send(new APIResponse(200, restaurants));
 				} else {
-					res.send(new APIResponse(400, { message: "Unauthorize." }));
+					res.send(
+						new APIResponse(404, {
+							message: "User not found.",
+						})
+					);
 				}
 			} catch (err) {
 				res.send(
@@ -58,51 +47,40 @@ export default function RestuarantRouter(
 		"/detail",
 		async (req: Request, res: Response, next: NextFunction) => {
 			try {
-				const isLogedIn = await jsonWebTokenService.verifyAccessToken(
-					req
+				const userId = req.headers["user-id"]?.toString();
+				const customer = await getCustomerUseCase.execute(
+					Number.parseInt(userId!)
 				);
-				const isCorrectHeaders =
-					authenticationService.checkHeaders(req);
-				if (isLogedIn && isCorrectHeaders) {
-					const userId = req.headers["user-id"]?.toString();
-					const customer = await getCustomerUseCase.execute(
-						Number.parseInt(userId!)
-					);
 
-					if (customer != null) {
-						const restaurantId = req.query["restaurantId"];
-						if (restaurantId != null && restaurantId != undefined) {
-							const restaurantDetail =
-								await getResTaurantDetailUseCase.execute(
-									Number.parseInt(restaurantId.toString())
-								);
-							if (restaurantDetail != null) {
-								res.send(
-									new APIResponse(200, restaurantDetail)
-								);
-							} else {
-								res.send(
-									new APIResponse(404, {
-										message: "Not found.",
-									})
-								);
-							}
+				if (customer != null) {
+					const restaurantId = req.query["restaurantId"];
+					if (restaurantId != null && restaurantId != undefined) {
+						const restaurantDetail =
+							await getResTaurantDetailUseCase.execute(
+								Number.parseInt(restaurantId.toString())
+							);
+						if (restaurantDetail != null) {
+							res.send(new APIResponse(200, restaurantDetail));
 						} else {
 							res.send(
-								new APIResponse(400, {
-									message: "Bad request.",
+								new APIResponse(404, {
+									message: "Not found.",
 								})
 							);
 						}
 					} else {
 						res.send(
-							new APIResponse(404, {
-								message: "User not found.",
+							new APIResponse(400, {
+								message: "Bad request.",
 							})
 						);
 					}
 				} else {
-					res.send(new APIResponse(400, { message: "Unauthorize." }));
+					res.send(
+						new APIResponse(404, {
+							message: "User not found.",
+						})
+					);
 				}
 			} catch (err) {
 				res.send(

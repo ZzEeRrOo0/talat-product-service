@@ -167,7 +167,7 @@ export default function UserRouter(
 					addRestaurantDetail(req, res, restaurantId);
 				}
 			} catch (e) {
-				new APIResponse(500, { message: "Internal server error" });
+				res.send(new APIResponse(500, { message: "Internal server error" }));
 			}
 		} else {
 			res.send(new APIResponse(400, { message: "Bad request" }));
@@ -196,96 +196,71 @@ export default function UserRouter(
 }
 
 function verifyEmployeeRegisterForm(req: Request): boolean {
-	if (
-		req.body["full_name"] == undefined ||
-		req.body["full_name"] == null ||
-		req.body["full_name"] == "" ||
-		req.body["date_of_birth"] == undefined ||
-		req.body["date_of_birth"] == null ||
-		req.body["gender"] == undefined ||
-		req.body["gender"] == null ||
-		req.body["province_id"] == undefined ||
-		req.body["province_id"] == null ||
-		req.body["district"] == undefined ||
-		req.body["district"] == null ||
-		req.body["district"] == "" ||
-		req.body["village"] == undefined ||
-		req.body["village"] == null ||
-		req.body["village"] == "" ||
-		req.body["phone"] == undefined ||
-		req.body["phone"] == null ||
-		req.body["phone"] == "" ||
-		req.body["password"] == undefined ||
-		req.body["password"] == null ||
-		req.body["password"] == "" ||
-		req.body["fb_uid"] == undefined ||
-		req.body["fb_uid"] == null ||
-		req.body["fb_uid"] == ""
-	) {
-		return false;
-	}
+	const fields = [
+		"full_name",
+		"date_of_birth",
+		"gender",
+		"province_id",
+		"district",
+		"village",
+		"phone",
+		"password",
+		"fb_uid",
+	];
 
-	return true;
+	return fields.every(
+		(field) =>
+			req.body[field] !== undefined &&
+			req.body[field] !== null &&
+			req.body[field] !== ""
+	);
 }
 
 function verifyOwnerRegisterForm(req: Request): boolean {
+	const fields = [
+		"restaurant_name",
+		"restaurant_type_id",
+		"restaurant_purchase_order_id",
+		"restaurant_branch_id",
+		"location",
+		"owner_type_id",
+		"phone",
+		"password",
+		"fb_uid",
+	];
+
 	if (
-		req.body["restaurant_name"] == undefined ||
-		req.body["restaurant_name"] == null ||
-		req.body["restaurant_name"] == "" ||
-		req.body["restaurant_type_id"] == undefined ||
-		req.body["restaurant_type_id"] == null ||
-		req.body["restaurant_purchase_order_id"] == undefined ||
-		req.body["restaurant_purchase_order_id"] == null ||
-		req.body["restaurant_branch_id"] == undefined ||
-		req.body["restaurant_branch_id"] == null ||
-		req.body["location"] == undefined ||
-		req.body["location"] == null ||
-		req.body["location"] == "" ||
-		req.body["owner_type_id"] == undefined ||
-		req.body["owner_type_id"] == null ||
-		req.body["phone"] == undefined ||
-		req.body["phone"] == null ||
-		req.body["phone"] == "" ||
-		req.body["password"] == undefined ||
-		req.body["password"] == null ||
-		req.body["password"] == "" ||
-		req.body["fb_uid"] == undefined ||
-		req.body["fb_uid"] == null ||
-		req.body["fb_uid"] == ""
+		fields.some(
+			(field) =>
+				req.body[field] === undefined ||
+				req.body[field] === null ||
+				req.body[field] === ""
+		)
 	) {
 		return false;
 	}
 
 	if (req.body["owner_type_id"] == "1") {
-		if (
-			req.body["full_name"] == undefined ||
-			req.body["full_name"] == null ||
-			req.body["full_name"] == "" ||
-			req.body["id_card_number"] == undefined ||
-			req.body["id_card_number"] == null ||
-			req.body["id_card_number"] == "" ||
-			req.body["address"] == undefined ||
-			req.body["address"] == null ||
-			req.body["address"] == ""
-		) {
-			return false;
-		}
-	} else {
-		if (
-			req.body["company_name"] == undefined ||
-			req.body["company_name"] == null ||
-			req.body["company_name"] == "" ||
-			req.body["juristic_person_registration_number"] == undefined ||
-			req.body["juristic_person_registration_number"] == null ||
-			req.body["juristic_person_registration_number"] == "" ||
-			req.body["registration_address"] == undefined ||
-			req.body["registration_address"] == null ||
-			req.body["registration_address"] == ""
-		) {
-			return false;
-		}
-	}
+		const ownerFields = ["full_name", "id_card_number", "address"];
 
-	return true;
+		return ownerFields.every(
+			(field) =>
+				req.body[field] !== undefined &&
+				req.body[field] !== null &&
+				req.body[field] !== ""
+		);
+	} else {
+		const companyFields = [
+			"company_name",
+			"juristic_person_registration_number",
+			"registration_address",
+		];
+
+		return companyFields.every(
+			(field) =>
+				req.body[field] !== undefined &&
+				req.body[field] !== null &&
+				req.body[field] !== ""
+		);
+	}
 }

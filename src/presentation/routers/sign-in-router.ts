@@ -8,6 +8,7 @@ import { GetIndividualCustomerUseCase } from "../../domain/interfaces/use-cases/
 import { GetJuristicPersonCustomerUseCase } from "../../domain/interfaces/use-cases/customer/get-juristic-person-customer";
 import { GetStaffUseCase } from "../../domain/interfaces/use-cases/staff/get-staff";
 import { GetStaffDetailUseCase } from "../../domain/interfaces/use-cases/staff-detail/get-staff-detail";
+import { GetAdminByUserIdUseCase } from "../../domain/interfaces/use-cases/admin/get-admin";
 
 export default function SignInRouter(
 	getUserByPhoneNumberAndPasswordFromUserDBUseCase: GetUserByPhoneNumberAndPasswordFromUserDBUseCase,
@@ -15,6 +16,7 @@ export default function SignInRouter(
 	getIndividualCustomerUseCase: GetIndividualCustomerUseCase,
 	getJuristicPersonCustomerUseCase: GetJuristicPersonCustomerUseCase,
 	getStaffUseCase: GetStaffUseCase,
+	getAdminByUserIdUseCase: GetAdminByUserIdUseCase,
 	getStaffDetailUseCase: GetStaffDetailUseCase,
 	jsonWebTokenService: JsonWebTokenService
 ) {
@@ -31,7 +33,7 @@ export default function SignInRouter(
 						password
 					);
 				if (user != null) {
-					if (user.user_type_id == 3) {
+					if (user.user_type_id == 2) {
 						const customer = await getCustomerUseCase.execute(
 							user.id
 						);
@@ -110,7 +112,7 @@ export default function SignInRouter(
 								})
 							);
 						}
-					} else {
+					} else if (user.user_type_id == 3) {
 						const staff = await getStaffUseCase.execute(user.id);
 						if (staff != null) {
 							const staffDetail =
@@ -136,6 +138,84 @@ export default function SignInRouter(
 								})
 							);
 						}
+					} else {
+						res.send(
+							new APIResponse(400, {
+								message: "Bad Request.",
+							})
+						);
+					}
+				} else {
+					res.send(
+						new APIResponse(404, {
+							message: "User or password wrong",
+						})
+					);
+				}
+			} else {
+				res.send(
+					new APIResponse(400, {
+						message: "Bad request.",
+					})
+				);
+			}
+		} catch (err) {
+			res.send(new APIResponse(500, { message: "Error fetching data" }));
+		}
+	});
+
+	router.post("/admin", async (req: Request, res: Response) => {
+		try {
+			const phone = req.body["phone"];
+			const password = req.body["password"];
+			if (phone && password) {
+				const user =
+					await getUserByPhoneNumberAndPasswordFromUserDBUseCase.execute(
+						phone,
+						password
+					);
+				if (user != null) {
+					if (user.user_type_id == 1) {
+						const admin = await getAdminByUserIdUseCase.execute(
+							user.id
+						);
+						if (admin != null) {
+							jsonWebTokenService
+								.generateToken(admin.full_name!, phone)
+								.then((userToken) => {
+									const ut = userToken;
+									ut.id = user.id;
+									const data = {
+										access_token: ut.access_token,
+										refresh_token: ut.refresh_token,
+										user: {
+											id: user.id,
+											display_name: ut.display_name,
+											role_id: admin.role_id,
+										},
+									};
+									res.send(new APIResponse(200, data));
+								})
+								.catch((err) => {
+									res.send(
+										new APIResponse(401, {
+											message: "Unauthorized.",
+										})
+									);
+								});
+						} else {
+							res.send(
+								new APIResponse(404, {
+									message: "User not found",
+								})
+							);
+						}
+					} else {
+						res.send(
+							new APIResponse(400, {
+								message: "Bad Request.",
+							})
+						);
 					}
 				} else {
 					res.send(

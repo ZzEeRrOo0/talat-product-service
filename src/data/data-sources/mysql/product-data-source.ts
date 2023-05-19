@@ -180,6 +180,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					[paginate.pageSize, paginate.startIndex],
 					(pError, pResult) => {
 						if (pError) {
+							console.log(pError);
 							throw new Error("Internal server error.");
 						}
 

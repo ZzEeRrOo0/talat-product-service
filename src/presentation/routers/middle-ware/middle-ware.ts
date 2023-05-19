@@ -90,6 +90,11 @@ import { GetOrderListUseCaseImpl } from "../../../domain/use-cases/order/get-lis
 import { GetRestaurantList } from "../../../domain/use-cases/restaurant/get-restaurant-list";
 import { GetOrderDetailsUseCaseImpl } from "../../../domain/use-cases/order/get-order-detail";
 import { GetOrderUseCaseImpl } from "../../../domain/use-cases/order/get-order";
+import AdminRouter from "../admin-router";
+import { AddAdmin } from "../../../domain/use-cases/admin/add-admin";
+import { AdminRepositoryImpl } from "../../../domain/repositories/admin-repository";
+import { AdminDataSourceImpl } from "../../../data/data-sources/mysql/admin-data-source";
+import { GetAdminByUserId } from "../../../domain/use-cases/admin/get-admin";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -199,7 +204,8 @@ export const ProductMiddleWare = ProductRouter(
 			),
 			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
-	)
+	),
+	new JsonWebTokenServiceImpl()
 );
 
 export const CategoriesMiddleWare = CategoriesRouter(
@@ -363,38 +369,15 @@ export const SignInMiddleWare = SignInRouter(
 		new CustomerRepositoryImpl(new CustomerDataSourceImpl())
 	),
 	new GetStaff(new StaffRepositoryImpl(new StaffDataSourceImpl())),
+	new GetAdminByUserId(new AdminRepositoryImpl(new AdminDataSourceImpl())),
 	new GetStaffDetail(
 		new StaffDetailRepositoryImpl(new StaffDetailDataSourceImpl())
 	),
-	new JsonWebTokenServiceImpl(
-		new UserRepositoryImpl(
-			new UserDataSourceImpl(
-				new Pagination(),
-				new FindUserByQueryImpl(),
-				new AuthenticationServiceImpl()
-			),
-			new FirebaseStorageDataSourceImpl(
-				new GoogleStorage(),
-				new AuthenticationServiceImpl()
-			)
-		)
-	)
+	new JsonWebTokenServiceImpl()
 );
 
 export const RefreshTokenMiddleWare = RefreshTokenRouter(
-	new JsonWebTokenServiceImpl(
-		new UserRepositoryImpl(
-			new UserDataSourceImpl(
-				new Pagination(),
-				new FindUserByQueryImpl(),
-				new AuthenticationServiceImpl()
-			),
-			new FirebaseStorageDataSourceImpl(
-				new GoogleStorage(),
-				new AuthenticationServiceImpl()
-			)
-		)
-	)
+	new JsonWebTokenServiceImpl()
 );
 
 export const SearchMiddleWare = SearchRouter(
@@ -416,21 +399,7 @@ export const RestuarantMiddleWare = RestuarantRouter(
 	new GetRestaurantDetail(
 		new RestaurantRepositoryImpl(new RestaurantDataSourceImpl())
 	),
-	new GetCustomer(new CustomerRepositoryImpl(new CustomerDataSourceImpl())),
-	new AuthenticationServiceImpl(),
-	new JsonWebTokenServiceImpl(
-		new UserRepositoryImpl(
-			new UserDataSourceImpl(
-				new Pagination(),
-				new FindUserByQueryImpl(),
-				new AuthenticationServiceImpl()
-			),
-			new FirebaseStorageDataSourceImpl(
-				new GoogleStorage(),
-				new AuthenticationServiceImpl()
-			)
-		)
-	)
+	new GetCustomer(new CustomerRepositoryImpl(new CustomerDataSourceImpl()))
 );
 
 export const OrderMiddleWare = OrderRouter(
@@ -455,9 +424,13 @@ export const OrderMiddleWare = OrderRouter(
 			),
 			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
-	),
-	new AuthenticationServiceImpl(),
-	new JsonWebTokenServiceImpl(
+	)
+);
+
+export const JsonWebTokenServiceMiddleWare = new JsonWebTokenServiceImpl();
+
+export const AdminMiddleWare = AdminRouter(
+	new AddUser(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
 				new Pagination(),
@@ -469,5 +442,6 @@ export const OrderMiddleWare = OrderRouter(
 				new AuthenticationServiceImpl()
 			)
 		)
-	)
+	),
+	new AddAdmin(new AdminRepositoryImpl(new AdminDataSourceImpl()))
 );

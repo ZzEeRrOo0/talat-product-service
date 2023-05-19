@@ -1,14 +1,12 @@
 import { admin } from "../../../../config/firebase";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../../../../config/constants";
-import { Request } from "express";
 
 export interface AuthenticationService {
 	verifyToken(token: string): Promise<boolean>;
 	getUserByPhoneNumber(phone: string): Promise<boolean>;
 	encryptPassword(password: string): Promise<string>;
 	decryptPassword(password: string, hash: string): Promise<boolean>;
-	checkHeaders(req: Request): boolean;
 }
 
 export class AuthenticationServiceImpl implements AuthenticationService {
@@ -74,13 +72,5 @@ export class AuthenticationServiceImpl implements AuthenticationService {
 				}
 			});
 		});
-	}
-
-	checkHeaders(req: Request): boolean {
-		if (!("user-id" in req.headers)) {
-			return false;
-		}
-
-		return true;
 	}
 }

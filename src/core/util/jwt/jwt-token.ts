@@ -1,8 +1,7 @@
 import path from "path";
 import { UserToken } from "../../../domain/entities/user-token";
 import jwt from "jsonwebtoken";
-import { Request } from "express";
-import { UserRepository } from "../../../domain/interfaces/repositories/user-repository";
+import { Request, Response, NextFunction } from "express";
 
 var fs = require("fs");
 
@@ -15,17 +14,11 @@ const publicKey = fs.readFileSync(
 
 export interface JsonWebTokenService {
 	generateToken(name: string, phone: string): Promise<UserToken>;
-	verifyAccessToken(req: Request): Promise<boolean>;
+	verifyAccessToken(req: Request, res: Response, next: NextFunction): void;
 	verifyRefreshToken(refreshToken: string): Promise<UserToken>;
 }
 
 export class JsonWebTokenServiceImpl implements JsonWebTokenService {
-	userRepository: UserRepository;
-
-	constructor(userRepository: UserRepository) {
-		this.userRepository = userRepository;
-	}
-
 	generateToken(name: string, phone: string): Promise<UserToken> {
 		return new Promise((resolve, reject) => {
 			try {
@@ -57,37 +50,29 @@ export class JsonWebTokenServiceImpl implements JsonWebTokenService {
 		});
 	}
 
-	verifyAccessToken(req: Request): Promise<boolean> {
-		return new Promise((resolve, reject) => {
-			try {
-				let authHeader = req.headers["authorization"];
+	verifyAccessToken(req: Request, res: Response, next: NextFunction): void {
+		try {
+			let authHeader = req.headers["authorization"] as string;
+			let userHeader = req.headers["x-user-id"] ?? null;
 
-				if (authHeader?.startsWith("Bearer ")) {
-					const token = authHeader!.substring(7, authHeader!.length);
+			console.log(req.headers);
 
-					jwt.verify(token, publicKey, async (err, decoded) => {
-						if (err) {
-							resolve(false);
-						}
+			if (authHeader?.startsWith("Bearer ") && userHeader != null) {
+				const token = authHeader!.substring(7, authHeader!.length);
 
-						const isExistUser =
-							await this.userRepository.getUserByPhoneNumberFromUserDB(
-								decoded.phone
-							);
+				jwt.verify(token, publicKey, async (err, decoded) => {
+					if (err) {
+						res.status(400).json({ message: "Bad Request." });
+					}
 
-						if (isExistUser) {
-							resolve(true);
-						} else {
-							resolve(false);
-						}
-					});
-				} else {
-					resolve(false);
-				}
-			} catch (err) {
-				resolve(false);
+					next();
+				});
+			} else {
+				res.status(400).json({ message: "Unauthorize." });
 			}
-		});
+		} catch (err) {
+			res.status(500).json({ message: "Internal server error." });
+		}
 	}
 
 	verifyRefreshToken(refreshToken: string): Promise<UserToken> {

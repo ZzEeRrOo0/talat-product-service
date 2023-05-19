@@ -13,6 +13,7 @@ import { ProductImage } from "../../domain/entities/product-image";
 import { UpdateProductPriceUseCase } from "../../domain/interfaces/use-cases/product-size/update-product-price";
 import { UpdateProductStatusUseCase } from "../../domain/interfaces/use-cases/product/update-product-statatus-usecase";
 import { GetProductByProductIdUseCase } from "../../domain/interfaces/use-cases/product/get-by-product-id";
+import { JsonWebTokenService } from "../../core/util/jwt/jwt-token";
 
 export default function ProductRouter(
 	getAllProductUseCase: GetAllProductUseCase,
@@ -25,6 +26,7 @@ export default function ProductRouter(
 	updateProductPriceUseCase: UpdateProductPriceUseCase,
 	updateProductStatusUseCase: UpdateProductStatusUseCase,
 	getProductByProductIdUseCase: GetProductByProductIdUseCase,
+	jsonWebTokenService: JsonWebTokenService
 ) {
 	const router = express.Router();
 	const upload = multer({
@@ -58,24 +60,30 @@ export default function ProductRouter(
 		}
 	});
 
-	router.post("/", async (req: Request, res: Response) => {
-		try {
-			//TODO check body and haldle bad request
-			const productID = await addProductUseCase.execute(req.body);
-			await addProductSizeUseCase.execute({
-				productId: productID,
-				...req.body,
-			});
-			res.send(
-				new APIResponse(200, {
-					product_id: productID,
-					message: "Created Successfully",
-				})
-			);
-		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error saving data" }));
+	router.post(
+		"/",
+		jsonWebTokenService.verifyAccessToken,
+		async (req: Request, res: Response) => {
+			try {
+				//TODO check body and haldle bad request
+				const productID = await addProductUseCase.execute(req.body);
+				await addProductSizeUseCase.execute({
+					productId: productID,
+					...req.body,
+				});
+				res.send(
+					new APIResponse(200, {
+						product_id: productID,
+						message: "Created Successfully",
+					})
+				);
+			} catch (err) {
+				res.send(
+					new APIResponse(500, { message: "Error saving data" })
+				);
+			}
 		}
-	});
+	);
 
 	router.get("/category/:id", async (req: Request, res: Response) => {
 		try {
@@ -99,51 +107,68 @@ export default function ProductRouter(
 		}
 	});
 
-	router.put("/update-price/:id", async (req: Request, res: Response) => {
-		try {
-			let price = req.body.price ?? "0";
-			if (price !== "0") {
-				await updateProductPriceUseCase.execute(
-					req.params.id,
-					price as string
-				);
+	router.put(
+		"/update-price/:id",
+		jsonWebTokenService.verifyAccessToken,
+		async (req: Request, res: Response) => {
+			try {
+				let price = req.body.price ?? "0";
+				if (price !== "0") {
+					await updateProductPriceUseCase.execute(
+						req.params.id,
+						price as string
+					);
+					res.send(
+						new APIResponse(200, {
+							message: "update Product price successful",
+						})
+					);
+				} else {
+					res.send(
+						new APIResponse(400, { message: "Error wrong data" })
+					);
+				}
+			} catch (err) {
 				res.send(
-					new APIResponse(200, {
-						message: "update Product price successful",
-					})
+					new APIResponse(500, { message: "Error fetching data" })
 				);
-			} else {
-				res.send(new APIResponse(400, { message: "Error wrong data" }));
 			}
-		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error fetching data" }));
 		}
-	});
+	);
 
-	router.put("/update-status/:id", async (req: Request, res: Response) => {
-		try {
-			let status = req.body.status ?? 0;
-			if (status !== null) {
-				await updateProductStatusUseCase.execute(
-					req.params.id,
-					status as number
-				);
+	router.put(
+		"/update-status/:id",
+		jsonWebTokenService.verifyAccessToken,
+		async (req: Request, res: Response) => {
+			try {
+				let status = req.body.status ?? 0;
+				if (status !== null) {
+					await updateProductStatusUseCase.execute(
+						req.params.id,
+						status as number
+					);
+					res.send(
+						new APIResponse(200, {
+							message: "update Product status successful",
+						})
+					);
+				} else {
+					res.send(
+						new APIResponse(400, { message: "Error wrong data" })
+					);
+				}
+			} catch (err) {
 				res.send(
-					new APIResponse(200, {
-						message: "update Product status successful",
-					})
+					new APIResponse(500, { message: "Error fetching data" })
 				);
-			} else {
-				res.send(new APIResponse(400, { message: "Error wrong data" }));
 			}
-		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error fetching data" }));
 		}
-	});
+	);
 
 	router.post(
 		"/upload-image/:id",
 		upload.single("product_image"),
+		jsonWebTokenService.verifyAccessToken,
 		async (req: Request, res: Response) => {
 			try {
 				if (req.file) {

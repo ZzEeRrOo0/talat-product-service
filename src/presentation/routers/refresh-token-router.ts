@@ -10,10 +10,14 @@ export default function RefreshTokenRouter(
 
 	router.post("/", verifyRefreshBody, async (req: Request, res: Response) => {
 		try {
-			const userToken = await jsonWebTokenService.verifyRefreshToken(
-				req.body["refresh_token"]
-			);
-			res.send(new APIResponse(200, userToken));
+			await jsonWebTokenService
+				.verifyRefreshToken(req.body["refresh_token"])
+				.then((userToken) => {
+					res.send(new APIResponse(200, userToken));
+				})
+				.catch((err) => {
+					return res.status(401).json({ message: "Unauthorized" });	
+				});
 		} catch (err) {
 			res.send(new APIResponse(500, { message: "Error fetching data" }));
 		}
