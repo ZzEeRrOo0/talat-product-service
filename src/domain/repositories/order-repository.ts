@@ -1,9 +1,10 @@
+import { Request } from "express";
 import { OrderDetail } from "../entities/order-detail";
 import { OrderRepository } from "../interfaces/repositories/order-repository";
 import { OrderDataSource } from "../../data/interfaces/data-sources/mysql/order-data-source";
 import { OrderListItem } from "../entities/order-list-item";
 import { Order } from "../entities/order";
-import { OrderDetailResponse } from "../entities/order-detail-response";
+import { AllOrder } from "../entities/all-order";
 
 export class OrderRepositoryImpl implements OrderRepository {
 	orderDataSource: OrderDataSource;
@@ -20,6 +21,18 @@ export class OrderRepositoryImpl implements OrderRepository {
 		return await this.orderDataSource.addOrderDetail(orderDetail);
 	}
 
+	async getAllOrder(
+		currentPage: number,
+		pageSize: number,
+		req: Request
+	): Promise<AllOrder> {
+		return await this.orderDataSource.getAllOrder(
+			currentPage,
+			pageSize,
+			req
+		);
+	}
+
 	async getOrders(
 		restaurants: Array<number>,
 		status?: number
@@ -33,5 +46,12 @@ export class OrderRepositoryImpl implements OrderRepository {
 
 	async getOrderDetails(orderId: number): Promise<OrderDetail[]> {
 		return await this.orderDataSource.getOrderDetailByOrderId(orderId);
+	}
+
+	async updateOrderStatus(orderId: number, status: number): Promise<boolean> {
+		return await this.orderDataSource.updateOrderStatusByOrderId(
+			orderId,
+			status
+		);
 	}
 }

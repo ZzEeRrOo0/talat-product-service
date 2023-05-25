@@ -55,9 +55,7 @@ export class JsonWebTokenServiceImpl implements JsonWebTokenService {
 			let authHeader = req.headers["authorization"] as string;
 			let userHeader = req.headers["x-user-id"] ?? null;
 
-			console.log(req.headers);
-
-			if (authHeader?.startsWith("Bearer ") && userHeader != null) {
+			if (authHeader?.startsWith("Bearer ") && userHeader) {
 				const token = authHeader!.substring(7, authHeader!.length);
 
 				jwt.verify(token, publicKey, async (err, decoded) => {

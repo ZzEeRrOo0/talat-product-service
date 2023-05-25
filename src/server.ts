@@ -11,6 +11,7 @@ const options: cors.CorsOptions = {
 		"X-Access-Token",
 		"Authorization",
 		"X-User-Id",
+		"X-User-Type-Id",
 	],
 	credentials: true,
 	methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",

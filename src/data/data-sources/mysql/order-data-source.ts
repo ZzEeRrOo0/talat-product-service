@@ -1,11 +1,21 @@
+import { promisify } from "util";
+import { Request } from "express";
 import { OrderDataSource } from "../../interfaces/data-sources/mysql/order-data-source";
 import { OrderDetailModel } from "./models/order-detail";
 import { transection_db } from "../../../../config/database";
 import { OkPacket, RowDataPacket } from "mysql2";
 import { OrderListItemModel } from "./models/order-list-item";
 import { OrderModel } from "./models/order";
+import { AllOrderModel } from "./models/all-order";
+import { Pagination } from "../../../core/pagination";
 
 export class OrderDataSourceImpl implements OrderDataSource {
+	paginationService: Pagination;
+
+	constructor($paginationService: Pagination) {
+		this.paginationService = $paginationService;
+	}
+
 	createNewOrder(order: OrderModel): Promise<number> {
 		const sql =
 			"INSERT INTO orders (no, restaurant_id, delivery_time, order_status_id) VALUES(?, ?, ?, ?)";
@@ -56,12 +66,104 @@ export class OrderDataSourceImpl implements OrderDataSource {
 		});
 	}
 
+	getAllOrder(
+		currentPage: number,
+		pageSize: number,
+		req: Request
+	): Promise<AllOrderModel> {
+		const getTotalItemSql = req.query.orderNo
+			? `SELECT COUNT(*) AS total FROM orders WHERE no=${req.query.orderNo} AND deleted_at IS NULL`
+			: `SELECT COUNT(*) AS total FROM orders WHERE ${
+					req.query.status != undefined ? "order_status_id=? AND" : ""
+			  } deleted_at IS NULL`;
+
+		const getOrdersSql = `SELECT id, no, restaurant_id, delivery_time, order_status_id, created_at, (SELECT COUNT(*) FROM order_details WHERE order_id=orders.id) AS total FROM orders WHERE ${
+			req.query.orderNo ? "no=? AND" : ""
+		}${
+			req.query.status ? "order_status_id=? AND" : ""
+		} deleted_at IS NULL ORDER BY created_at DESC LIMIT ? OFFSET ?`;
+
+		return new Promise((resolve, reject) => {
+			transection_db.query(
+				getTotalItemSql,
+				req.query.status ? [req.query.status] : [],
+				(error, result) => {
+					if (error) {
+						console.log(error);
+						throw new Error("Internal server error.");
+					}
+
+					const data = <RowDataPacket>result;
+
+					const paginate = this.paginationService.paginate(
+						data[0].total,
+						currentPage,
+						pageSize,
+						20
+					);
+
+					transection_db.query(
+						getOrdersSql,
+						req.query.status
+							? [
+									req.query.status,
+									paginate.pageSize,
+									paginate.startIndex,
+							  ]
+							: req.query.orderNo
+							? [
+									req.query.orderNo,
+									paginate.pageSize,
+									paginate.startIndex,
+							  ]
+							: [paginate.pageSize, paginate.startIndex],
+						(pError, pResult) => {
+							if (pError) {
+								console.log(pError);
+								throw new Error("Internal server error.");
+							}
+
+							const data = pResult as RowDataPacket;
+
+							const orders: OrderListItemModel[] = data.map(
+								(e: {
+									id: number;
+									no: string;
+									restaurant_id: number;
+									delivery_time: Date;
+									order_status_id: number;
+									created_at: Date;
+									total: number;
+								}) =>
+									new OrderListItemModel(
+										e.id,
+										e.no,
+										e.restaurant_id,
+										e.delivery_time,
+										e.order_status_id,
+										e.total
+									)
+							);
+
+							const allOrderResponse = new AllOrderModel(
+								orders,
+								paginate
+							);
+
+							resolve(allOrderResponse);
+						}
+					);
+				}
+			);
+		});
+	}
+
 	getOrders(
 		restaurants: Array<number>,
 		status?: number
 	): Promise<OrderListItemModel[]> {
 		const sql =
-			"SELECT id, restaurant_id, delivery_time, order_status_id, (SELECT COUNT(*) FROM order_details WHERE order_id=id) AS total FROM orders " +
+			"SELECT id, no, restaurant_id, delivery_time, order_status_id, (SELECT COUNT(*) FROM order_details WHERE order_id=orders.id) AS total FROM orders " +
 			`WHERE ${
 				status != undefined ? "order_status_id=?" : "order_status_id!=5"
 			} ${restaurants.length > 0 ? "AND" : ""} ${restaurants
@@ -82,6 +184,7 @@ export class OrderDataSourceImpl implements OrderDataSource {
 					const orders: OrderListItemModel[] = data.map(
 						(e: {
 							id: number;
+							no: string;
 							restaurant_id: number;
 							delivery_time: Date;
 							order_status_id: number;
@@ -89,6 +192,7 @@ export class OrderDataSourceImpl implements OrderDataSource {
 						}) =>
 							new OrderListItemModel(
 								e.id,
+								e.no,
 								e.restaurant_id,
 								e.delivery_time,
 								e.order_status_id,
@@ -160,6 +264,31 @@ export class OrderDataSourceImpl implements OrderDataSource {
 				);
 
 				resolve(orderDetails);
+			});
+		});
+	}
+
+	updateOrderStatusByOrderId(
+		orderId: number,
+		status: number
+	): Promise<boolean> {
+		const sql =
+			"UPDATE orders SET order_status_id=? WHERE id=? AND deleted_at IS NULL";
+
+		return new Promise((resolve, reject) => {
+			transection_db.query(sql, [status, orderId], (error, result) => {
+				if (error) {
+					console.log(error);
+					throw new Error("Internal server error.");
+				}
+
+				const data = <OkPacket>result;
+
+				if (data.affectedRows === 1) {
+					resolve(true);
+				}
+
+				resolve(false);
 			});
 		});
 	}

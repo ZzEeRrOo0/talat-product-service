@@ -18,7 +18,7 @@ export default function RestuarantRouter(
 		"/list",
 		async (req: Request, res: Response, next: NextFunction) => {
 			try {
-				const userId = req.headers["user-id"]?.toString();
+				const userId = req.headers["x-user-id"]?.toString();
 				const customer = await getCustomerUseCase.execute(
 					Number.parseInt(userId!)
 				);
@@ -47,12 +47,17 @@ export default function RestuarantRouter(
 		"/detail",
 		async (req: Request, res: Response, next: NextFunction) => {
 			try {
-				const userId = req.headers["user-id"]?.toString();
-				const customer = await getCustomerUseCase.execute(
-					Number.parseInt(userId!)
-				);
+				const userId = req.headers["x-user-id"]
+					? req.headers["x-user-id"]?.toString()
+					: null;
+				const userTypeId = req.headers["x-user-type-id"]?.toString();
+				const customer =
+					userId ??
+					(await getCustomerUseCase.execute(
+						Number.parseInt(userId!)
+					));
 
-				if (customer != null) {
+				if (customer != null || userTypeId == "1") {
 					const restaurantId = req.query["restaurantId"];
 					if (restaurantId != null && restaurantId != undefined) {
 						const restaurantDetail =

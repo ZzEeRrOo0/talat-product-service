@@ -191,6 +191,7 @@ export default function SignInRouter(
 										user: {
 											id: user.id,
 											display_name: ut.display_name,
+											user_type_id: user.user_type_id,
 											role_id: admin.role_id,
 										},
 									};

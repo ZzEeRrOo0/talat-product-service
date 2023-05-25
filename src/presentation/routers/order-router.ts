@@ -9,6 +9,8 @@ import { Order } from "../../domain/entities/order";
 import { GetOrderDetailsUseCase } from "../../domain/interfaces/use-cases/order/get-order-detail";
 import { GetOrderUseCase } from "../../domain/interfaces/use-cases/order/get-order";
 import { GetProductByProductIdUseCase } from "../../domain/interfaces/use-cases/product/get-by-product-id";
+import { GetAllOrderUseCase } from "../../domain/interfaces/use-cases/order/get-all-order";
+import { UpdateOrderStatusUseCase } from "../../domain/interfaces/use-cases/order/update-order-status";
 import {
 	OrderDetailResponse,
 	ProductItemDetail,
@@ -17,12 +19,29 @@ import {
 export default function OrderRouter(
 	createNewOrderUseCase: CreateNewOrderUseCase,
 	addOrderDetailUseCase: AddOrderDetailUseCase,
+	getAllOrderUseCase: GetAllOrderUseCase,
 	getOrderListUseCase: GetOrderListUseCase,
 	getOrderUseCase: GetOrderUseCase,
 	getOrderDetailsUseCase: GetOrderDetailsUseCase,
-	getProductByProductIdUseCase: GetProductByProductIdUseCase
+	getProductByProductIdUseCase: GetProductByProductIdUseCase,
+	updateOrderStatusUseCase: UpdateOrderStatusUseCase
 ) {
 	const router = express.Router();
+
+	router.get("/all", async (req: Request, res: Response) => {
+		try {
+			const currentPage = req.query["currentPage"]?.toString() ?? "1";
+			const pageSize = req.query["pageSize"]?.toString() ?? "10";
+			const orders = await getAllOrderUseCase.execute(
+				Number.parseInt(currentPage),
+				Number.parseInt(pageSize),
+				req
+			);
+			res.send(new APIResponse(200, orders));
+		} catch (err) {
+			res.send(new APIResponse(500, { message: "Error fetching data" }));
+		}
+	});
 
 	router.get("/list", async (req: Request, res: Response) => {
 		try {
@@ -47,7 +66,7 @@ export default function OrderRouter(
 		}
 	});
 
-	router.get("/detail/:id", async (req: Request, res: Response) => {
+	router.get("/details/:id", async (req: Request, res: Response) => {
 		try {
 			const orderId = req.params.id;
 			if (orderId == null || orderId == undefined) {
@@ -72,7 +91,9 @@ export default function OrderRouter(
 									e.product_id!,
 									productDetail[0].name,
 									Number.parseFloat(e.amount.toString()),
-									Number.parseInt(e.price?.toString() ?? "0")
+									Number.parseInt(e.price?.toString() ?? "0"),
+									productDetail[0].productSizeType ?? "",
+									productDetail[0].image ?? ''
 								);
 							}
 						)
@@ -92,7 +113,7 @@ export default function OrderRouter(
 				}
 			}
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error saving data" }));
+			res.send(new APIResponse(500, { message: "Error fetch data" }));
 		}
 	});
 
@@ -123,6 +144,26 @@ export default function OrderRouter(
 				});
 
 				res.send(new APIResponse(200, { message: "Success." }));
+			} else {
+				res.send(new APIResponse(400, { message: "Bad Request." }));
+			}
+		} catch (err) {
+			res.send(new APIResponse(500, { message: "Error saving data" }));
+		}
+	});
+
+	router.post("/update-status", async (req: Request, res: Response) => {
+		try {
+			const orderId = req.body["order_id"];
+			const status = req.body["status"];
+			if (orderId && status) {
+				const order = await getOrderUseCase.execute(orderId);
+				if (order) {
+					await updateOrderStatusUseCase.execute(orderId, status);
+					res.send(new APIResponse(200, { message: "Success." }));
+				} else {
+					res.send(new APIResponse(400, { message: "Bad Request." }));
+				}
 			} else {
 				res.send(new APIResponse(400, { message: "Bad Request." }));
 			}

@@ -95,6 +95,8 @@ import { AddAdmin } from "../../../domain/use-cases/admin/add-admin";
 import { AdminRepositoryImpl } from "../../../domain/repositories/admin-repository";
 import { AdminDataSourceImpl } from "../../../data/data-sources/mysql/admin-data-source";
 import { GetAdminByUserId } from "../../../domain/use-cases/admin/get-admin";
+import { GetAllOrderUseCaseImpl } from "../../../domain/use-cases/order/get-all-order";
+import { UpdateOrderStatusUseCaseImpl } from "../../../domain/use-cases/order/update-order-status";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -404,17 +406,22 @@ export const RestuarantMiddleWare = RestuarantRouter(
 
 export const OrderMiddleWare = OrderRouter(
 	new CreateNewOrderUseCaseImpl(
-		new OrderRepositoryImpl(new OrderDataSourceImpl())
+		new OrderRepositoryImpl(new OrderDataSourceImpl(new Pagination()))
 	),
 	new AddOrderDetailUseCaseImpl(
-		new OrderRepositoryImpl(new OrderDataSourceImpl())
+		new OrderRepositoryImpl(new OrderDataSourceImpl(new Pagination()))
+	),
+	new GetAllOrderUseCaseImpl(
+		new OrderRepositoryImpl(new OrderDataSourceImpl(new Pagination()))
 	),
 	new GetOrderListUseCaseImpl(
-		new OrderRepositoryImpl(new OrderDataSourceImpl())
+		new OrderRepositoryImpl(new OrderDataSourceImpl(new Pagination()))
 	),
-	new GetOrderUseCaseImpl(new OrderRepositoryImpl(new OrderDataSourceImpl())),
+	new GetOrderUseCaseImpl(
+		new OrderRepositoryImpl(new OrderDataSourceImpl(new Pagination()))
+	),
 	new GetOrderDetailsUseCaseImpl(
-		new OrderRepositoryImpl(new OrderDataSourceImpl())
+		new OrderRepositoryImpl(new OrderDataSourceImpl(new Pagination()))
 	),
 	new GetProductByProductId(
 		new ProductRepositoryImpl(
@@ -424,6 +431,9 @@ export const OrderMiddleWare = OrderRouter(
 			),
 			new CloudinaryDataSourceImpl(new Cloudinary())
 		)
+	),
+	new UpdateOrderStatusUseCaseImpl(
+		new OrderRepositoryImpl(new OrderDataSourceImpl(new Pagination()))
 	)
 );
 
