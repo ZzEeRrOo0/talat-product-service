@@ -1,5 +1,4 @@
 import express, { Request, Response } from "express";
-import { APIResponse } from "../../core/response/api-response";
 import { CreateNewOrderUseCase } from "../../domain/interfaces/use-cases/order/create-new-order";
 import { AddOrderDetailUseCase } from "../../domain/interfaces/use-cases/order/add-order-detail";
 import { OrderDetail } from "../../domain/entities/order-detail";
@@ -15,6 +14,7 @@ import {
 	OrderDetailResponse,
 	ProductItemDetail,
 } from "../../domain/entities/order-detail-response";
+import { sendResponse } from "../../core/response/api-response";
 
 export default function OrderRouter(
 	createNewOrderUseCase: CreateNewOrderUseCase,
@@ -37,9 +37,9 @@ export default function OrderRouter(
 				Number.parseInt(pageSize),
 				req
 			);
-			res.send(new APIResponse(200, orders));
+			sendResponse(res, 200, orders);
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error fetching data" }));
+			sendResponse(res, 500, { message: "Error fetching data" });
 		}
 	});
 
@@ -53,16 +53,16 @@ export default function OrderRouter(
 				: [];
 			const restaurantsValue = restaurants.map((e) => Number.parseInt(e));
 			if (restaurantsValue.length < 1) {
-				res.send(new APIResponse(400, { message: "Bad request." }));
+				sendResponse(res, 400, { message: "Bad request." });
 			} else {
 				const orders = await getOrderListUseCase.execute(
 					restaurantsValue,
 					status
 				);
-				res.send(new APIResponse(200, orders));
+				sendResponse(res, 200, orders);
 			}
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error saving data" }));
+			sendResponse(res, 500, { message: "Error saving data" });
 		}
 	});
 
@@ -70,7 +70,7 @@ export default function OrderRouter(
 		try {
 			const orderId = req.params.id;
 			if (orderId == null || orderId == undefined) {
-				res.send(new APIResponse(400, { message: "Bad Request." }));
+				sendResponse(res, 400, { message: "Bad Request." });
 			} else {
 				const order = await getOrderUseCase.execute(
 					Number.parseInt(orderId)
@@ -93,7 +93,7 @@ export default function OrderRouter(
 									Number.parseFloat(e.amount.toString()),
 									Number.parseInt(e.price?.toString() ?? "0"),
 									productDetail[0].productSizeType ?? "",
-									productDetail[0].image ?? ''
+									productDetail[0].image ?? ""
 								);
 							}
 						)
@@ -107,13 +107,13 @@ export default function OrderRouter(
 						order.delivery_time,
 						productItems
 					);
-					res.send(new APIResponse(200, orderDetail));
+					sendResponse(res, 200, orderDetail);
 				} else {
-					res.send(new APIResponse(404, { message: "Not found." }));
+					sendResponse(res, 404, { message: "Not found." });
 				}
 			}
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error fetch data" }));
+			sendResponse(res, 500, { message: "Error fetch data" });
 		}
 	});
 
@@ -143,12 +143,12 @@ export default function OrderRouter(
 					await addOrderDetailUseCase.execute(orderDetail);
 				});
 
-				res.send(new APIResponse(200, { message: "Success." }));
+				sendResponse(res, 200, { message: "Success." });
 			} else {
-				res.send(new APIResponse(400, { message: "Bad Request." }));
+				sendResponse(res, 400, { message: "Bad Request." });
 			}
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error saving data" }));
+			sendResponse(res, 500, { message: "Error saving data" });
 		}
 	});
 
@@ -160,15 +160,15 @@ export default function OrderRouter(
 				const order = await getOrderUseCase.execute(orderId);
 				if (order) {
 					await updateOrderStatusUseCase.execute(orderId, status);
-					res.send(new APIResponse(200, { message: "Success." }));
+					sendResponse(res, 200, { message: "Success." });
 				} else {
-					res.send(new APIResponse(400, { message: "Bad Request." }));
+					sendResponse(res, 400, { message: "Bad Request." });
 				}
 			} else {
-				res.send(new APIResponse(400, { message: "Bad Request." }));
+				sendResponse(res, 400, { message: "Bad Request." })
 			}
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error saving data" }));
+			sendResponse(res, 500, { message: "Error saving data" });
 		}
 	});
 

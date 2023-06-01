@@ -14,6 +14,7 @@ import {
 	OrderMiddleWare,
 	JsonWebTokenServiceMiddleWare,
 	AdminMiddleWare,
+	PaymentMiddleWare,
 } from "./presentation/routers/middle-ware/middle-ware";
 import { API_BASE_URL } from "../config/constants";
 
@@ -41,5 +42,6 @@ dotenv.config();
 		OrderMiddleWare
 	);
 	server.use(API_BASE_URL + "/admins", AdminMiddleWare);
+	server.use(API_BASE_URL + "/payments", PaymentMiddleWare);
 	server.listen(process.env.PORT, () => console.log("Running on server"));
 })();

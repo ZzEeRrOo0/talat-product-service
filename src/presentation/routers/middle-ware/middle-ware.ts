@@ -97,6 +97,12 @@ import { AdminDataSourceImpl } from "../../../data/data-sources/mysql/admin-data
 import { GetAdminByUserId } from "../../../domain/use-cases/admin/get-admin";
 import { GetAllOrderUseCaseImpl } from "../../../domain/use-cases/order/get-all-order";
 import { UpdateOrderStatusUseCaseImpl } from "../../../domain/use-cases/order/update-order-status";
+import PaymentRouter from "../payment-router";
+import { AddOrderPaymentUseCaseImpl } from "../../../domain/use-cases/payment/add-order-payment";
+import { PaymentRepositoryImpl } from "../../../domain/repositories/payment-repository";
+import { PaymentDataSourceImlp } from "../../../data/data-sources/mysql/payment-data-source";
+import { GetOrderPaymentUseCaseImpl } from "../../../domain/use-cases/payment/get-order-payment";
+import { UpdateOrderPaymentStatusUseCaseImpl } from "../../../domain/use-cases/payment/update-order-payment-status";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -454,4 +460,16 @@ export const AdminMiddleWare = AdminRouter(
 		)
 	),
 	new AddAdmin(new AdminRepositoryImpl(new AdminDataSourceImpl()))
+);
+
+export const PaymentMiddleWare = PaymentRouter(
+	new AddOrderPaymentUseCaseImpl(
+		new PaymentRepositoryImpl(new PaymentDataSourceImlp())
+	),
+	new GetOrderPaymentUseCaseImpl(
+		new PaymentRepositoryImpl(new PaymentDataSourceImlp())
+	),
+	new UpdateOrderPaymentStatusUseCaseImpl(
+		new PaymentRepositoryImpl(new PaymentDataSourceImlp())
+	)
 );

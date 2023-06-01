@@ -1,7 +1,7 @@
 import express from "express";
 import { Request, Response } from "express";
-import { APIResponse } from "../../core/response/api-response";
 import { GetListFilterProductUseCase } from "../../domain/interfaces/use-cases/product/get-list-filter-product";
+import { sendResponse } from "../../core/response/api-response";
 
 export default function SearchRouter(
 	getListFilterProductUseCase: GetListFilterProductUseCase
@@ -13,12 +13,12 @@ export default function SearchRouter(
 			const name = req.query["name"]?.toString() ?? "";
 			if (name != "") {
 				const data = await getListFilterProductUseCase.execute(name);
-				res.send(new APIResponse(200, data));
+				sendResponse(res, 200, data);
 			} else {
-				res.send(new APIResponse(200, []));
+				sendResponse(res, 200, []);
 			}
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error fetching data" }));
+			sendResponse(res, 500, { message: "Error fetching data" });
 		}
 	});
 

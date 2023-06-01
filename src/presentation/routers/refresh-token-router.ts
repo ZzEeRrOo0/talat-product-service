@@ -1,7 +1,7 @@
 import express from "express";
 import { Request, Response, NextFunction } from "express";
-import { APIResponse } from "../../core/response/api-response";
 import { JsonWebTokenService } from "../../core/util/jwt/jwt-token";
+import { sendResponse } from "../../core/response/api-response";
 
 export default function RefreshTokenRouter(
 	jsonWebTokenService: JsonWebTokenService
@@ -13,13 +13,13 @@ export default function RefreshTokenRouter(
 			await jsonWebTokenService
 				.verifyRefreshToken(req.body["refresh_token"])
 				.then((userToken) => {
-					res.send(new APIResponse(200, userToken));
+					sendResponse(res, 200, userToken);
 				})
 				.catch((err) => {
-					return res.status(401).json({ message: "Unauthorized" });	
+					sendResponse(res, 401, { message: "Unauthorized" });
 				});
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error fetching data" }));
+			sendResponse(res, 500, { message: "Error fetching data" });
 		}
 	});
 
@@ -30,6 +30,6 @@ function verifyRefreshBody(req: Request, res: Response, next: NextFunction) {
 	if (req.body["refresh_token"]) {
 		next();
 	} else {
-		res.send(new APIResponse(400, { message: "Bad Request." }));
+		sendResponse(res, 400, { message: "Bad Request." });
 	}
 }

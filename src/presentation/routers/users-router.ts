@@ -1,6 +1,5 @@
 import express from "express";
 import { Request, Response } from "express";
-import { APIResponse } from "../../core/response/api-response";
 import { AddRestaurantUseCase } from "../../domain/interfaces/use-cases/restaurant/add-restaurant";
 import { AddRestaurantDetailUseCase } from "../../domain/interfaces/use-cases/restaurant/add-restaurant-detail";
 import { AddCustomerUseCase } from "../../domain/interfaces/use-cases/users/add-customer";
@@ -18,6 +17,7 @@ import { AddStaffUseCase } from "../../domain/interfaces/use-cases/staff/add-sta
 import { AddStaffDetailUseCase } from "../../domain/interfaces/use-cases/staff-detail/add-staff-detail";
 import { Staff } from "../../domain/entities/staff";
 import { StaffDetail } from "../../domain/entities/staff-detail";
+import { sendResponse } from "../../core/response/api-response";
 
 export default function UserRouter(
 	getAllUsersUseCase: GetAllUsersUseCase,
@@ -42,9 +42,9 @@ export default function UserRouter(
 				Number.parseInt(pageSize),
 				req
 			);
-			res.send(new APIResponse(200, users));
+			sendResponse(res, 200, users);
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error fetching data" }));
+			sendResponse(res, 500, { message: "Error fetching data" });
 		}
 	});
 
@@ -58,27 +58,21 @@ export default function UserRouter(
 							req.body.phone
 						);
 					if (isExistUserPhoneNumber) {
-						res.send(
-							new APIResponse(200, {
-								is_exist: true,
-								message: "This phone number already exist.",
-							})
-						);
+						sendResponse(res, 200, {
+							is_exist: true,
+							message: "This phone number already exist.",
+						});
 					} else {
-						res.send(
-							new APIResponse(200, {
-								is_exist: false,
-								message: "Can use this phone number.",
-							})
-						);
+						sendResponse(res, 200, {
+							is_exist: false,
+							message: "Can use this phone number.",
+						});
 					}
 				} else {
-					res.send(new APIResponse(400, { message: "Bad request" }));
+					sendResponse(res, 400, { message: "Bad request" });
 				}
 			} catch (err) {
-				res.send(
-					new APIResponse(500, { message: "Error fetching data" })
-				);
+				sendResponse(res, 500, { message: "Error fetching data" });
 			}
 		}
 	);
@@ -104,16 +98,12 @@ export default function UserRouter(
 				staffDetail.district = req.body["district"];
 				staffDetail.village = req.body["village"];
 				await addStaffDetailUseCase.execute(staffDetail);
-				res.send(
-					new APIResponse(201, { message: "Register success." })
-				);
+				sendResponse(res, 201, { message: "Register success." });
 			} catch (err) {
-				res.send(
-					new APIResponse(500, { message: "Internal server error" })
-				);
+				sendResponse(res, 500, { message: "Internal server error" });
 			}
 		} else {
-			res.send(new APIResponse(400, { message: "Bad request" }));
+			sendResponse(res, 400, { message: "Bad request" });
 		}
 	});
 
@@ -167,10 +157,10 @@ export default function UserRouter(
 					addRestaurantDetail(req, res, restaurantId);
 				}
 			} catch (e) {
-				res.send(new APIResponse(500, { message: "Internal server error" }));
+				sendResponse(res, 500, { message: "Internal server error" });
 			}
 		} else {
-			res.send(new APIResponse(400, { message: "Bad request" }));
+			sendResponse(res, 400, { message: "Bad request" });
 		}
 	});
 
@@ -189,7 +179,7 @@ export default function UserRouter(
 			req.body["restaurant_purchase_order_id"];
 		restuarantDetail.location = req.body["location"];
 		await addRestaurantDetailUseCase.execute(restuarantDetail);
-		res.send(new APIResponse(201, { message: "Register success." }));
+		sendResponse(res, 201, { message: "Register success." });
 	}
 
 	return router;

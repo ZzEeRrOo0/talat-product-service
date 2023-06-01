@@ -1,6 +1,5 @@
 import express from "express";
 import { Request, Response } from "express";
-import { APIResponse } from "../../core/response/api-response";
 import { GetUserByPhoneNumberAndPasswordFromUserDBUseCase } from "../../domain/interfaces/use-cases/users/get-user-by-phone-number-and-password-from-user-db";
 import { JsonWebTokenService } from "../../core/util/jwt/jwt-token";
 import { GetCustomerUseCase } from "../../domain/interfaces/use-cases/customer/get-customer";
@@ -9,6 +8,8 @@ import { GetJuristicPersonCustomerUseCase } from "../../domain/interfaces/use-ca
 import { GetStaffUseCase } from "../../domain/interfaces/use-cases/staff/get-staff";
 import { GetStaffDetailUseCase } from "../../domain/interfaces/use-cases/staff-detail/get-staff-detail";
 import { GetAdminByUserIdUseCase } from "../../domain/interfaces/use-cases/admin/get-admin";
+import { encrypt } from "../../core/util/authentication/encryption";
+import { sendResponse } from "../../core/response/api-response";
 
 export default function SignInRouter(
 	getUserByPhoneNumberAndPasswordFromUserDBUseCase: GetUserByPhoneNumberAndPasswordFromUserDBUseCase,
@@ -53,23 +54,17 @@ export default function SignInRouter(
 										.then((userToken) => {
 											const data = userToken;
 											data.id = user.id;
-											res.send(
-												new APIResponse(200, data)
-											);
+											sendResponse(res, 200, data);
 										})
 										.catch((err) => {
-											res.send(
-												new APIResponse(401, {
-													message: "Unauthorized.",
-												})
-											);
+											sendResponse(res, 401, {
+												message: "Unauthorized.",
+											});
 										});
 								} else {
-									res.send(
-										new APIResponse(404, {
-											message: "User not found",
-										})
-									);
+									sendResponse(res, 404, {
+										message: "User not found",
+									});
 								}
 							} else {
 								const juristicPersonCustomer =
@@ -86,31 +81,23 @@ export default function SignInRouter(
 										.then((userToken) => {
 											const data = userToken;
 											data.id = user.id;
-											res.send(
-												new APIResponse(200, data)
-											);
+											sendResponse(res, 200, data);
 										})
 										.catch((err) => {
-											res.send(
-												new APIResponse(401, {
-													message: "Unauthorized.",
-												})
-											);
+											sendResponse(res, 401, {
+												message: "Unauthorized.",
+											});
 										});
 								} else {
-									res.send(
-										new APIResponse(404, {
-											message: "User not found",
-										})
-									);
+									sendResponse(res, 404, {
+										message: "User not found",
+									});
 								}
 							}
 						} else {
-							res.send(
-								new APIResponse(404, {
-									message: "User not found",
-								})
-							);
+							sendResponse(res, 404, {
+								message: "User not found",
+							});
 						}
 					} else if (user.user_type_id == 3) {
 						const staff = await getStaffUseCase.execute(user.id);
@@ -122,45 +109,35 @@ export default function SignInRouter(
 								.then((userToken) => {
 									const data = userToken;
 									data.id = user.id;
-									res.send(new APIResponse(200, data));
+									sendResponse(res, 200, data);
 								})
 								.catch((err) => {
-									res.send(
-										new APIResponse(401, {
-											message: "Unauthorized.",
-										})
-									);
+									sendResponse(res, 401, {
+										message: "Unauthorized.",
+									});
 								});
 						} else {
-							res.send(
-								new APIResponse(404, {
-									message: "User not found",
-								})
-							);
+							sendResponse(res, 404, {
+								message: "User not found",
+							});
 						}
 					} else {
-						res.send(
-							new APIResponse(400, {
-								message: "Bad Request.",
-							})
-						);
+						sendResponse(res, 400, {
+							message: "Bad Request.",
+						});
 					}
 				} else {
-					res.send(
-						new APIResponse(404, {
-							message: "User or password wrong",
-						})
-					);
+					sendResponse(res, 404, {
+						message: "User or password wrong",
+					});
 				}
 			} else {
-				res.send(
-					new APIResponse(400, {
-						message: "Bad request.",
-					})
-				);
+				sendResponse(res, 400, {
+					message: "Bad request.",
+				});
 			}
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error fetching data" }));
+			sendResponse(res, 500, { message: "Error fetching data" });
 		}
 	});
 
@@ -189,51 +166,43 @@ export default function SignInRouter(
 										access_token: ut.access_token,
 										refresh_token: ut.refresh_token,
 										user: {
-											id: user.id,
+											id: encrypt(user.id.toString()),
 											display_name: ut.display_name,
-											user_type_id: user.user_type_id,
+											user_type_id: encrypt(
+												user.user_type_id.toString()
+											),
 											role_id: admin.role_id,
 										},
 									};
-									res.send(new APIResponse(200, data));
+									sendResponse(res, 200, data);
 								})
 								.catch((err) => {
-									res.send(
-										new APIResponse(401, {
-											message: "Unauthorized.",
-										})
-									);
+									sendResponse(res, 401, {
+										message: "Unauthorized.",
+									});
 								});
 						} else {
-							res.send(
-								new APIResponse(404, {
-									message: "User not found",
-								})
-							);
+							sendResponse(res, 404, {
+								message: "User not found",
+							});
 						}
 					} else {
-						res.send(
-							new APIResponse(400, {
-								message: "Bad Request.",
-							})
-						);
+						sendResponse(res, 400, {
+							message: "Bad Request.",
+						});
 					}
 				} else {
-					res.send(
-						new APIResponse(404, {
-							message: "User or password wrong",
-						})
-					);
+					sendResponse(res, 404, {
+						message: "User or password wrong",
+					});
 				}
 			} else {
-				res.send(
-					new APIResponse(400, {
-						message: "Bad request.",
-					})
-				);
+				sendResponse(res, 400, {
+					message: "Bad request.",
+				});
 			}
 		} catch (err) {
-			res.send(new APIResponse(500, { message: "Error fetching data" }));
+			sendResponse(res, 500, { message: "Error fetching data" });
 		}
 	});
 

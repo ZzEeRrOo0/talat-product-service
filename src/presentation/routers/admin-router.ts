@@ -1,10 +1,9 @@
 import express, { Request, Response } from "express";
 import { AddAdminUseCase } from "../../domain/interfaces/use-cases/admin/add-admin";
-import { GetAdminByUserIdUseCase } from "../../domain/interfaces/use-cases/admin/get-admin";
 import { AddUserUseCase } from "../../domain/interfaces/use-cases/users/add-user";
-import { APIResponse } from "../../core/response/api-response";
 import { UserRequest } from "../../domain/entities/user-request";
 import { Admin } from "../../domain/entities/admin";
+import { sendResponse } from "../../core/response/api-response";
 
 export default function AdminRouter(
 	addUserUseCase: AddUserUseCase,
@@ -28,14 +27,12 @@ export default function AdminRouter(
 				admin.role_id = req.body["role_id"];
 				admin.user_id = userId;
 				await addAdminUseCase.execute(admin);
-				res.send(new APIResponse(201, { message: "Created success." }));
+				sendResponse(res, 201, { message: "Created success." })
 			} else {
-				res.send(new APIResponse(400, { message: "Bad request" }));
+				sendResponse(res, 400, { message: "Bad request" })
 			}
 		} catch (e) {
-			return res.send(
-				new APIResponse(500, { message: "Internal server error" })
-			);
+			sendResponse(res, 500, { message: "Internal server error" })
 		}
 	});
 

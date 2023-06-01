@@ -1,9 +1,5 @@
-export class APIResponse {
-	status: number;
-	data: Object;
+import { Response } from "express";
 
-	constructor($status: number, $data: Object) {
-		this.status = $status;
-		this.data = $data;
-	}
-}
+export const sendResponse = (res: Response, statusCode: number, data: any) => {
+	res.status(statusCode).json(data);
+};

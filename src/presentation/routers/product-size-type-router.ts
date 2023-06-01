@@ -1,21 +1,22 @@
 import express from "express";
 import { Request, Response } from "express";
 import { GetAllProductSizeTypeUseCase } from "../../domain/interfaces/use-cases/product-size-type/get-by-sub-category-usecase";
-import { APIResponse } from '../../core/response/api-response';
+import { sendResponse } from "../../core/response/api-response";
 
 export default function ProductSizeTypeRouter(
-    getAllProductSizeTypeUseCase: GetAllProductSizeTypeUseCase
+	getAllProductSizeTypeUseCase: GetAllProductSizeTypeUseCase
 ) {
-    const router = express.Router();
+	const router = express.Router();
 
-    router.get("/", async (req: Request, res: Response) => {
-        try {
-            const productSizeType = await getAllProductSizeTypeUseCase.execute();
-            res.send(new APIResponse(200, productSizeType))
-        } catch (err) {
-            res.send(new APIResponse(500, { message: "Error fetching data" }))
-        }
-    });
+	router.get("/", async (req: Request, res: Response) => {
+		try {
+			const productSizeType =
+				await getAllProductSizeTypeUseCase.execute();
+			sendResponse(res, 200, productSizeType);
+		} catch (err) {
+			sendResponse(res, 500, { message: "Error fetching data" });
+		}
+	});
 
-    return router;
+	return router;
 }
