@@ -8,6 +8,7 @@ import { OrderListItemModel } from "./models/order-list-item";
 import { OrderModel } from "./models/order";
 import { AllOrderModel } from "./models/all-order";
 import { Pagination } from "../../../core/pagination";
+import { OrderDetail } from "../../../domain/entities/order-detail";
 
 export class OrderDataSourceImpl implements OrderDataSource {
 	paginationService: Pagination;
@@ -168,7 +169,7 @@ export class OrderDataSourceImpl implements OrderDataSource {
 				status != undefined ? "order_status_id=?" : "order_status_id!=5"
 			} ${restaurants.length > 0 ? "AND" : ""} ${restaurants
 				.map((e) => "restaurant_id=" + e)
-				.join(" OR ")} AND deleted_at IS NULL`;
+				.join(" OR ")} AND deleted_at IS NULL ORDER BY created_at DESC`;
 
 		return new Promise((resolve, reject) => {
 			transection_db.query(
@@ -291,5 +292,44 @@ export class OrderDataSourceImpl implements OrderDataSource {
 				resolve(false);
 			});
 		});
+	}
+
+	async updateOrderDetailById(orderDetails: OrderDetail[]): Promise<boolean> {
+		const sqlUpdate =
+			"UPDATE order_details SET price=?, amount=?  WHERE id=? AND deleted_at IS NULL";
+		const sqlDelete =
+			"UPDATE order_details SET price=?, amount=? deleted_at=CURRENT_TIMESTAMP WHERE id=?";
+		const batchSize = 1000; // Number of rows to update in each batch
+		let offset = 0;
+
+		try {
+			while (offset < orderDetails.length) {
+				const batch = orderDetails.slice(offset, offset + batchSize);
+
+				transection_db.query("START TRANSACTION");
+
+				try {
+					const updatePromises = batch.map(async (item) => {
+						transection_db.execute(
+							item.deleted_at ? sqlDelete : sqlUpdate,
+							[item.price, item.amount, item.id]
+						);
+					});
+
+					await Promise.all(updatePromises);
+
+					transection_db.query("COMMIT");
+				} catch (error) {
+					transection_db.query("ROLLBACK");
+					throw error;
+				}
+
+				offset += batchSize;
+			}
+
+			return true;
+		} catch (error) {
+			return false;
+		}
 	}
 }

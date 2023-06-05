@@ -1,6 +1,4 @@
-import { Order } from "../../entities/order";
 import { OrderRepository } from "../../interfaces/repositories/order-repository";
-import { GetOrderUseCase } from "../../interfaces/use-cases/order/get-order";
 import { UpdateOrderStatusUseCase } from "../../interfaces/use-cases/order/update-order-status";
 
 export class UpdateOrderStatusUseCaseImpl implements UpdateOrderStatusUseCase {

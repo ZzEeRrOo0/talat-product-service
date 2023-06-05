@@ -19,4 +19,5 @@ export interface OrderRepository {
 	getOrderById(orderId: number): Promise<Order | null>;
 	getOrderDetails(orderId: number): Promise<OrderDetail[]>;
 	updateOrderStatus(orderId: number, status: number): Promise<boolean>;
+	updateOrderDetails(orderDetails: OrderDetail[]): Promise<boolean>;
 }

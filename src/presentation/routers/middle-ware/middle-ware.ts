@@ -103,6 +103,7 @@ import { PaymentRepositoryImpl } from "../../../domain/repositories/payment-repo
 import { PaymentDataSourceImlp } from "../../../data/data-sources/mysql/payment-data-source";
 import { GetOrderPaymentUseCaseImpl } from "../../../domain/use-cases/payment/get-order-payment";
 import { UpdateOrderPaymentStatusUseCaseImpl } from "../../../domain/use-cases/payment/update-order-payment-status";
+import { UpdateOrderDetailsUseCaseImpl } from "../../../domain/use-cases/order/update-order-detail";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -439,6 +440,9 @@ export const OrderMiddleWare = OrderRouter(
 		)
 	),
 	new UpdateOrderStatusUseCaseImpl(
+		new OrderRepositoryImpl(new OrderDataSourceImpl(new Pagination()))
+	),
+	new UpdateOrderDetailsUseCaseImpl(
 		new OrderRepositoryImpl(new OrderDataSourceImpl(new Pagination()))
 	)
 );

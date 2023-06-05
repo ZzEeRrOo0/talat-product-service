@@ -15,6 +15,7 @@ import {
 	ProductItemDetail,
 } from "../../domain/entities/order-detail-response";
 import { sendResponse } from "../../core/response/api-response";
+import { UpdateOrderDetailsUseCase } from "../../domain/interfaces/use-cases/order/update-order-detail";
 
 export default function OrderRouter(
 	createNewOrderUseCase: CreateNewOrderUseCase,
@@ -24,7 +25,8 @@ export default function OrderRouter(
 	getOrderUseCase: GetOrderUseCase,
 	getOrderDetailsUseCase: GetOrderDetailsUseCase,
 	getProductByProductIdUseCase: GetProductByProductIdUseCase,
-	updateOrderStatusUseCase: UpdateOrderStatusUseCase
+	updateOrderStatusUseCase: UpdateOrderStatusUseCase,
+	updateOrderDetailsUseCase: UpdateOrderDetailsUseCase
 ) {
 	const router = express.Router();
 
@@ -62,7 +64,7 @@ export default function OrderRouter(
 				sendResponse(res, 200, orders);
 			}
 		} catch (err) {
-			sendResponse(res, 500, { message: "Error saving data" });
+			sendResponse(res, 500, { message: "Error fetch data" });
 		}
 	});
 
@@ -156,17 +158,39 @@ export default function OrderRouter(
 		try {
 			const orderId = req.body["order_id"];
 			const status = req.body["status"];
-			if (orderId && status) {
-				const order = await getOrderUseCase.execute(orderId);
-				if (order) {
-					await updateOrderStatusUseCase.execute(orderId, status);
-					sendResponse(res, 200, { message: "Success." });
-				} else {
-					sendResponse(res, 400, { message: "Bad Request." });
-				}
-			} else {
-				sendResponse(res, 400, { message: "Bad Request." })
+
+			if (!orderId || !status) {
+				sendResponse(res, 400, { message: "Bad Request." });
+				return;
 			}
+
+			const order = await getOrderUseCase.execute(orderId);
+
+			if (!order) {
+				sendResponse(res, 400, { message: "Bad Request." });
+				return;
+			}
+
+			await updateOrderStatusUseCase.execute(orderId, status);
+
+			if (status == "5") {
+				let orderDetails = await getOrderDetailsUseCase.execute(
+					orderId
+				);
+
+				for (let i = 0; i < orderDetails.length; i++) {
+					const orderDetail = orderDetails[i];
+					const product = await getProductByProductIdUseCase.execute(
+						orderDetail.product_id!.toString()
+					);
+
+					orderDetails[i].price = product[0].price;
+				}
+
+				await updateOrderDetailsUseCase.execute(orderDetails);
+			}
+
+			sendResponse(res, 200, { message: "Success." });
 		} catch (err) {
 			sendResponse(res, 500, { message: "Error saving data" });
 		}

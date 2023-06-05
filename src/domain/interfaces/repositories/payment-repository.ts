@@ -4,7 +4,8 @@ export interface PaymentRepository {
 	createNewOrderPayment(
 		orderId: number,
 		total: number,
-		paymentTypeId: number
+		paymentTypeId: number,
+		paymentStatusId: number
 	): Promise<number>;
 	getOrderPayment(orderId: number): Promise<OrderPayment | null>;
 	updateOrderPaymentStatus(

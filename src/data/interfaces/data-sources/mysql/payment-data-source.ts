@@ -4,7 +4,8 @@ export interface PaymentDataSource {
 	createNewOrderPayment(
 		orderId: number,
 		total: number,
-		paymentTypeId: number
+		paymentTypeId: number,
+		paymentStatusId: number
 	): Promise<number>;
 	getOrderPaymentByOrderId(orderId: number): Promise<OrderPayment | null>;
 	updateOrderPaymentStatus(

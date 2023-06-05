@@ -22,4 +22,5 @@ export interface OrderDataSource {
 		orderId: number,
 		status: number
 	): Promise<boolean>;
+	updateOrderDetailById(orderDetails: OrderDetail[]): Promise<boolean>;
 }

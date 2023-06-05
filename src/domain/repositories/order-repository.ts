@@ -54,4 +54,8 @@ export class OrderRepositoryImpl implements OrderRepository {
 			status
 		);
 	}
+
+	async updateOrderDetails(orderDetails: OrderDetail[]): Promise<boolean> {
+		return await this.orderDataSource.updateOrderDetailById(orderDetails);
+	}
 }

@@ -12,12 +12,14 @@ export class PaymentRepositoryImpl implements PaymentRepository {
 	async createNewOrderPayment(
 		orderId: number,
 		total: number,
-		paymentTypeId: number
+		paymentTypeId: number,
+		paymentStatusId: number
 	): Promise<number> {
 		return await this.paymentDataSource.createNewOrderPayment(
 			orderId,
 			total,
-			paymentTypeId
+			paymentTypeId,
+			paymentStatusId
 		);
 	}
 

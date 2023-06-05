@@ -11,12 +11,14 @@ export class AddOrderPaymentUseCaseImpl implements AddOrderPaymentUseCase {
 	execute(
 		orderId: number,
 		total: number,
-		paymentTypeId: number
+		paymentTypeId: number,
+		paymentStatusId: number
 	): Promise<number> {
 		return this.paymentRepository.createNewOrderPayment(
 			orderId,
 			total,
-			paymentTypeId
+			paymentTypeId,
+			paymentStatusId
 		);
 	}
 }

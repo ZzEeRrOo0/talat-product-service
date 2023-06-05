@@ -8,15 +8,16 @@ export class PaymentDataSourceImlp implements PaymentDataSource {
 	createNewOrderPayment(
 		orderId: number,
 		total: number,
-		paymentTypeId: number
+		paymentTypeId: number,
+		paymentStatusId: number
 	): Promise<number> {
 		const sql =
-			"INSERT INTO order_payments (order_id, total_price, payment_type_id, payment_status_id) VALUES(?, ?, ?, 1)";
+			"INSERT INTO order_payments (order_id, total_price, payment_type_id, payment_status_id) VALUES(?, ?, ?, ?)";
 
 		return new Promise((resolve, reject) => {
 			payment_db.query(
 				sql,
-				[orderId, total, paymentTypeId],
+				[orderId, total, paymentTypeId, paymentStatusId],
 				(error, result) => {
 					if (error) {
 						// throw new Error("Internal server error.");

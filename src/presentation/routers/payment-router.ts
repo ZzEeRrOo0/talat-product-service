@@ -19,11 +19,12 @@ export default function PaymentRouter(
 			);
 			if (userTypeId == "1") {
 				if (verifyOrderPaymentRequest(req)) {
-					const { order_id, total_price, payment_type_id } = req.body;
+					const { order_id, total_price, payment_type_id, payment_status_id } = req.body;
 					await addOrderPaymentUseCase.execute(
 						order_id,
 						total_price,
-						payment_type_id
+						payment_type_id,
+						payment_status_id
 					);
 					sendResponse(res, 200, { messge: "success." });
 				} else {
@@ -39,21 +40,12 @@ export default function PaymentRouter(
 
 	router.get("/order-id/:id", async (req: Request, res: Response) => {
 		try {
-			const userTypeId = decrypt(
-				req.headers["x-user-type-id"]?.toString() ?? ""
-			);
 			const orderId = Number.parseInt(req.params.id);
-			if (userTypeId == "1") {
-				const orderPayment = await getOrderPaymentUseCase.execute(
-					orderId
-				);
-				if (orderPayment) {
-					sendResponse(res, 200, orderPayment);
-				} else {
-					sendResponse(res, 404, { messge: "Not found." });
-				}
+			const orderPayment = await getOrderPaymentUseCase.execute(orderId);
+			if (orderPayment) {
+				sendResponse(res, 200, orderPayment);
 			} else {
-				sendResponse(res, 400, { messge: "Bad Request" });
+				sendResponse(res, 404, { messge: "Not found." });
 			}
 		} catch (err) {
 			sendResponse(res, 500, { message: "Error fetching data" });
@@ -100,7 +92,12 @@ export default function PaymentRouter(
 }
 
 function verifyOrderPaymentRequest(req: Request): boolean {
-	const fields = ["order_id", "total_price", "payment_type_id"];
+	const fields = [
+		"order_id",
+		"total_price",
+		"payment_type_id",
+		"payment_status_id",
+	];
 
 	return fields.every(
 		(field) =>
