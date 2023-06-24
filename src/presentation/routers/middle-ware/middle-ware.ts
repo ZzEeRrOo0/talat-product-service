@@ -104,6 +104,9 @@ import { PaymentDataSourceImlp } from "../../../data/data-sources/mysql/payment-
 import { GetOrderPaymentUseCaseImpl } from "../../../domain/use-cases/payment/get-order-payment";
 import { UpdateOrderPaymentStatusUseCaseImpl } from "../../../domain/use-cases/payment/update-order-payment-status";
 import { UpdateOrderDetailsUseCaseImpl } from "../../../domain/use-cases/order/update-order-detail";
+import { GetAllCustomerIndividual } from "../../../domain/use-cases/users/get-all-customer-individual";
+import { GetAllCustomerJuristicPerson } from "../../../domain/use-cases/users/get-all-customer-juristic-person";
+import { GetAllUserAdmin } from "../../../domain/use-cases/users/get-all-user-admin";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -266,19 +269,6 @@ export const ProductTypeMiddleWare = ProductTypeRouter(
 );
 
 export const UserMiddleWare = UserRouter(
-	new GetAllUsers(
-		new UserRepositoryImpl(
-			new UserDataSourceImpl(
-				new Pagination(),
-				new FindUserByQueryImpl(),
-				new AuthenticationServiceImpl()
-			),
-			new FirebaseStorageDataSourceImpl(
-				new GoogleStorage(),
-				new AuthenticationServiceImpl()
-			)
-		)
-	),
 	new AddUser(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
@@ -353,7 +343,47 @@ export const UserMiddleWare = UserRouter(
 	new AddStaff(new StaffRepositoryImpl(new StaffDataSourceImpl())),
 	new AddStaffDetail(
 		new StaffDetailRepositoryImpl(new StaffDetailDataSourceImpl())
-	)
+	),
+	new GetAllCustomerIndividual(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
+		)
+	),
+	new GetAllCustomerJuristicPerson(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
+		)
+	),
+	new GetAllUserAdmin(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
+		)
+	),
+	new JsonWebTokenServiceImpl()
 );
 
 export const SignInMiddleWare = SignInRouter(

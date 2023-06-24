@@ -5,6 +5,9 @@ import { Request } from "express";
 import { UserRequest } from "../../entities/user-request";
 import { Customer } from "../../entities/customer";
 import { User } from "../../entities/user";
+import { AllIndividualCustomer } from "../../entities/all-individual-customer";
+import { AllJuristicPersonCustomer } from "../../entities/all-juristic-person-customer";
+import { AllUserAdmin } from "../../entities/all-user-admin";
 
 export interface UserRepository {
 	getUsers(
@@ -24,4 +27,16 @@ export interface UserRepository {
 		customer: JuristicPersonCustomer
 	): Promise<number>;
 	getUserByPhoneNumber(phone: string): Promise<boolean>;
+	getAllIndividualCustomer(
+		currentPage: number,
+		pageSize: number
+	): Promise<AllIndividualCustomer>;
+	getAllJuristicPersonCustomer(
+		currentPage: number,
+		pageSize: number
+	): Promise<AllJuristicPersonCustomer>;
+	getAllUserAdmin(
+		currentPage: number,
+		pageSize: number
+	): Promise<AllUserAdmin>;
 }

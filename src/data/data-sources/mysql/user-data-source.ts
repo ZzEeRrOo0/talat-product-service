@@ -11,6 +11,13 @@ import { IndividualCustomerModel } from "./models/individual-customer";
 import { CustomerModel } from "./models/customer";
 import { UserRequestModel } from "./models/user-request";
 import { AuthenticationService } from "../../../core/util/authentication/index";
+import { AllIndividualCustomer } from "../../../domain/entities/all-individual-customer";
+import { AllJuristicPersonCustomer } from "../../../domain/entities/all-juristic-person-customer";
+import { AllIndividualCustomerModel } from "./models/all-individual-customer";
+import { AllJuristicPersonCustomerModel } from "./models/all-juristic-person-customer";
+import { AllUserAdmin } from "../../../domain/entities/all-user-admin";
+import { AdminModel } from "./models/admin";
+import { AllUserAdminModel } from "./models/all-user-admin";
 
 export class UserDataSourceImpl implements UserDataSource {
 	paginationService: Pagination;
@@ -234,6 +241,200 @@ export class UserDataSourceImpl implements UserDataSource {
 						);
 
 						resolve(allUserResponse);
+					}
+				);
+			});
+		});
+	}
+
+	getAllIndividualCustomer(
+		currentPage: number,
+		pageSize: number
+	): Promise<AllIndividualCustomer> {
+		const getTotalItemSql =
+			"SELECT COUNT(*) AS total FROM customer_individual WHERE deleted_at IS NULL";
+		const getIndividualCustomerSql =
+			"SELECT id, customer_id, full_name, id_card_number, address FROM customer_individual " +
+			"WHERE deleted_at IS NULL LIMIT ? OFFSET ?";
+
+		return new Promise((resolve, reject) => {
+			user_db.query(getTotalItemSql, [], (error, result) => {
+				if (error) {
+					throw new Error("Internal server error.");
+				}
+
+				const data = JSON.parse(JSON.stringify(result));
+
+				const paginate = this.paginationService.paginate(
+					data[0].total,
+					currentPage,
+					pageSize,
+					20
+				);
+
+				user_db.query(
+					getIndividualCustomerSql,
+					[paginate.pageSize, paginate.startIndex],
+					(pError, pResult) => {
+						if (pError) {
+							throw new Error("Internal server error.");
+						}
+
+						const data = JSON.parse(JSON.stringify(pResult));
+
+						const individualCustomers: IndividualCustomerModel[] =
+							data.map(
+								(e: {
+									id: number;
+									customer_id: number;
+									full_name: string;
+									id_card_number: string;
+									address: string;
+								}) =>
+									new IndividualCustomerModel(
+										e.customer_id,
+										e.full_name,
+										e.id_card_number,
+										e.address,
+										e.id
+									)
+							);
+
+						const allIndividualCustomerResponse =
+							new AllIndividualCustomerModel(
+								individualCustomers,
+								paginate
+							);
+
+						resolve(allIndividualCustomerResponse);
+					}
+				);
+			});
+		});
+	}
+
+	getAllJuristicPersonCustomer(
+		currentPage: number,
+		pageSize: number
+	): Promise<AllJuristicPersonCustomer> {
+		const getTotalItemSql =
+			"SELECT COUNT(*) AS total FROM customer_juristic_person WHERE deleted_at IS NULL";
+		const getJuristicPersonCustomerSql =
+			"SELECT id, customer_id, company_name, juristic_person_registration_number, registration_address FROM customer_juristic_person " +
+			"WHERE deleted_at IS NULL LIMIT ? OFFSET ?";
+
+		return new Promise((resolve, reject) => {
+			user_db.query(getTotalItemSql, [], (error, result) => {
+				if (error) {
+					throw new Error("Internal server error.");
+				}
+
+				const data = JSON.parse(JSON.stringify(result));
+
+				const paginate = this.paginationService.paginate(
+					data[0].total,
+					currentPage,
+					pageSize,
+					20
+				);
+
+				user_db.query(
+					getJuristicPersonCustomerSql,
+					[paginate.pageSize, paginate.startIndex],
+					(pError, pResult) => {
+						if (pError) {
+							throw new Error("Internal server error.");
+						}
+
+						const data = JSON.parse(JSON.stringify(pResult));
+
+						const juristicPersonCustomers: JuristicPersonCustomerModel[] =
+							data.map(
+								(e: {
+									id: number;
+									customer_id: number;
+									company_name: string;
+									juristic_person_registration_number: string;
+									registration_address: string;
+								}) =>
+									new JuristicPersonCustomerModel(
+										e.customer_id,
+										e.company_name,
+										e.juristic_person_registration_number,
+										e.registration_address,
+										e.id
+									)
+							);
+
+						const allJuristicPersonResponse =
+							new AllJuristicPersonCustomerModel(
+								juristicPersonCustomers,
+								paginate
+							);
+
+						resolve(allJuristicPersonResponse);
+					}
+				);
+			});
+		});
+	}
+
+	getAllUserAdmin(
+		currentPage: number,
+		pageSize: number
+	): Promise<AllUserAdmin> {
+		const getTotalItemSql =
+			"SELECT COUNT(*) AS total FROM admins WHERE deleted_at IS NULL";
+		const getUserAdminSql =
+			"SELECT id, user_id, role_id, full_name FROM admins " +
+			"WHERE deleted_at IS NULL LIMIT ? OFFSET ?";
+
+		return new Promise((resolve, reject) => {
+			user_db.query(getTotalItemSql, [], (error, result) => {
+				if (error) {
+					throw new Error("Internal server error.");
+				}
+
+				const data = JSON.parse(JSON.stringify(result));
+
+				const paginate = this.paginationService.paginate(
+					data[0].total,
+					currentPage,
+					pageSize,
+					20
+				);
+
+				user_db.query(
+					getUserAdminSql,
+					[paginate.pageSize, paginate.startIndex],
+					(pError, pResult) => {
+						if (pError) {
+							throw new Error("Internal server error.");
+						}
+
+						const data = JSON.parse(JSON.stringify(pResult));
+
+						const userAdmins: AdminModel[] = data.map(
+							(e: {
+								id: number;
+								user_id: number;
+								role_id: number;
+								full_name: string;
+							}) =>
+								new AdminModel(
+									e.user_id,
+									e.role_id,
+									e.full_name,
+									e.id
+								)
+						);
+
+						const allUserAdminResponse = new AllUserAdminModel(
+							userAdmins,
+							paginate
+						);
+
+						resolve(allUserAdminResponse);
 					}
 				);
 			});

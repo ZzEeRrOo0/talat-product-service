@@ -1,4 +1,3 @@
-import { promisify } from "util";
 import { Request } from "express";
 import { OrderDataSource } from "../../interfaces/data-sources/mysql/order-data-source";
 import { OrderDetailModel } from "./models/order-detail";

@@ -11,6 +11,10 @@ import { JuristicPersonCustomerModel } from "../../data/data-sources/mysql/model
 import { IndividualCustomerModel } from "../../data/data-sources/mysql/models/individual-customer";
 import { CustomerModel } from "../../data/data-sources/mysql/models/customer";
 import { User } from "../entities/user";
+import { AllIndividualCustomer } from "../entities/all-individual-customer";
+import { AllJuristicPersonCustomer } from "../entities/all-juristic-person-customer";
+import { AllUserAdmin } from "../entities/all-user-admin";
+
 export class UserRepositoryImpl implements UserRepository {
 	userDataSource: UserDataSource;
 	firebaseDataSource: FirebaseStorageDataSource;
@@ -94,5 +98,31 @@ export class UserRepositoryImpl implements UserRepository {
 
 	async getUserByPhoneNumberFromUserDB(phone: string): Promise<boolean> {
 		return await this.userDataSource.getUserByPhoneNumber(phone);
+	}
+
+	async getAllIndividualCustomer(
+		currentPage: number,
+		pageSize: number
+	): Promise<AllIndividualCustomer> {
+		return await this.userDataSource.getAllIndividualCustomer(
+			currentPage,
+			pageSize
+		);
+	}
+	async getAllJuristicPersonCustomer(
+		currentPage: number,
+		pageSize: number
+	): Promise<AllJuristicPersonCustomer> {
+		return await this.userDataSource.getAllJuristicPersonCustomer(
+			currentPage,
+			pageSize
+		);
+	}
+
+	async getAllUserAdmin(
+		currentPage: number,
+		pageSize: number
+	): Promise<AllUserAdmin> {
+		return await this.userDataSource.getAllUserAdmin(currentPage, pageSize);
 	}
 }

@@ -6,7 +6,6 @@ import { AddCustomerUseCase } from "../../domain/interfaces/use-cases/users/add-
 import { AddCustomerIndividualUseCase } from "../../domain/interfaces/use-cases/users/add-customer-indiavidual";
 import { AddCustomerJuristicPersonUseCase } from "../../domain/interfaces/use-cases/users/add-customer-juristic-person";
 import { AddUserUseCase } from "../../domain/interfaces/use-cases/users/add-user";
-import { GetAllUsersUseCase } from "../../domain/interfaces/use-cases/users/get-all-user";
 import { GetUserByPhoneNumberUseCase } from "../../domain/interfaces/use-cases/users/get-user-by-phone-number";
 import { UserRequest } from "../../domain/entities/user-request";
 import { Customer } from "../../domain/entities/customer";
@@ -18,9 +17,13 @@ import { AddStaffDetailUseCase } from "../../domain/interfaces/use-cases/staff-d
 import { Staff } from "../../domain/entities/staff";
 import { StaffDetail } from "../../domain/entities/staff-detail";
 import { sendResponse } from "../../core/response/api-response";
+import { JsonWebTokenService } from "../../core/util/jwt/jwt-token";
+import { decrypt } from "../../core/util/authentication/decryption";
+import { GetAllCustomerIndividualUseCase } from "../../domain/interfaces/use-cases/users/get-all-cusromer-individual";
+import { GetAllCustomerJuristicPersonUseCase } from "../../domain/interfaces/use-cases/users/get-all-customer-juristic-person";
+import { GetAllUserAdminUseCase } from "../../domain/interfaces/use-cases/users/get-all-user-admin";
 
 export default function UserRouter(
-	getAllUsersUseCase: GetAllUsersUseCase,
 	addUserUseCase: AddUserUseCase,
 	addCustomerUseCase: AddCustomerUseCase,
 	addCustomerIndividualUseCase: AddCustomerIndividualUseCase,
@@ -29,24 +32,83 @@ export default function UserRouter(
 	addRestaurantDetailUseCase: AddRestaurantDetailUseCase,
 	getUserByPhoneNumberUseCase: GetUserByPhoneNumberUseCase,
 	addStaffUseCase: AddStaffUseCase,
-	addStaffDetailUseCase: AddStaffDetailUseCase
+	addStaffDetailUseCase: AddStaffDetailUseCase,
+	getAllCustomerIndividualUseCase: GetAllCustomerIndividualUseCase,
+	getAllCustomerJuristicPersonUseCase: GetAllCustomerJuristicPersonUseCase,
+	getAllUserAdminUseCase: GetAllUserAdminUseCase,
+	jsonWebTokenService: JsonWebTokenService
 ) {
 	const router = express.Router();
 
-	router.get("/all", async (req: Request, res: Response) => {
-		try {
-			const currentPage = req.query["currentPage"]?.toString() ?? "1";
-			const pageSize = req.query["pageSize"]?.toString() ?? "5";
-			const users = await getAllUsersUseCase.execute(
-				Number.parseInt(currentPage),
-				Number.parseInt(pageSize),
-				req
-			);
-			sendResponse(res, 200, users);
-		} catch (err) {
-			sendResponse(res, 500, { message: "Error fetching data" });
+	router.get(
+		"/customers/owner",
+		jsonWebTokenService.verifyAccessToken,
+		async (req: Request, res: Response) => {
+			try {
+				const currentPage = req.query["currentPage"]?.toString() ?? "1";
+				const pageSize = req.query["pageSize"]?.toString() ?? "5";
+				const customerType =
+					req.query["customerType"]?.toString() ?? "1";
+				const userTypeId = decrypt(
+					req.headers["x-user-type-id"]?.toString() ?? ""
+				);
+				if (userTypeId == "1") {
+					if (customerType == "1") {
+						const individualCustomers =
+							await getAllCustomerIndividualUseCase.execute(
+								Number.parseInt(currentPage),
+								Number.parseInt(pageSize)
+							);
+						sendResponse(res, 200, individualCustomers);
+					} else if (customerType == "2") {
+						const juristicPersonCustomers =
+							await getAllCustomerJuristicPersonUseCase.execute(
+								Number.parseInt(currentPage),
+								Number.parseInt(pageSize)
+							);
+						sendResponse(res, 200, juristicPersonCustomers);
+					} else {
+						sendResponse(res, 400, {
+							message: "Bad request.",
+						});
+					}
+				} else {
+					sendResponse(res, 400, {
+						message: "Bad request.",
+					});
+				}
+			} catch (err) {
+				sendResponse(res, 500, { message: "Error fetching data" });
+			}
 		}
-	});
+	);
+
+	router.get(
+		"/admin",
+		jsonWebTokenService.verifyAccessToken,
+		async (req: Request, res: Response) => {
+			try {
+				const currentPage = req.query["currentPage"]?.toString() ?? "1";
+				const pageSize = req.query["pageSize"]?.toString() ?? "5";
+				const userTypeId = decrypt(
+					req.headers["x-user-type-id"]?.toString() ?? ""
+				);
+				if (userTypeId == "1") {
+					const userAdmins = await getAllUserAdminUseCase.execute(
+						Number.parseInt(currentPage),
+						Number.parseInt(pageSize)
+					);
+					sendResponse(res, 200, userAdmins);
+				} else {
+					sendResponse(res, 400, {
+						message: "Bad request.",
+					});
+				}
+			} catch (err) {
+				sendResponse(res, 500, { message: "Error fetching data" });
+			}
+		}
+	);
 
 	router.post(
 		"/check/is-exist-phone-number",
