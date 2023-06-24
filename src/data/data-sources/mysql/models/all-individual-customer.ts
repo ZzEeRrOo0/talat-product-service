@@ -3,11 +3,11 @@ import { AllIndividualCustomer } from "../../../../domain/entities/all-individua
 import { IndividualCustomer } from "../../../../domain/entities/individual-customer";
 
 export class AllIndividualCustomerModel implements AllIndividualCustomer {
-	orders: IndividualCustomer[];
+	customers: IndividualCustomer[];
 	paginate: PaginationResponse;
 
-	constructor($orders: IndividualCustomer[], $paginate: PaginationResponse) {
-		this.orders = $orders;
+	constructor($customers: IndividualCustomer[], $paginate: PaginationResponse) {
+		this.customers = $customers;
 		this.paginate = $paginate;
 	}
 }

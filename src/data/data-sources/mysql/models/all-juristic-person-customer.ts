@@ -5,14 +5,14 @@ import { JuristicPersonCustomer } from "../../../../domain/entities/juristic-per
 export class AllJuristicPersonCustomerModel
 	implements AllJuristicPersonCustomer
 {
-	orders: JuristicPersonCustomer[];
+	customers: JuristicPersonCustomer[];
 	paginate: PaginationResponse;
 
 	constructor(
-		$orders: JuristicPersonCustomer[],
+		$customers: JuristicPersonCustomer[],
 		$paginate: PaginationResponse
 	) {
-		this.orders = $orders;
+		this.customers = $customers;
 		this.paginate = $paginate;
 	}
 }

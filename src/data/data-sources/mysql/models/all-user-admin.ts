@@ -3,11 +3,11 @@ import { Admin } from "../../../../domain/entities/admin";
 import { AllUserAdmin } from "../../../../domain/entities/all-user-admin";
 
 export class AllUserAdminModel implements AllUserAdmin {
-	orders: Admin[];
+	users: Admin[];
 	paginate: PaginationResponse;
 
-	constructor($orders: Admin[], $paginate: PaginationResponse) {
-		this.orders = $orders;
+	constructor($users: Admin[], $paginate: PaginationResponse) {
+		this.users = $users;
 		this.paginate = $paginate;
 	}
 }
