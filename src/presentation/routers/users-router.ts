@@ -280,7 +280,9 @@ export default function UserRouter(
 		async (req: Request, res: Response) => {
 			try {
 				const userId = decrypt(req.headers["x-user-id"]!.toString());
-				const password = "12345678";
+				const password = Math.floor(
+					10000000 + Math.random() * 90000000
+				).toString();
 				const isUpdated = await resetPasswordUseCase.execute(
 					Number.parseInt(userId),
 					password
