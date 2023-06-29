@@ -53,7 +53,7 @@ export default function SignInRouter(
 										)
 										.then((userToken) => {
 											const data = userToken;
-											data.id = user.id;
+											data.id = encrypt(user.id.toString());
 											sendResponse(res, 200, data);
 										})
 										.catch((err) => {
@@ -80,7 +80,7 @@ export default function SignInRouter(
 										)
 										.then((userToken) => {
 											const data = userToken;
-											data.id = user.id;
+											data.id = encrypt(user.id.toString());
 											sendResponse(res, 200, data);
 										})
 										.catch((err) => {
@@ -108,7 +108,7 @@ export default function SignInRouter(
 								.generateToken(staffDetail!.full_name, phone)
 								.then((userToken) => {
 									const data = userToken;
-									data.id = user.id;
+									data.id = encrypt(user.id.toString());
 									sendResponse(res, 200, data);
 								})
 								.catch((err) => {
@@ -161,7 +161,7 @@ export default function SignInRouter(
 								.generateToken(admin.full_name!, phone)
 								.then((userToken) => {
 									const ut = userToken;
-									ut.id = user.id;
+									ut.id = encrypt(user.id.toString());
 									const data = {
 										access_token: ut.access_token,
 										refresh_token: ut.refresh_token,

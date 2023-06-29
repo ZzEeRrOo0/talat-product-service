@@ -440,4 +440,32 @@ export class UserDataSourceImpl implements UserDataSource {
 			});
 		});
 	}
+
+	updatePassword(userId: number, password: string): Promise<boolean> {
+		const sql = "UPDATE users set password=? WHERE id=?";
+
+		return new Promise((resolve, reject) => {
+			this.authenticationService
+				.encryptPassword(password)
+				.then((p) => {
+					user_db.query(sql, [p, userId], (error, result) => {
+						if (error) {
+							console.log(error);
+							throw new Error("Internal server error.");
+						}
+
+						const data = <OkPacket>result;
+
+						if (data.affectedRows === 1) {
+							resolve(true);
+						}
+
+						resolve(false);
+					});
+				})
+				.catch((error) => {
+					throw new Error(error);
+				});
+		});
+	}
 }

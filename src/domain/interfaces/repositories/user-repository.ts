@@ -39,4 +39,5 @@ export interface UserRepository {
 		currentPage: number,
 		pageSize: number
 	): Promise<AllUserAdmin>;
+	updatePassword(userId: number, password: string): Promise<boolean>;
 }

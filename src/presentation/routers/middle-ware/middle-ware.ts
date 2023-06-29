@@ -107,6 +107,8 @@ import { UpdateOrderDetailsUseCaseImpl } from "../../../domain/use-cases/order/u
 import { GetAllCustomerIndividual } from "../../../domain/use-cases/users/get-all-customer-individual";
 import { GetAllCustomerJuristicPerson } from "../../../domain/use-cases/users/get-all-customer-juristic-person";
 import { GetAllUserAdmin } from "../../../domain/use-cases/users/get-all-user-admin";
+import { ResetPassword } from "../../../domain/use-cases/users/reset-password";
+import { SMSServiceImpl } from "../../../core/util/twilio/sms";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -383,6 +385,33 @@ export const UserMiddleWare = UserRouter(
 			)
 		)
 	),
+	new GetUserByPhoneNumberAndPasswordFromUserDB(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
+		)
+	),
+	new ResetPassword(
+		new UserRepositoryImpl(
+			new UserDataSourceImpl(
+				new Pagination(),
+				new FindUserByQueryImpl(),
+				new AuthenticationServiceImpl()
+			),
+			new FirebaseStorageDataSourceImpl(
+				new GoogleStorage(),
+				new AuthenticationServiceImpl()
+			)
+		)
+	),
+	new SMSServiceImpl(),
 	new JsonWebTokenServiceImpl()
 );
 

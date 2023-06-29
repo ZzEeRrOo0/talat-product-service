@@ -22,6 +22,9 @@ import { decrypt } from "../../core/util/authentication/decryption";
 import { GetAllCustomerIndividualUseCase } from "../../domain/interfaces/use-cases/users/get-all-cusromer-individual";
 import { GetAllCustomerJuristicPersonUseCase } from "../../domain/interfaces/use-cases/users/get-all-customer-juristic-person";
 import { GetAllUserAdminUseCase } from "../../domain/interfaces/use-cases/users/get-all-user-admin";
+import { ResetPasswordUseCase } from "../../domain/interfaces/use-cases/users/reset-password";
+import { GetUserByPhoneNumberAndPasswordFromUserDBUseCase } from "../../domain/interfaces/use-cases/users/get-user-by-phone-number-and-password-from-user-db";
+import { SMSService } from "../../core/util/twilio/sms";
 
 export default function UserRouter(
 	addUserUseCase: AddUserUseCase,
@@ -36,6 +39,9 @@ export default function UserRouter(
 	getAllCustomerIndividualUseCase: GetAllCustomerIndividualUseCase,
 	getAllCustomerJuristicPersonUseCase: GetAllCustomerJuristicPersonUseCase,
 	getAllUserAdminUseCase: GetAllUserAdminUseCase,
+	getUserByPhoneNumberAndPasswordFromUserDBUseCase: GetUserByPhoneNumberAndPasswordFromUserDBUseCase,
+	resetPasswordUseCase: ResetPasswordUseCase,
+	smsService: SMSService,
 	jsonWebTokenService: JsonWebTokenService
 ) {
 	const router = express.Router();
@@ -225,6 +231,79 @@ export default function UserRouter(
 			sendResponse(res, 400, { message: "Bad request" });
 		}
 	});
+
+	router.post(
+		"/reset-password",
+		jsonWebTokenService.verifyAccessToken,
+		async (req: Request, res: Response) => {
+			try {
+				const currentPassword = req.body["password"];
+				const newPassword = req.body["new_password"];
+				if (currentPassword && newPassword) {
+					const user =
+						await getUserByPhoneNumberAndPasswordFromUserDBUseCase.execute(
+							res.locals.phone,
+							currentPassword
+						);
+					if (user) {
+						const isUpdated = await resetPasswordUseCase.execute(
+							user.id,
+							newPassword
+						);
+
+						if (isUpdated) {
+							sendResponse(res, 200, {
+								message: "Reset password success.",
+							});
+						} else {
+							sendResponse(res, 500, {
+								message: "Reset password fialed.",
+							});
+						}
+					} else {
+						sendResponse(res, 400, {
+							message: "Your current password wrong.",
+						});
+					}
+				} else {
+					sendResponse(res, 400, { message: "Bad request." });
+				}
+			} catch (err) {
+				sendResponse(res, 500, { message: "Internal server error" });
+			}
+		}
+	);
+
+	router.post(
+		"/forgot-password",
+		jsonWebTokenService.verifyAccessToken,
+		async (req: Request, res: Response) => {
+			try {
+				const userId = decrypt(req.headers["x-user-id"]!.toString());
+				const password = "12345678";
+				const isUpdated = await resetPasswordUseCase.execute(
+					Number.parseInt(userId),
+					password
+				);
+				if (isUpdated) {
+					const message = `ຈາກ TaLat ລະຫັດຜ່ານໃໝ່ຂອງທ່ານແມ່ນ: ${password}`;
+					smsService.sendMessage(
+						message,
+						`+85620${res.locals.phone}`
+					);
+					sendResponse(res, 200, {
+						message: "Reset password success",
+					});
+				} else {
+					sendResponse(res, 500, {
+						message: "Internal server error",
+					});
+				}
+			} catch (err) {
+				sendResponse(res, 500, { message: "Internal server error" });
+			}
+		}
+	);
 
 	async function addRestaurantDetail(
 		req: Request,

@@ -63,6 +63,8 @@ export class JsonWebTokenServiceImpl implements JsonWebTokenService {
 						res.status(400).json({ message: "Bad Request." });
 					}
 
+					res.locals.phone = decoded.phone;
+
 					next();
 				});
 			} else {

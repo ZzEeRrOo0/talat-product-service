@@ -17,7 +17,7 @@ export default function RestuarantRouter(
 		"/list",
 		async (req: Request, res: Response, next: NextFunction) => {
 			try {
-				const userId = req.headers["x-user-id"]?.toString();
+				const userId = decrypt(req.headers["x-user-id"]!.toString());
 				const customer = await getCustomerUseCase.execute(
 					Number.parseInt(userId!)
 				);
@@ -42,9 +42,7 @@ export default function RestuarantRouter(
 		"/detail",
 		async (req: Request, res: Response, next: NextFunction) => {
 			try {
-				const userId = req.headers["x-user-id"]
-					? req.headers["x-user-id"]?.toString()
-					: null;
+				const userId = decrypt(req.headers["x-user-id"]!.toString());
 				const userTypeId = decrypt(
 					req.headers["x-user-type-id"]?.toString() ?? ""
 				);
