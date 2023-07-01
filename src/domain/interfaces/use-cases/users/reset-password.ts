@@ -1,3 +1,3 @@
 export interface ResetPasswordUseCase {
-	execute(userId: number, password: string): Promise<boolean>;
+	execute(phone: string, password: string): Promise<boolean>;
 }

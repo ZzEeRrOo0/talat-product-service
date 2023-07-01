@@ -126,7 +126,7 @@ export class UserRepositoryImpl implements UserRepository {
 		return await this.userDataSource.getAllUserAdmin(currentPage, pageSize);
 	}
 
-	async updatePassword(userId: number, password: string): Promise<boolean> {
-		return await this.userDataSource.updatePassword(userId, password);
+	async updatePassword(phone: string, password: string): Promise<boolean> {
+		return await this.userDataSource.updatePassword(phone, password);
 	}
 }

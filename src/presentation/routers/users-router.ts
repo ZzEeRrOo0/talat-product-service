@@ -247,7 +247,7 @@ export default function UserRouter(
 						);
 					if (user) {
 						const isUpdated = await resetPasswordUseCase.execute(
-							user.id,
+							user.phone,
 							newPassword
 						);
 
@@ -274,25 +274,20 @@ export default function UserRouter(
 		}
 	);
 
-	router.post(
-		"/forgot-password",
-		jsonWebTokenService.verifyAccessToken,
-		async (req: Request, res: Response) => {
-			try {
-				const userId = decrypt(req.headers["x-user-id"]!.toString());
+	router.post("/forgot-password", async (req: Request, res: Response) => {
+		try {
+			const phone = req.body["phone"];
+			if (phone) {
 				const password = Math.floor(
 					10000000 + Math.random() * 90000000
 				).toString();
 				const isUpdated = await resetPasswordUseCase.execute(
-					Number.parseInt(userId),
+					phone,
 					password
 				);
 				if (isUpdated) {
 					const message = `ຈາກ TaLat ລະຫັດຜ່ານໃໝ່ຂອງທ່ານແມ່ນ: ${password}`;
-					smsService.sendMessage(
-						message,
-						`+85620${res.locals.phone}`
-					);
+					smsService.sendMessage(message, `+85620${phone}`);
 					sendResponse(res, 200, {
 						message: "Reset password success",
 					});
@@ -301,11 +296,13 @@ export default function UserRouter(
 						message: "Internal server error",
 					});
 				}
-			} catch (err) {
-				sendResponse(res, 500, { message: "Internal server error" });
+			} else {
+				sendResponse(res, 400, { message: "Bad request." });
 			}
+		} catch (err) {
+			sendResponse(res, 500, { message: "Internal server error" });
 		}
-	);
+	});
 
 	async function addRestaurantDetail(
 		req: Request,

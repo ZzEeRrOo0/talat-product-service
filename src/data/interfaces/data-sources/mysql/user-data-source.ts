@@ -40,5 +40,5 @@ export interface UserDataSource {
 		currentPage: number,
 		pageSize: number
 	): Promise<AllUserAdmin>;
-	updatePassword(userId: number, password: string): Promise<boolean>;
+	updatePassword(phone: string, password: string): Promise<boolean>;
 }

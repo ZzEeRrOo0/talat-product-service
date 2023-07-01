@@ -7,9 +7,9 @@ export class ResetPassword implements ResetPasswordUseCase {
 		this.userRepository = userRepository;
 	}
 
-	async execute(userId: number, password: string): Promise<boolean> {
+	async execute(phone: string, password: string): Promise<boolean> {
 		const result = await this.userRepository.updatePassword(
-			userId,
+			phone,
 			password
 		);
 		return result;
