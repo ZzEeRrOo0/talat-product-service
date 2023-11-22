@@ -20,7 +20,7 @@ const options: cors.CorsOptions = {
 };
 
 const server = express();
-server.use(express.json());
+server.use(express.json({ limit: "50mb" }));
 server.use(cors(options));
 server.options("*", cors(options));
 export default server;

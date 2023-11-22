@@ -6,8 +6,7 @@ import { OkPacket } from "mysql2";
 
 export class SubCategoryDataSourceImpl implements SubCategoryDataSource {
 	addSubCategoryImage(productImage: ProductImage): Promise<string> {
-		const sql =
-			"UPDATE sub_category SET image_url = ? WHERE id= ?";
+		const sql = "UPDATE sub_categories SET image_url = ? WHERE id= ?";
 
 		return new Promise((resolve, reject) => {
 			db.query(
@@ -24,7 +23,7 @@ export class SubCategoryDataSourceImpl implements SubCategoryDataSource {
 		});
 	}
 	getAllByCategoryId(categoryId: string): Promise<SubCategoryModel[]> {
-		const sql = `SELECT id,name_la AS name,category_id, image_url FROM sub_category WHERE category_id = ${categoryId} AND deleted_at IS NULL`;
+		const sql = `SELECT id, name_la AS name,category_id, image_url FROM sub_categories WHERE category_id = ${categoryId} AND deleted_at IS NULL`;
 
 		return new Promise((resolve, reject) => {
 			db.query(sql, [], (error, result) => {

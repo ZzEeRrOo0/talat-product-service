@@ -23,8 +23,8 @@ import { GetAllCustomerIndividualUseCase } from "../../domain/interfaces/use-cas
 import { GetAllCustomerJuristicPersonUseCase } from "../../domain/interfaces/use-cases/users/get-all-customer-juristic-person";
 import { GetAllUserAdminUseCase } from "../../domain/interfaces/use-cases/users/get-all-user-admin";
 import { ResetPasswordUseCase } from "../../domain/interfaces/use-cases/users/reset-password";
-import { GetUserByPhoneNumberAndPasswordFromUserDBUseCase } from "../../domain/interfaces/use-cases/users/get-user-by-phone-number-and-password-from-user-db";
 import { SMSService } from "../../core/util/twilio/sms";
+import { GetUserByPhoneNumberFromUserDBUseCase } from "../../domain/interfaces/use-cases/users/get-user-by-phone-number-from-user-db";
 
 export default function UserRouter(
 	addUserUseCase: AddUserUseCase,
@@ -39,7 +39,7 @@ export default function UserRouter(
 	getAllCustomerIndividualUseCase: GetAllCustomerIndividualUseCase,
 	getAllCustomerJuristicPersonUseCase: GetAllCustomerJuristicPersonUseCase,
 	getAllUserAdminUseCase: GetAllUserAdminUseCase,
-	getUserByPhoneNumberAndPasswordFromUserDBUseCase: GetUserByPhoneNumberAndPasswordFromUserDBUseCase,
+	getUserByPhoneNumberFromUserDBUseCase: GetUserByPhoneNumberFromUserDBUseCase,
 	resetPasswordUseCase: ResetPasswordUseCase,
 	smsService: SMSService,
 	jsonWebTokenService: JsonWebTokenService
@@ -237,32 +237,24 @@ export default function UserRouter(
 		jsonWebTokenService.verifyAccessToken,
 		async (req: Request, res: Response) => {
 			try {
-				const currentPassword = req.body["password"];
 				const newPassword = req.body["new_password"];
-				if (currentPassword && newPassword) {
-					const user =
-						await getUserByPhoneNumberAndPasswordFromUserDBUseCase.execute(
-							res.locals.phone,
-							currentPassword
-						);
-					if (user) {
-						const isUpdated = await resetPasswordUseCase.execute(
-							user.phone,
-							newPassword
-						);
+				const isExistUser =
+					await getUserByPhoneNumberFromUserDBUseCase.execute(
+						res.locals.phone
+					);
+				if (newPassword && isExistUser) {
+					const isUpdated = await resetPasswordUseCase.execute(
+						res.locals.phone,
+						newPassword
+					);
 
-						if (isUpdated) {
-							sendResponse(res, 200, {
-								message: "Reset password success.",
-							});
-						} else {
-							sendResponse(res, 500, {
-								message: "Reset password fialed.",
-							});
-						}
+					if (isUpdated) {
+						sendResponse(res, 200, {
+							message: "Reset password success.",
+						});
 					} else {
-						sendResponse(res, 400, {
-							message: "Your current password wrong.",
+						sendResponse(res, 500, {
+							message: "Reset password fialed.",
 						});
 					}
 				} else {

@@ -24,11 +24,11 @@ export class ProductDataSourceImpl implements ProductDataSource {
 
 	getProductsByProductId(productId: string): Promise<ProductDetailModel[]> {
 		const sql =
-			"SELECT p.id,p.name,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id,ps.size,ps.price," +
-			"(SELECT name FROM product_size_type WHERE id = ps.product_size_type_id AND deleted_at IS NULL) AS product_size_type, " +
-			"(SELECT name FROM categories WHERE id = p.category_id AND deleted_at IS NULL) AS category_name, " +
-			"(SELECT name FROM sub_category WHERE id = p.sub_category_id AND deleted_at IS NULL) AS sub_category_name, " +
-			"(SELECT name FROM product_type WHERE id = p.product_type_id AND deleted_at IS NULL) AS product_type_name, " +
+			"SELECT p.id,p.name_la AS name,p.description,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id,ps.size,ps.price," +
+			"(SELECT name_la FROM product_size_type WHERE id = ps.product_size_type_id AND deleted_at IS NULL) AS product_size_type, " +
+			"(SELECT name_la FROM categories WHERE id = p.category_id AND deleted_at IS NULL) AS category_name, " +
+			"(SELECT name_la FROM sub_categories WHERE id = p.sub_category_id AND deleted_at IS NULL) AS sub_category_name, " +
+			"(SELECT name_la FROM product_type WHERE id = p.product_type_id AND deleted_at IS NULL) AS product_type_name, " +
 			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL) AS image " +
 			"FROM products AS p LEFT JOIN product_size AS ps ON p.id = ps.product_id WHERE p.id = ? AND p.deleted_at IS NULL";
 
@@ -44,6 +44,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					(e: {
 						id: number;
 						name: string;
+						description?: string | undefined;
 						code: string;
 						image: string | undefined;
 						product_type_id: number;
@@ -60,6 +61,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						new ProductDetailModel(
 							e.id,
 							e.name,
+							e.description,
 							e.code,
 							e.image,
 							e.product_type_id,
@@ -118,7 +120,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 
 	addProduct(product: ProductModel): Promise<number> {
 		const sql =
-			"INSERT INTO products (name, code, product_type_id, category_id, sub_category_id) VALUES(?, ?, ?, ?, ?)";
+			"INSERT INTO products (name, name_la, code, description, product_type_id, category_id, sub_category_id) VALUES('Update later', ?, ?, ?, ?, ?, ?)";
 
 		return new Promise((resolve, reject) => {
 			db.query(
@@ -126,6 +128,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 				[
 					product.name,
 					product.code,
+					product.description,
 					product.product_type_id,
 					product.category_id,
 					product.sub_category_id,
@@ -147,14 +150,14 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		req: Request
 	): Promise<AllProductModel> {
 		const getTotalItemSql = req.query.name
-			? `SELECT COUNT(*) AS total FROM products WHERE name LIKE '%${req.query.name}%' AND deleted_at IS NULL`
+			? `SELECT COUNT(*) AS total FROM products WHERE name_la LIKE '%${req.query.name}%' AND deleted_at IS NULL`
 			: "SELECT COUNT(*) AS total FROM products WHERE deleted_at IS NULL";
 		const getProductsSql =
-			"SELECT p.id,p.name,p.code,p.status, ps.price, c.id AS category_id, sc.id AS sub_category_id, pt.id AS product_type_id, pst.name AS product_size_type, " +
+			"SELECT p.id,p.name_la AS name,p.code,p.status, ps.price, c.id AS category_id, sc.id AS sub_category_id, pt.id AS product_type_id, pst.name AS product_size_type, " +
 			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL LIMIT 1) AS image_url " +
 			"FROM products AS p " +
 			"LEFT JOIN categories AS c ON c.id = p.category_id " +
-			"LEFT JOIN sub_category AS sc ON sc.id = p.sub_category_id " +
+			"LEFT JOIN sub_categories AS sc ON sc.id = p.sub_category_id " +
 			"LEFT JOIN product_type AS pt ON pt.id = p.product_type_id " +
 			"LEFT JOIN product_size AS ps ON ps.product_id = p.id " +
 			"LEFT JOIN product_size_type AS pst ON pst.id = ps.product_size_type_id " +
@@ -191,6 +194,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 								id: number;
 								name: string;
 								code: string;
+								description: string | null;
 								product_type_id: number | null;
 								category_id: number;
 								sub_category_id: number | null;
@@ -203,6 +207,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 									e.id,
 									e.name,
 									e.code,
+									e.description,
 									e.product_type_id ?? null,
 									e.category_id,
 									e.sub_category_id ?? null,
@@ -227,10 +232,10 @@ export class ProductDataSourceImpl implements ProductDataSource {
 
 	getAllByCategoryId(categoryId: string): Promise<ProductDetailModel[]> {
 		const sql =
-			"SELECT p.id,p.name,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id," +
-			"(SELECT name FROM categories WHERE id = p.category_id AND deleted_at IS NULL) AS category_name, " +
-			"(SELECT name FROM sub_category WHERE id = p.sub_category_id AND deleted_at IS NULL) AS sub_category_name, " +
-			"(SELECT name FROM product_type WHERE id = p.product_type_id AND deleted_at IS NULL) AS product_type_name, " +
+			"SELECT p.id, p.name_la AS name,p.description,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id," +
+			"(SELECT name_la FROM categories WHERE id = p.category_id AND deleted_at IS NULL) AS category_name, " +
+			"(SELECT name_la FROM sub_categories WHERE id = p.sub_category_id AND deleted_at IS NULL) AS sub_category_name, " +
+			"(SELECT name_la FROM product_type WHERE id = p.product_type_id AND deleted_at IS NULL) AS product_type_name, " +
 			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL) AS image " +
 			"FROM products AS p WHERE category_id = ? AND deleted_at IS NULL";
 
@@ -246,6 +251,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					(e: {
 						id: number;
 						name: string;
+						description?: string | undefined;
 						code: string;
 						image: string | undefined;
 						product_type_id: number;
@@ -262,6 +268,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						new ProductDetailModel(
 							e.id,
 							e.name,
+							e.description,
 							e.code,
 							e.image,
 							e.product_type_id,
@@ -286,10 +293,10 @@ export class ProductDataSourceImpl implements ProductDataSource {
 		subCategoryId: string
 	): Promise<ProductDetailModel[]> {
 		const sql =
-			"SELECT p.id,p.name,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id," +
-			"(SELECT name FROM categories WHERE id = p.category_id AND deleted_at IS NULL) AS category_name, " +
-			"(SELECT name FROM sub_category WHERE id = p.sub_category_id AND deleted_at IS NULL) AS sub_category_name, " +
-			"(SELECT name FROM product_type WHERE id = p.product_type_id AND deleted_at IS NULL) AS product_type_name, " +
+			"SELECT p.id,p.name_la AS name,p.description,p.code,p.status,p.product_type_id,p.category_id,p.sub_category_id," +
+			"(SELECT name_la FROM categories WHERE id = p.category_id AND deleted_at IS NULL) AS category_name, " +
+			"(SELECT name_la FROM sub_categories WHERE id = p.sub_category_id AND deleted_at IS NULL) AS sub_category_name, " +
+			"(SELECT name_la FROM product_type WHERE id = p.product_type_id AND deleted_at IS NULL) AS product_type_name, " +
 			"(SELECT image_url FROM product_images WHERE product_id = p.id AND deleted_at IS NULL) AS image " +
 			"FROM products AS p WHERE sub_category_id = ? AND deleted_at IS NULL";
 
@@ -305,6 +312,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					(e: {
 						id: number;
 						name: string;
+						description?: string | undefined;
 						code: string;
 						image: string | undefined;
 						product_type_id: number;
@@ -321,6 +329,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 						new ProductDetailModel(
 							e.id,
 							e.name,
+							e.description,
 							e.code,
 							e.image,
 							e.product_type_id,
@@ -342,7 +351,7 @@ export class ProductDataSourceImpl implements ProductDataSource {
 	}
 
 	getListFilterProductName(name: string): Promise<FilterProductModel[]> {
-		const sql = `SELECT * FROM products WHERE name LIKE '%${name}%' AND deleted_at is NULL LIMIT 20`;
+		const sql = `SELECT id, name_la AS name FROM products WHERE name_la LIKE '%${name}%' AND deleted_at is NULL LIMIT 20`;
 
 		return new Promise((reslove, reject) => {
 			db.query(sql, [], (error, result) => {

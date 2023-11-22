@@ -109,6 +109,7 @@ import { GetAllCustomerJuristicPerson } from "../../../domain/use-cases/users/ge
 import { GetAllUserAdmin } from "../../../domain/use-cases/users/get-all-user-admin";
 import { ResetPassword } from "../../../domain/use-cases/users/reset-password";
 import { SMSServiceImpl } from "../../../core/util/twilio/sms";
+import { GetUserByPhoneNumberFromUserDB } from "../../../domain/use-cases/users/get-user-by-phone-number-from-user-db";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -385,7 +386,7 @@ export const UserMiddleWare = UserRouter(
 			)
 		)
 	),
-	new GetUserByPhoneNumberAndPasswordFromUserDB(
+	new GetUserByPhoneNumberFromUserDB(
 		new UserRepositoryImpl(
 			new UserDataSourceImpl(
 				new Pagination(),

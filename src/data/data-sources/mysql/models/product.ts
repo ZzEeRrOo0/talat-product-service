@@ -4,6 +4,7 @@ export class ProductModel implements Product {
 	id?: number | undefined;
 	name!: string;
 	code!: string;
+	description?: string | null;
 	product_type_id!: number | null;
 	category_id!: number;
 	sub_category_id!: number | null;
@@ -16,6 +17,7 @@ export class ProductModel implements Product {
 		id: number | undefined,
 		name: string,
 		code: string,
+		description: string | null,
 		product_type_id: number | null,
 		category_id: number,
 		sub_category_id: number | null,
@@ -27,6 +29,7 @@ export class ProductModel implements Product {
 		(this.id = id),
 			(this.name = name),
 			(this.code = code),
+			(this.description = description),
 			(this.product_type_id = product_type_id),
 			(this.category_id = category_id),
 			(this.sub_category_id = sub_category_id);

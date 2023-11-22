@@ -22,7 +22,11 @@ export class FindProductByQueryImpl implements FindProductByQuery {
 		}
 
 		if (query.name != undefined && query.name != "") {
-			sql.push(`p.name LIKE '%${query.name}%'`);
+			sql.push(`p.name_la LIKE '%${query.name}%'`);
+		}
+
+		if (query.status != undefined) {
+			sql.push(`p.status=${query.status}`);
 		}
 
 		sql.push("p.deleted_at IS NULL");

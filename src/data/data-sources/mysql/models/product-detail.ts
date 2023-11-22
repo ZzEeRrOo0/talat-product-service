@@ -3,6 +3,7 @@ import { ProductDetail } from './../../../../domain/entities/product-detail';
 export class ProductDetailModel implements ProductDetail {
     id: number;
     name: string;
+	description?: string | undefined;
     code: string;
     image: string | undefined;
     productTypeId: number;
@@ -19,6 +20,7 @@ export class ProductDetailModel implements ProductDetail {
     constructor(
         id: number,
         name: string,
+		description: string | undefined,
         code: string,
         image: string | undefined,
         productTypeId: number,
@@ -36,6 +38,7 @@ export class ProductDetailModel implements ProductDetail {
     ) {
         (this.id = id),
             (this.name = name),
+			(this.description = description),
             (this.code = code),
             (this.image = image),
             (this.productTypeId = productTypeId),
