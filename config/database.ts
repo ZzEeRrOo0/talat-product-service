@@ -19,7 +19,7 @@ export const user_db = mysql.createConnection({
 export const transection_db = mysql.createConnection({
 	host: process.env.DB_HOST,
 	user: process.env.DB_USER,
-	password: process.env.RANSECTION_DB_PWD,
+	password: process.env.TRANSECTION_DB_PWD,
 	database: process.env.TRANSECTION_DB_NAME,
 });
 
