@@ -9,7 +9,7 @@
 		"start": "ts-node src/main.ts",
 		"build": "npm run build:without-test",
 		"build:without-test": "tsc",
-		"start:prod": "node build/src/main.js",
+		"start:prod": "node build/genkey.js && node build/src/main.js",
 		"lint": "eslint . --ext .ts",
 		"lint:fix": "eslint . --ext .ts --fix"
 	},

@@ -1,5 +1,6 @@
 import * as admin from "firebase-admin";
 import path from "path";
+import firebaseAdminJson from "../talat-admin-cert.json"
 
 admin.initializeApp({
 	credential: admin.credential.cert(
