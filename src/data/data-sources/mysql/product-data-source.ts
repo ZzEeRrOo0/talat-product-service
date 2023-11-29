@@ -369,4 +369,19 @@ export class ProductDataSourceImpl implements ProductDataSource {
 			});
 		});
 	}
+
+	deleteProduct(productId: string): Promise<boolean> {
+		const sql =
+			"UPDATE products SET deleted_at = CURRENT_TIMESTAMP() WHERE id = ? AND deleted_at IS NULL";
+
+		return new Promise((resolve, reject) => {
+			db.query(sql, [productId], (error, result) => {
+				if (error) {
+					throw new Error("Internal server error.");
+				}
+
+				resolve(true);
+			});
+		});
+	}
 }

@@ -18,6 +18,7 @@ export interface ProductRepository {
 	uploadProductImage(file: string, folderName: string): Promise<string>;
 	addProductImage(imageParams: ProductImage): Promise<string>;
 	updateProductStatus(productId: string, productStatus: number): Promise<string>;
+	deleteProduct(productId: string): Promise<boolean>;
 	getProductByProductId(productId: string): Promise<ProductDetail[]>;
 	getFilterProducts(name: string): Promise<FilterProduct[]>;
 }

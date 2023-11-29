@@ -20,6 +20,7 @@ export interface ProductDataSource {
 		productId: string,
 		productStatus: number
 	): Promise<string>;
+	deleteProduct(productId: string): Promise<boolean>;
 	getProductsByProductId(productId: string): Promise<ProductDetail[]>;
 	getListFilterProductName(name: string): Promise<FilterProduct[]>;
 }

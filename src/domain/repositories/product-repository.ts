@@ -13,13 +13,12 @@ export class ProductRepositoryImpl implements ProductRepository {
 	cloudinaryDataSource: CloudinaryDataSource;
 	constructor(
 		$productDataSource: ProductDataSource,
-		$cloudinaryDataSource: CloudinaryDataSource,
-
+		$cloudinaryDataSource: CloudinaryDataSource
 	) {
 		this.productDataSource = $productDataSource;
 		this.cloudinaryDataSource = $cloudinaryDataSource;
 	}
-	
+
 	async getProductByProductId(productId: string): Promise<ProductDetail[]> {
 		const result = await this.productDataSource.getProductsByProductId(
 			productId
@@ -87,5 +86,9 @@ export class ProductRepositoryImpl implements ProductRepository {
 
 	async getFilterProducts(name: string): Promise<FilterProduct[]> {
 		return await this.productDataSource.getListFilterProductName(name);
+	}
+
+	async deleteProduct(productId: string): Promise<boolean> {
+		return await this.productDataSource.deleteProduct(productId);
 	}
 }

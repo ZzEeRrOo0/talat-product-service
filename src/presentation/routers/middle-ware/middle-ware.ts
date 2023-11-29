@@ -110,6 +110,7 @@ import { GetAllUserAdmin } from "../../../domain/use-cases/users/get-all-user-ad
 import { ResetPassword } from "../../../domain/use-cases/users/reset-password";
 import { SMSServiceImpl } from "../../../core/util/twilio/sms";
 import { GetUserByPhoneNumberFromUserDB } from "../../../domain/use-cases/users/get-user-by-phone-number-from-user-db";
+import { DeleteProduct } from "../../../domain/use-cases/product/delete-product";
 
 export const contactMiddleWare = async () => {
 	const client: MongoClient = new MongoClient(
@@ -212,6 +213,15 @@ export const ProductMiddleWare = ProductRouter(
 		)
 	),
 	new GetProductByProductId(
+		new ProductRepositoryImpl(
+			new ProductDataSourceImpl(
+				new Pagination(),
+				new FindProductByQueryImpl()
+			),
+			new CloudinaryDataSourceImpl(new Cloudinary())
+		)
+	),
+	new DeleteProduct(
 		new ProductRepositoryImpl(
 			new ProductDataSourceImpl(
 				new Pagination(),

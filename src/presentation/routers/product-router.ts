@@ -14,6 +14,7 @@ import { UpdateProductStatusUseCase } from "../../domain/interfaces/use-cases/pr
 import { GetProductByProductIdUseCase } from "../../domain/interfaces/use-cases/product/get-by-product-id";
 import { JsonWebTokenService } from "../../core/util/jwt/jwt-token";
 import { sendResponse } from "../../core/response/api-response";
+import { DeleteProductUseCase } from "../../domain/interfaces/use-cases/product/delete-product";
 
 export default function ProductRouter(
 	getAllProductUseCase: GetAllProductUseCase,
@@ -26,6 +27,7 @@ export default function ProductRouter(
 	updateProductPriceUseCase: UpdateProductPriceUseCase,
 	updateProductStatusUseCase: UpdateProductStatusUseCase,
 	getProductByProductIdUseCase: GetProductByProductIdUseCase,
+	deleteProductUseCase: DeleteProductUseCase,
 	jsonWebTokenService: JsonWebTokenService
 ) {
 	const router = express.Router();
@@ -37,7 +39,7 @@ export default function ProductRouter(
 	router.get("/", async (req: Request, res: Response) => {
 		try {
 			const currentPage = req.query["currentPage"]?.toString() ?? "1";
-			const pageSize = req.query["pageSize"]?.toString() ?? "5";
+			const pageSize = req.query["pageSize"]?.toString() ?? "10";
 			const products = await getAllProductUseCase.execute(
 				Number.parseInt(currentPage),
 				Number.parseInt(pageSize),
@@ -171,6 +173,21 @@ export default function ProductRouter(
 				}
 			} catch (err) {
 				sendResponse(res, 500, { message: "Upload failure" });
+			}
+		}
+	);
+
+	router.put(
+		"/delete/:id",
+		jsonWebTokenService.verifyAccessToken,
+		async (req: Request, res: Response) => {
+			try {
+				await deleteProductUseCase.execute(req.params.id);
+				sendResponse(res, 200, {
+					message: "Delete Product successful",
+				});
+			} catch (err) {
+				sendResponse(res, 500, { message: "Error deleted" });
 			}
 		}
 	);
