@@ -129,9 +129,9 @@ export class ProductDataSourceImpl implements ProductDataSource {
 					product.name,
 					product.code,
 					product.description,
-					product.product_type_id,
+					product.product_type_id ?? null,
 					product.category_id,
-					product.sub_category_id,
+					product.sub_category_id ?? null,
 				],
 				(error, result) => {
 					if (error) {
